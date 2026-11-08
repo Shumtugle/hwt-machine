@@ -23,21 +23,21 @@ FONT_TEXT = os.path.join(ROOT, 'fonts', 'Oswald.ttf')
 SYMBOLS = draw.Symbols(os.path.join(ROOT, 'fonts', 'Symbols.ttf'), os.path.join(ROOT, 'fonts', 'symbols.codepoints'))
 
 TITLE = 'Vibe'
-CHOICE_TARGET = 1               # what the choice slots report as their tap target; copied from faces that switch languages
+CHOICE_FUNCTIONS = [1, 2, 9]  # function code per language slot; the editor names and dedupes slots by it
 AUTHOR = 'vibe'
 SCREEN = 'HWHD13'
 FORMAT_VERSION = '2.5.1'
 W, H = 408, 480
 
 # palette
-CREAM = (242, 227, 198, 255)        # text and light symbols
+CREAM = (236, 224, 200, 255)        # text and light symbols, a soft cream
 SCARLET = (255, 40, 60, 255)        # accents
 SCARLET_SOFT = (255, 104, 112, 255)
 SECONDS = (198, 34, 50, 255)        # seconds digits, a step quieter than the accents
 DIM = (150, 140, 120, 255)          # always-on screen
 GLOW = (168, 8, 28)                 # centre of the background glow
-TICK = (70, 12, 20, 255)
-TICK_MAJOR = (118, 20, 32, 255)
+TICK = (50, 10, 15, 255)
+TICK_MAJOR = (80, 15, 23, 255)
 
 WEATHER = ['cloud_off', 'sunny', 'clear_night', 'cloud', 'partly_cloudy_day', 'rainy',
            'thunderstorm', 'weather_snowy', 'air', 'mist', 'foggy']
@@ -128,7 +128,7 @@ def build(locales):
             if d:
                 items.append(layout.slot_image(face.add(d, ('dot', i)), 0, day_y - zy))
                 thumb.alpha_composite(d, (0, day_y - zy))
-            slots.append(layout.slot(i, items, face.add(thumb, ('thumb', i)), frame_ref, CHOICE_TARGET))
+            slots.append(layout.slot(i, items, face.add(thumb, ('thumb', i)), frame_ref, CHOICE_FUNCTIONS[i % len(CHOICE_FUNCTIONS)]))
         choices.append((zone, list(range(len(langs))), 0))
 
     # --- time card: HH:MM as large as fits, seconds smaller and quieter on the same baseline
@@ -136,7 +136,7 @@ def build(locales):
     colon_w, gap = 26, 10
     for size in range(124, 90, -2):
         s_time = style(size, 600, CREAM)
-        s_sec = style(int(size * 0.42), 500, SECONDS)
+        s_sec = style(int(size * 0.32), 500, SECONDS)
         t_digits, t_cell = s_time.digits(extra_pad=2)
         sec_digits, sec_cell = s_sec.digits(extra_pad=1)
         total = 4 * t_cell + colon_w + gap + 2 * sec_cell
@@ -277,8 +277,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     ap.add_argument('locales', nargs='*', default=['all'],
                     help='locales to build one face each, or "all"')
-    ap.add_argument('--switchable', default='ru,en,fi',
-                    help='locales of the face whose language is picked on the watch; empty to skip')
+    ap.add_argument('--switchable', default='',
+                    help='also build one face with these locales as editor choices (experimental)')
     ap.add_argument('--out', default=os.path.join(ROOT, 'dist'))
     a = ap.parse_args()
     available = sorted(n[:-5] for n in os.listdir(os.path.join(HERE, 'locale')) if n.endswith('.json'))

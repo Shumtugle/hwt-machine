@@ -109,12 +109,13 @@
         Every bitmap is drawn by the build, every glyph sits on its visible ink, and the package
         is checked by drawing it back before it ever reaches a wrist.</p>
       <div class="buttons">
-        <a class="btn primary" id="download" href="faces/vibe.hwt" download>Download Vibe</a>
+        <a class="btn primary" id="download" href="faces/vibe-en.hwt" download>Download Vibe</a>
         <a class="btn" href="https://github.com/Shumtugle/hwt-machine/releases">All releases</a>
       </div>
-      <p class="lede" style="font-size:15px;margin-top:16px">Two faces so far. One file, three languages: pick Russian, English or Finnish in the
-        watch's face editor. Single-language files: <a id="single-ru" href="faces/vibe-ru.hwt" download>RU</a> ·
-        <a id="single-en" href="faces/vibe-en.hwt" download>EN</a> · <a id="single-fi" href="faces/vibe-fi.hwt" download>FI</a>.</p>
+      <p class="lede" style="font-size:15px;margin-top:16px">Two faces so far, each in Russian, English and Finnish:
+        <a id="single-ru" href="faces/vibe-ru.hwt" download>RU</a> ·
+        <a id="single-en" href="faces/vibe-en.hwt" download>EN</a> · <a id="single-fi" href="faces/vibe-fi.hwt" download>FI</a>.
+        The button downloads the language picked below.</p>
       <div>
       </div>
     </div>
@@ -212,7 +213,7 @@ python3 -m unittest discover tests</pre>
   }
   document.getElementById('weather').addEventListener('change', () => tick());
 
-  // one package carries all three languages; the chips pick the choice the watch editor would
+  // the preview package carries all three languages as choices; downloads are single-language files
   const ORDER = ['ru', 'en', 'fi'];
   state.name = 'vibe';
   async function loadFace(name) {
@@ -223,8 +224,8 @@ python3 -m unittest discover tests</pre>
     state.name = name;
     state.face = faces[name];
     const dl = document.getElementById('download');
-    dl.href = 'faces/' + name + '.hwt';
-    dl.textContent = 'Download ' + (name === 'vibe' ? 'Vibe' : 'Night Tram');
+    dl.href = 'faces/' + name + '-' + state.lang + '.hwt';
+    dl.textContent = 'Download ' + (name === 'vibe' ? 'Vibe' : 'Night Tram') + ' · ' + state.lang.toUpperCase();
     for (const l of ['ru', 'en', 'fi']) {
       const a = document.getElementById('single-' + l);
       if (a) a.href = 'faces/' + name + '-' + l + '.hwt';

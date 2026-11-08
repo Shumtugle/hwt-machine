@@ -27,7 +27,7 @@ AUTHOR = 'night-tram'
 NAME = 'night-tram'
 SCREEN = 'HWHD13'
 FORMAT_VERSION = '2.5.1'
-CHOICE_TARGET = 1
+CHOICE_FUNCTIONS = [1, 2, 9]  # function code per language slot; the editor names and dedupes slots by it
 W, H = 408, 480
 SS = 4
 
@@ -47,7 +47,7 @@ STOP_IDLE = (64, 66, 62, 255)
 WEATHER = ['cloud_off', 'sunny', 'clear_night', 'cloud', 'partly_cloudy_day', 'rainy',
            'thunderstorm', 'weather_snowy', 'air', 'mist', 'foggy']
 
-FRAME_INSET, FRAME_RADIUS = 7, 70
+FRAME_INSET, FRAME_RADIUS = 11, 82
 COLUMNS = [84, 204, 324]
 STOPS_Y, STOPS_X = 446, [94 + 44 * i for i in range(6)]
 
@@ -178,13 +178,13 @@ def build(locales):
 
     bg = ink_background()
     bg.alpha_composite(copper_frame())
-    ticks = draw.Ring(W, H, inset=13, radius=FRAME_RADIUS - 6, length=(5, 8), thickness=(1.4, 2.0))
+    ticks = draw.Ring(W, H, inset=FRAME_INSET + 6, radius=FRAME_RADIUS - 6, length=(5, 8), thickness=(1.4, 2.0))
     bg.alpha_composite(ticks.draw_ticks(range(60), lambda i: CREAM_TICK_MAJOR if ticks.ticks[i][2] else CREAM_TICK))
     bg.alpha_composite(night_arc())
 
     # --- date line: lamp, weekday, separator, day, month
     lamp_d, gap = 11, 10
-    for date_size in range(32, 16, -1):
+    for date_size in range(33, 16, -1):
         s_date = style(date_size, 500, CREAM, 2, words + ''.join(suffixes) + '·')
         day_digits, day_cell = s_date.digits()
         week_w = max(s_date.width(w) for n in langs for w in n['weekdays'])
@@ -194,7 +194,7 @@ def build(locales):
         sep = s_date.render('·')
         week_box = int(math.ceil(week_w))
         block = lamp_d + 14 + week_box + gap + sep.width + gap + 2 * day_cell + dot_w + gap + int(month_w)
-        if block <= W - 84:
+        if block <= W - 76:
             break
     bx = (W - block) // 2
     line_cy = 56
@@ -240,7 +240,7 @@ def build(locales):
             thumb.alpha_composite(s_date.render(n['months'][10]), (month_x - zx, ly - zy))
             if d:
                 items.append(layout.slot_image(face.add(d, ('dot', i)), day_right - zx, ly - zy))
-            slots.append(layout.slot(i, items, face.add(thumb, ('thumb', i)), frame_ref, CHOICE_TARGET))
+            slots.append(layout.slot(i, items, face.add(thumb, ('thumb', i)), frame_ref, CHOICE_FUNCTIONS[i % len(CHOICE_FUNCTIONS)]))
         choices.append((zone, list(range(len(langs))), 0))
 
     # --- time: as large as fits between the horizon and the seconds rule
@@ -280,7 +280,7 @@ def build(locales):
 
     lamp_ring = draw.Ring(W, H, inset=FRAME_INSET, radius=FRAME_RADIUS, length=(0, 0))
     mark_items = effects.running_mark(face, bg, lamp_ring,
-                                      painter=effects.glowing(lamp_ring, 3.6, AMBER_LAMP, halo=11, halo_alpha=170))
+                                      painter=effects.glowing(lamp_ring, 3.4, AMBER_LAMP, halo=6, halo_alpha=170))
     time_items = mark_items + [
         layout.image_list(t_refs[0:3], tx, ty, codes.HOUR_TENS),
         layout.image_list(t_refs, tx + t_cell, ty, codes.HOUR_UNITS),
@@ -443,7 +443,7 @@ def package(locales, out_dir, name):
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     ap.add_argument('locales', nargs='*', default=['all'])
-    ap.add_argument('--switchable', default='ru,en,fi')
+    ap.add_argument('--switchable', default='')
     ap.add_argument('--out', default=os.path.join(ROOT, 'dist'))
     a = ap.parse_args()
     available = sorted(n[:-5] for n in os.listdir(os.path.join(HERE, 'locale')) if n.endswith('.json'))

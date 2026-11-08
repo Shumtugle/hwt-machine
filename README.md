@@ -15,8 +15,7 @@ the month in words, 24-hour time with seconds, battery, weather, pulse and steps
 cream mark that runs around the frame once a minute. Tapping a tile opens the matching
 screen on the watch.
 
-[`vibe.hwt`](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/vibe.hwt) carries Russian, English and Finnish at once: pick the language in the
-watch's face editor, the way other faces switch theirs. Or take a single-language file:
+Download it in
 [English](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/vibe-en.hwt),
 [Russian](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/vibe-ru.hwt) or
 [Finnish](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/vibe-fi.hwt)
@@ -35,10 +34,12 @@ goal is walked. Battery, weather and steps share one row; the pulse sits above t
 
 ![Night Tram in English, Russian, Finnish, and its always-on screen](docs/img/night-tram.png)
 
-[`night-tram.hwt`](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/night-tram.hwt)
-switches between Russian, English and Finnish on the watch; single-language files sit next
-to it in [docs/faces](docs/faces). The route and the battery bar use progress sources seen
-in other faces but not yet confirmed on a watch with this one.
+Download it in
+[English](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/night-tram-en.hwt),
+[Russian](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/night-tram-ru.hwt) or
+[Finnish](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/night-tram-fi.hwt).
+The battery bar runs on a progress source confirmed on the watch; the route uses the
+step-goal source seen in other faces.
 
 ## What the machine does
 
@@ -62,17 +63,20 @@ in other faces but not yet confirmed on a watch with this one.
 Python 3 and Pillow.
 
 ```sh
-python3 faces/vibe/build.py all          # every locale, plus the switchable face, into dist/
+python3 faces/vibe/build.py all          # every locale into dist/
 python3 faces/night-tram/build.py all
-python3 faces/vibe/build.py ru --switchable ''   # just one locale
+python3 faces/vibe/build.py ru           # one locale
 python3 tools/inspect.py dist/vibe-ru.hwt --images out/ --render screen.png
 python3 -m unittest discover tests
 cp dist/*.hwt docs/faces/                # refresh the faces on the live page
 ```
 
 A new language is one JSON file in `faces/vibe/locale/` with seven weekdays, twelve
-months and an optional suffix after the day number. Add it to `--switchable` to put it
-in the all-in-one face.
+months and an optional suffix after the day number.
+
+`--switchable ru,en,fi` also builds one face with the locales as editor choices. The
+watch lists choices by function rather than by name, so this is an experiment; see the
+format notes.
 
 ## Layout of the repository
 

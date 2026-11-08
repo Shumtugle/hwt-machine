@@ -136,15 +136,19 @@ code in `6`. No font travels with the face; the watch uses its own.
 ### Choice zone and slots (group fields 8 and 7)
 
 A zone with `2` set to 1 is a choice: `3` holds the slot indices as raw bytes, `4` the
-default slot, `5` the box. The wearer switches choices in the face editor. Language
-variants of a face are done this way.
+default slot, `5` the box. The wearer switches choices in the face editor.
 
 A slot (group field 7): `1` slot index, `2` elements (repeated), `3` thumbnail ref,
-`4` selection-frame ref (both the size of the zone), `5` tap target while the slot is
-active. Elements inside a slot sit at position `(0, 0)` and carry an offset from the
-zone's top-left corner: field `4` for images, `5` for image lists, `10` for numbers.
-Offsets may be negative. Simulated here; on the watch it is observed in other faces,
-not yet verified with one built by this machine.
+`4` selection-frame ref (both the size of the zone), `5` function code. Elements inside a
+slot sit at position `(0, 0)` and carry an offset from the zone's top-left corner: field
+`4` for images, `5` for image lists, `10` for numbers. Offsets may be negative.
+
+Verified on the watch: the editor shows the zone with its selection frame and lists the
+choices **by function**, under the function's own name (code 1 appears as *Calendar →
+Date*). Slots that share a function code fold into one entry, so three language slots
+with the same code offer nothing to choose. A face that switches variants of one
+function needs a different code per slot, and the editor will show those codes' names,
+not the variant's.
 
 ## Data sources
 
@@ -187,4 +191,6 @@ around the frame is still possible; see the running mark in the machine's effect
 | 21 | weather | verified |
 | 17 | battery: nothing on newer watches | verified |
 | 50 | settings | observed |
+
+In choice slots the same field names a *function*; code 1 is shown as Calendar → Date.
 | 18 | messages | observed |
