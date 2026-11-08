@@ -15,9 +15,11 @@ the month in words, 24-hour time with seconds, battery, weather, pulse and steps
 cream mark that runs around the frame once a minute. Tapping a tile opens the matching
 screen on the watch.
 
-Download it from [Releases](https://github.com/Shumtugle/hwt-machine/releases) in
-English, Russian or Finnish and install it with any app that can send a watch face file
-to the watch.
+Download it in [English](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/vibe-en.hwt),
+[Russian](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/vibe-ru.hwt) or
+[Finnish](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/vibe-fi.hwt)
+(also attached to [Releases](https://github.com/Shumtugle/hwt-machine/releases)) and
+install it with any app that can send a watch face file to the watch.
 
 Built for 408 × 480 screens (screen code `HWHD13`). Runs on the HUAWEI WATCH FIT 4;
 faces for this screen are reported to work on the FIT 3 as well, memory permitting.
