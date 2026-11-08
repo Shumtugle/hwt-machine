@@ -1,0 +1,26 @@
+{
+  "weekdays": [
+    "MAANANTAI",
+    "TIISTAI",
+    "KESKIVIIKKO",
+    "TORSTAI",
+    "PERJANTAI",
+    "LAUANTAI",
+    "SUNNUNTAI"
+  ],
+  "months": [
+    "TAMMIKUUTA",
+    "HELMIKUUTA",
+    "MAALISKUUTA",
+    "HUHTIKUUTA",
+    "TOUKOKUUTA",
+    "KESÄKUUTA",
+    "HEINÄKUUTA",
+    "ELOKUUTA",
+    "SYYSKUUTA",
+    "LOKAKUUTA",
+    "MARRASKUUTA",
+    "JOULUKUUTA"
+  ],
+  "day_suffix": "."
+}
