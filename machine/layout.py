@@ -78,6 +78,12 @@ def slot_image_list(refs, dx, dy, source, aod=0):
         (2, [(1, 0), (2, 0)]), (3, source), (5, [(1, dx), (2, dy)]), (6, aod)])
 
 
+def slot_number(digit_refs, dx, dy, align, source, aod=0, minus=''):
+    return (codes.NUMBER, [(1, r) for r in digit_refs] + [
+        (2, ''), (3, [(1, 0), (2, 0)]), (4, align), (5, source), (6, minus), (7, 0), (8, 0),
+        (10, [(1, dx), (2, dy)]), (13, aod)])
+
+
 def slot(index, items, thumb, frame, target):
     """One choice: its elements, a thumbnail for the editor, the editor's selection
     frame, and what a tap opens while this choice is active."""

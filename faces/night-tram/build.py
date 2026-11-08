@@ -149,32 +149,13 @@ def build(locales):
     bg.alpha_composite(ticks.draw_ticks(range(60), lambda i: CREAM_TICK_MAJOR if ticks.ticks[i][2] else CREAM_TICK))
     bg.alpha_composite(night_arc())
 
-    # --- date line: lamp, weekday, separator, day, month
+    # --- date line: lamp, weekday, separator, day, month; each language centred on its own
     lamp_d, gap = 11, 10
-    for date_size in range(33, 16, -1):
-        s_date = style(date_size, 500, CREAM, 2, words + ''.join(suffixes) + '·')
-        day_digits, day_cell = s_date.digits()
-        week_w = max(s_date.width(w) for n in langs for w in n['weekdays'])
-        month_w = max(s_date.width(m) for n in langs for m in n['months'])
-        dots = [s_date.render(sfx) if sfx else None for sfx in suffixes]
-        dot_w = max([d.width for d in dots if d] or [0])
-        sep = s_date.render('·')
-        week_box = int(math.ceil(week_w))
-        block = lamp_d + 14 + week_box + gap + sep.width + gap + 2 * day_cell + dot_w + gap + int(month_w)
-        if block <= W - 76:
-            break
-    bx = (W - block) // 2
     line_cy = 56
-    ly = s_date.top_for_digits_centred_on(line_cy)
-    lamp_x = bx
-    week_x = lamp_x + lamp_d + 14
-    sep_x = week_x + week_box + gap
-    day_right = sep_x + sep.width + gap + 2 * day_cell
-    month_x = day_right + dot_w + gap
-    # the lamp is lit while there are unread messages, and only glows faintly otherwise
     lamp_box = lamp_d + 12
     lamp_frames = []
     for on in (False, True):
+        # the lamp is lit while there are unread messages, and only glows faintly otherwise
         fr = Image.new('RGBA', (lamp_box, lamp_box), (0, 0, 0, 0))
         core = draw.dot(lamp_d, AMBER if on else (96, 58, 24, 255))
         if on:
@@ -183,45 +164,89 @@ def build(locales):
             fr.alpha_composite(halo.filter(ImageFilter.GaussianBlur(3)))
         fr.alpha_composite(core, (6, 6))
         lamp_frames.append(fr)
-    lamp_xy = (lamp_x - 6, int(line_cy - lamp_d / 2.0) - 6)
-    bg.alpha_composite(sep, (sep_x, ly))
-
-    def right_aligned(text, st):
-        im = Image.new('RGBA', (week_box, st.height), (0, 0, 0, 0))
-        t = st.render(text)
-        im.alpha_composite(t, (week_box - t.width, 0))
-        return im
-
-    date_items = [layout.number(face.add_set(day_digits, 'day'), day_right, ly, codes.ALIGN_RIGHT, codes.DAY_OF_MONTH)]
     lamp_refs = face.add_set(lamp_frames, 'lamp')
-    lamp_zone = (lamp_xy[0] - 6, lamp_xy[1] - 6, lamp_xy[0] + lamp_box + 6, lamp_xy[1] + lamp_box + 6)
-    slots, choices = [], []
+
+    def date_line(n):
+        """Sizes and places one language's line so that a typical date sits in the middle:
+        the mean weekday, a two-digit day and the mean month; the longest must still fit."""
+        sfx = n.get('day_suffix', '')
+        own = ''.join(n['weekdays'] + n['months']) + sfx + '·'
+        for size in range(33, 16, -1):
+            st = style(size, 500, CREAM, 2, own)
+            digits, cell = st.digits()
+            weeks = [st.width(w) for w in n['weekdays']]
+            months = [st.width(m) for m in n['months']]
+            dot = st.render(sfx) if sfx else None
+            sep = st.render('·')
+            week_box = int(math.ceil(max(weeks)))
+            fixed = lamp_d + 12 + week_box + gap + sep.width + gap + 2 * cell + (dot.width if dot else 0) + gap
+            typical = fixed + sum(months) / len(months)
+            x0 = int(round((W - typical) / 2.0))
+            # centred on a typical date, the longest month must still end inside the ticks
+            if x0 >= 44 and x0 + fixed + max(months) <= W - 44:
+                break
+        L = {'style': st, 'digits': digits, 'cell': cell, 'dot': dot, 'sep': sep, 'week_box': week_box,
+             'lamp_x': x0, 'y': st.top_for_digits_centred_on(line_cy)}
+        L['week_x'] = x0 + lamp_d + 12
+        L['sep_x'] = L['week_x'] + week_box + gap
+        L['day_right'] = L['sep_x'] + sep.width + gap + 2 * cell
+        L['month_x'] = L['day_right'] + (dot.width if dot else 0) + gap
+        L['right'] = int(L['month_x'] + max(months))
+        L['lamp_y'] = int(line_cy - lamp_d / 2.0) - 6
+        return L
+
+    lines = [date_line(n) for n in langs]
+    date_items, slots, choices = [], [], []
+    message_zone = None
     if len(langs) == 1:
-        wr = face.add_set([right_aligned(t, s_date) for t in names['weekdays']], 'week')
-        mr = face.add_set([s_date.render(t) for t in names['months']], 'month')
-        date_items += [layout.image_list([wr[0]] + wr, week_x, ly, codes.WEEKDAY),
-                       layout.image_list([mr[0]] + mr, month_x, ly, codes.MONTH)]
-        if dots[0]:
-            bg.alpha_composite(dots[0], (day_right, ly))
+        L = lines[0]
+        st, ly = L['style'], L['y']
+        date_items += [
+            layout.image_list(lamp_refs, L['lamp_x'] - 6, L['lamp_y'], codes.UNREAD_MESSAGES),
+            layout.number(face.add_set(L['digits'], 'day'), L['day_right'], ly, codes.ALIGN_RIGHT, codes.DAY_OF_MONTH),
+        ]
+        wr = face.add_set([st.render(t) for t in names['weekdays']], 'week')
+        mr = face.add_set([st.render(t) for t in names['months']], 'month')
+        date_items += [layout.image_list([wr[0]] + wr, L['week_x'], ly, codes.WEEKDAY),
+                       layout.image_list([mr[0]] + mr, L['month_x'], ly, codes.MONTH)]
+        bg.alpha_composite(L['sep'], (L['sep_x'], ly))
+        if L['dot']:
+            bg.alpha_composite(L['dot'], (L['day_right'], ly))
+        message_zone = (L['lamp_x'] - 12, L['lamp_y'] - 6, L['lamp_x'] + lamp_box, L['lamp_y'] + lamp_box + 6)
     else:
-        zone = (week_x - 6, ly - 6, month_x + int(month_w) + 6, ly + s_date.height + 6)
+        zone = (min(L['lamp_x'] for L in lines) - 10, min(L['y'] for L in lines) - 6,
+                max(L['right'] for L in lines) + 8, max(L['y'] + L['style'].height for L in lines) + 6)
         zx, zy = zone[0], zone[1]
         zw, zh = zone[2] - zx, zone[3] - zy
         frame = Image.new('RGBA', (zw, zh), (0, 0, 0, 0))
         ImageDraw.Draw(frame).rounded_rectangle([1, 1, zw - 2, zh - 2], radius=10, outline=AMBER, width=2)
         frame_ref = face.add(frame, 'choice_frame')
-        for i, (n, d) in enumerate(zip(langs, dots)):
-            wr = face.add_set([right_aligned(t, s_date) for t in n['weekdays']], ('week', i))
-            mr = face.add_set([s_date.render(t) for t in n['months']], ('month', i))
-            items = [layout.slot_image_list([wr[0]] + wr, week_x - zx, ly - zy, codes.WEEKDAY),
-                     layout.slot_image_list([mr[0]] + mr, month_x - zx, ly - zy, codes.MONTH)]
+        for i, (n, L) in enumerate(zip(langs, lines)):
+            st, ly = L['style'], L['y']
+            wr = face.add_set([st.render(t) for t in n['weekdays']], ('week', i))
+            mr = face.add_set([st.render(t) for t in n['months']], ('month', i))
+            items = [
+                layout.slot_image_list(lamp_refs, L['lamp_x'] - 6 - zx, L['lamp_y'] - zy, codes.UNREAD_MESSAGES),
+                layout.slot_image_list([wr[0]] + wr, L['week_x'] - zx, ly - zy, codes.WEEKDAY),
+                layout.slot_image(face.add(L['sep'], ('sep', i)), L['sep_x'] - zx, ly - zy),
+                layout.slot_number(face.add_set(L['digits'], ('day', i)), L['day_right'] - zx, ly - zy,
+                                   codes.ALIGN_RIGHT, codes.DAY_OF_MONTH),
+                layout.slot_image_list([mr[0]] + mr, L['month_x'] - zx, ly - zy, codes.MONTH),
+            ]
             thumb = Image.new('RGBA', (zw, zh), (0, 0, 0, 0))
-            thumb.alpha_composite(right_aligned(n['weekdays'][6], s_date), (week_x - zx, ly - zy))
-            thumb.alpha_composite(s_date.render(n['months'][10]), (month_x - zx, ly - zy))
-            if d:
-                items.append(layout.slot_image(face.add(d, ('dot', i)), day_right - zx, ly - zy))
-            slots.append(layout.slot(i, items, face.add(thumb, ('thumb', i)), frame_ref, CHOICE_FUNCTIONS[i % len(CHOICE_FUNCTIONS)]))
+            thumb.alpha_composite(lamp_frames[0], (L['lamp_x'] - 6 - zx, L['lamp_y'] - zy))
+            thumb.alpha_composite(st.render(n['weekdays'][6]), (L['week_x'] - zx, ly - zy))
+            thumb.alpha_composite(L['sep'], (L['sep_x'] - zx, ly - zy))
+            thumb.alpha_composite(st.render(n['months'][10]), (L['month_x'] - zx, ly - zy))
+            if L['dot']:
+                items.append(layout.slot_image(face.add(L['dot'], ('dot', i)), L['day_right'] - zx, ly - zy))
+                thumb.alpha_composite(L['dot'], (L['day_right'] - zx, ly - zy))
+            slots.append(layout.slot(i, items, face.add(thumb, ('thumb', i)), frame_ref,
+                                     CHOICE_FUNCTIONS[i % len(CHOICE_FUNCTIONS)]))
         choices.append((zone, list(range(len(langs))), 0))
+    L0 = lines[0]
+    s_date, ly = L0['style'], L0['y']
+    week_x, sep_x, day_right, month_x, week_box = L0['week_x'], L0['sep_x'], L0['day_right'], L0['month_x'], L0['week_box']
 
     # --- time: as large as fits between the horizon and the seconds rule
     for size in range(190, 120, -2):
@@ -288,8 +313,7 @@ def build(locales):
     def centred_right_edge(cx, digits, tail=0):
         return int(round(cx - (digits * v_cell + tail) / 2.0 + digits * v_cell))
 
-    zones = [(codes.OPEN_MESSAGES, lamp_zone,
-              [layout.image_list(lamp_refs, lamp_xy[0], lamp_xy[1], codes.UNREAD_MESSAGES)])]
+    zones = [(codes.OPEN_MESSAGES, message_zone, [])] if message_zone else []
     col_w = (COLUMNS[1] - COLUMNS[0])
     # battery
     cx = COLUMNS[0]
@@ -364,13 +388,7 @@ def build(locales):
     a_date = style(s_date.size, 400, DIM, 2, words + ''.join(suffixes))
     a_digits = a_date.digits()[0]
 
-    def a_right(text):
-        im = Image.new('RGBA', (week_box, a_date.height), (0, 0, 0, 0))
-        t = a_date.render(text)
-        im.alpha_composite(t, (week_box - t.width, 0))
-        return im
-
-    aw = face.add_set([a_right(t) for t in names['weekdays']], 'aod_week')
+    aw = face.add_set([a_date.render(t) for t in names['weekdays']], 'aod_week')
     am = face.add_set([a_date.render(t) for t in names['months']], 'aod_month')
     a_sep = a_date.render('·')
     date_items += [
