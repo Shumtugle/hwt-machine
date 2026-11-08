@@ -112,15 +112,20 @@
         <a class="btn primary" id="download" href="faces/vibe.hwt" download>Download Vibe</a>
         <a class="btn" href="https://github.com/Shumtugle/hwt-machine/releases">All releases</a>
       </div>
-      <p class="lede" style="font-size:15px;margin-top:16px">One file, three languages: pick Russian, English or Finnish in the
-        watch's face editor. Single-language files: <a href="faces/vibe-ru.hwt" download>RU</a> ·
-        <a href="faces/vibe-en.hwt" download>EN</a> · <a href="faces/vibe-fi.hwt" download>FI</a>.</p>
+      <p class="lede" style="font-size:15px;margin-top:16px">Two faces so far. One file, three languages: pick Russian, English or Finnish in the
+        watch's face editor. Single-language files: <a id="single-ru" href="faces/vibe-ru.hwt" download>RU</a> ·
+        <a id="single-en" href="faces/vibe-en.hwt" download>EN</a> · <a id="single-fi" href="faces/vibe-fi.hwt" download>FI</a>.</p>
       <div>
       </div>
     </div>
     <div class="stage">
       <div class="watch"><canvas class="screen" id="live" width="408" height="480" aria-label="Live watch face preview"></canvas></div>
       <div class="controls">
+        <div class="row"><label>Face</label>
+          <div class="chips" id="faces">
+            <button class="chip" data-face="vibe" aria-pressed="true">Vibe</button>
+            <button class="chip" data-face="night-tram" aria-pressed="false">Night Tram</button>
+          </div></div>
         <div class="row"><label>Language</label>
           <div class="chips" id="langs">
             <button class="chip" data-lang="en" aria-pressed="true">EN</button>
@@ -209,15 +214,28 @@ python3 -m unittest discover tests</pre>
 
   // one package carries all three languages; the chips pick the choice the watch editor would
   const ORDER = ['ru', 'en', 'fi'];
-  async function loadLang(lang) {
-    if (!faces.all) {
-      const r = await fetch('faces/vibe.hwt');
-      faces.all = await HWT.load(await r.arrayBuffer());
+  state.name = 'vibe';
+  async function loadFace(name) {
+    if (!faces[name]) {
+      const r = await fetch('faces/' + name + '.hwt');
+      faces[name] = await HWT.load(await r.arrayBuffer());
     }
-    state.lang = lang;
-    state.face = faces.all;
+    state.name = name;
+    state.face = faces[name];
+    const dl = document.getElementById('download');
+    dl.href = 'faces/' + name + '.hwt';
+    dl.textContent = 'Download ' + (name === 'vibe' ? 'Vibe' : 'Night Tram');
+    for (const l of ['ru', 'en', 'fi']) {
+      const a = document.getElementById('single-' + l);
+      if (a) a.href = 'faces/' + name + '-' + l + '.hwt';
+    }
     tick();
   }
+  async function loadLang(lang) {
+    state.lang = lang;
+    await loadFace(state.name);
+  }
+  chips('faces', (b) => loadFace(b.dataset.face));
 
   function tick() {
     if (!state.face) return;

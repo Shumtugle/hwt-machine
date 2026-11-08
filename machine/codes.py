@@ -10,7 +10,7 @@ IMAGE = 1          # static picture                                   verified
 IMAGE_LIST = 2     # picture chosen by a data value                   verified
 NUMBER = 3         # value drawn from a digit set                     verified
 HAND = 5           # picture rotated around a pivot                   verified
-PROGRESS = 6       # bar that grows with a value                      observed
+PROGRESS = 6       # picture revealed in proportion to a value         observed
 TEXT = 0           # value written in the system font                 observed
 TEXT_FORMATTED = 10  # system-font value with a unit or format       observed
 ARC = 7            # picture revealed along an arc                    observed
@@ -52,6 +52,11 @@ MINUTES = 13           # observed
 SECONDS = 14           # observed
 SUNRISE = 121          # text only                                     observed
 SUNSET = 122           # text only                                     observed
+
+# ---- data sources for progress bars and arcs (share of a goal or a range)
+PROGRESS_CALORIES = 158  # observed
+PROGRESS_STEPS = 161     # observed
+PROGRESS_BATTERY = 163   # observed
 
 # ---- data sources for hands
 HAND_HOUR = 150        # verified

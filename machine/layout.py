@@ -51,6 +51,12 @@ def number(digit_refs, x, y, align, source, aod=0, minus=''):
         (2, ''), (3, [(1, x), (2, y)]), (4, align), (5, source), (6, minus), (7, 0), (8, 0), (13, aod)])
 
 
+def progress(ref, box, source, aod=0):
+    """Picture the size of box, revealed from the left in proportion to the value."""
+    x0, y0, x1, y1 = box
+    return (codes.PROGRESS, [(1, ref), (2, [(1, x0), (2, y0), (3, x1 - x0), (4, y1 - y0)]), (3, source), (6, aod)])
+
+
 def hand(ref, cx, cy, pivot_x, pivot_y, source, aod=0):
     """Picture drawn pointing up, rotated about (pivot_x, pivot_y), placed on (cx, cy)."""
     side = 2 * pivot_y

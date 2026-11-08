@@ -88,5 +88,24 @@ class Vibe(unittest.TestCase):
         self.assertEqual(simulate.render(binary).tobytes(), simulate.render(binary_ru).tobytes())
 
 
+class NightTram(unittest.TestCase):
+    def test_build_and_draw(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location('night_tram', os.path.join(ROOT, 'faces', 'night-tram', 'build.py'))
+        tram = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(tram)
+        with tempfile.TemporaryDirectory() as out:
+            path, _, _ = tram.package(['ru', 'en'], out, 'night-tram')
+            _, binary, _ = container.read_package(path)
+        simulate.render(binary)
+        self.assertEqual(simulate.render.skipped, [])
+        # the route is dark with no steps and fully lit at the goal
+        empty = simulate.sample_data(); empty[codes.PROGRESS_STEPS] = 0
+        full = simulate.sample_data(); full[codes.PROGRESS_STEPS] = 100
+        last_stop = (tram.STOPS_X[-1], tram.STOPS_Y)
+        self.assertLess(sum(simulate.render(binary, data=empty).getpixel(last_stop)[:3]), 200)
+        self.assertGreater(sum(simulate.render(binary, data=full).getpixel(last_stop)[:3]), 600)
+
+
 if __name__ == '__main__':
     unittest.main()

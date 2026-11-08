@@ -163,6 +163,7 @@ const HWT = (() => {
       12: now.getHours(), 13: now.getMinutes(), 14: now.getSeconds(),
       53: s.weather, 54: Math.min(10, Math.floor(s.battery / 10)), 72: 0,
       0: s.steps, 1: 328, 2: s.heart, 4: s.temp, 9: s.battery,
+      161: Math.min(100, Math.round(s.steps / 100)), 163: s.battery, 158: 55,
     };
     d.time = now;
     return d;
@@ -225,6 +226,13 @@ const HWT = (() => {
         ctx.rotate(angle * Math.PI / 180);
         ctx.drawImage(im, -get(pv, 1, 0), -get(pv, 2, 0));
         ctx.restore();
+      } else if (kind === 6) {
+        if (get(body, 6, 0) !== flag) return;
+        const src = get(body, 3), v = data[src], r = get(body, 2, []), im = face.image(get(body, 1));
+        if (v === undefined || !im) return;
+        const share = Math.max(0, Math.min(1, v / (src === 154 ? 59 : 100)));
+        const w = Math.round(im.width * share);
+        if (w > 0) ctx.drawImage(im, 0, 0, w, im.height, get(r, 1, 0), get(r, 2, 0), w, im.height);
       } else if (kind === 0 || kind === 10) {
         // system-font text: the watch's own font is not available here, so this is an approximation
         const flagField = kind === 0 ? 7 : 9;

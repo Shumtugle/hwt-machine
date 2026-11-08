@@ -102,9 +102,9 @@ class Symbols:
         ImageDraw.Draw(im).text((size // 2, size // 2), self.cp[name], font=f, fill=color)
         return im.crop(im.getchannel('A').getbbox())
 
-    def same_box(self, names, size, color):
+    def same_box(self, names, size, color, fill=1):
         """Several symbols on one canvas size, each centred, so a list never jumps."""
-        ims = [self.get(n, size, color) for n in names]
+        ims = [self.get(n, size, color, fill) for n in names]
         bw = max(i.width for i in ims)
         bh = max(i.height for i in ims)
         out = []

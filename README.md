@@ -26,6 +26,20 @@ install it with any app that can send a watch face file to the watch.
 Built for 408 × 480 screens (screen code `HWHD13`). Runs on the HUAWEI WATCH FIT 4;
 faces for this screen are reported to work on the FIT 3 as well, memory permitting.
 
+## Night Tram
+
+Ink background, cream numerals, amber lights: a little of an old instrument, a little of
+an evening city. A lamp runs along the copper frame with the seconds, a horizon with a
+crescent hangs over the time, and six stops along the bottom light up as the day's step
+goal is walked. Battery, weather and steps share one row; the pulse sits above the route.
+
+![Night Tram in English, Russian, Finnish, and its always-on screen](docs/img/night-tram.png)
+
+[`night-tram.hwt`](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/night-tram.hwt)
+switches between Russian, English and Finnish on the watch; single-language files sit next
+to it in [docs/faces](docs/faces). The route and the battery bar use progress sources seen
+in other faces but not yet confirmed on a watch with this one.
+
 ## What the machine does
 
 - **Writes the container byte-exact.** Header, protobuf layout, image table and
@@ -49,6 +63,7 @@ Python 3 and Pillow.
 
 ```sh
 python3 faces/vibe/build.py all          # every locale, plus the switchable face, into dist/
+python3 faces/night-tram/build.py all
 python3 faces/vibe/build.py ru --switchable ''   # just one locale
 python3 tools/inspect.py dist/vibe-ru.hwt --images out/ --render screen.png
 python3 -m unittest discover tests
@@ -70,6 +85,7 @@ in the all-in-one face.
 | `machine/effects.py` | the running mark |
 | `machine/simulate.py` | draws a package the way the watch would |
 | `faces/vibe/` | the Vibe face and its locales |
+| `faces/night-tram/` | the Night Tram face and its locales |
 | `tools/inspect.py` | look inside any face |
 | `docs/` | the live page, its renderer, and the [format notes](docs/FORMAT.md) |
 

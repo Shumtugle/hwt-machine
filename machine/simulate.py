@@ -26,6 +26,7 @@ def sample_data(when=None, **values):
         codes.WEATHER_ICON: 4, codes.BATTERY_LEVEL: 8, codes.UNREAD_MESSAGES: 0,
         codes.STEPS: 7645, codes.HEART_RATE: 72, codes.TEMPERATURE: 3, codes.BATTERY_PERCENT: 80,
         codes.CALORIES: 328,
+        codes.PROGRESS_STEPS: 76, codes.PROGRESS_BATTERY: 80, codes.PROGRESS_CALORIES: 55,
     }
     d['_time'] = t
     d.update(values)
@@ -144,6 +145,20 @@ def render(binary, aod=False, data=None, size=(408, 480)):
             canvas.alpha_composite(im, (half - px, half - py))
             rot = canvas.rotate(-angle, resample=Image.BICUBIC)
             _put(screen, rot, int(round(cx - half)), int(round(cy - half)))
+        elif kind == codes.PROGRESS:
+            if _get(body, 6, 0) != flag:
+                return
+            src = _get(body, 3)
+            top = 59 if src in (codes.SECOND_TENS, codes.SECONDS, codes.HAND_SECOND) else 100
+            v = data.get(src)
+            r = _get(body, 2)
+            im = img(_get(body, 1))
+            if v is None or not r:
+                return
+            share = max(0.0, min(1.0, v / float(top)))
+            w = int(round(im.width * share))
+            if w > 0:
+                _put(screen, im.crop((0, 0, w, im.height)), _get(r, 1, 0), _get(r, 2, 0))
         else:
             skipped.add(kind)
 
