@@ -1,6 +1,6 @@
 """Lighthouse: a painted night sea with a lighthouse on a cliff; the time in a warm
-serif across the sky, the seconds quiet beneath it, and the battery, the weather, the
-pulse and the steps along the water.
+serif across the sky, the seconds quiet beneath it, a golden wave with a small boat on
+it, and the battery, the weather, the pulse and the steps on the dark water below.
 
 Usage: python3 faces/lighthouse/build.py [locale ... | all] [--switchable ru,en,fi] [--out DIR]
 """
@@ -92,7 +92,64 @@ def night():
     black = Image.new('RGBA', (W, H), (0, 0, 0, 255))
     black.putalpha(shade)
     art.alpha_composite(black)
+    # a cleaner night above the time and a calm dark band below the wave for the readings
+    veil = Image.new('L', (W, H), 0)
+    vp = []
+    for y in range(H):
+        top = max(0.0, 1.0 - y / 120.0) ** 1.6 * 0.55
+        bottom = min(1.0, max(0.0, (y - 336) / 64.0)) * 0.82
+        vp.extend([int(255 * max(top, bottom))] * W)
+    veil.putdata(vp)
+    ink = Image.new('RGBA', (W, H), (3, 6, 18, 255))
+    ink.putalpha(veil)
+    art.alpha_composite(ink)
     return art
+
+
+WAVE_BASE, WAVE_AMP, WAVE_LEN, WAVE_PHASE = 382, 9.0, 250.0, 0.9
+BOAT_X = 286
+
+
+def wave_y(x):
+    return WAVE_BASE + WAVE_AMP * math.sin(2 * math.pi * x / WAVE_LEN + WAVE_PHASE)
+
+
+def sea_line(ss=4):
+    """A golden wave across the water with a dotted wake under it and a small sailboat
+    riding the crest, all in the numerals' warm gold."""
+    im = Image.new('RGBA', (W * ss, H * ss), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    xs = [x / 2.0 for x in range(-10, 2 * W + 10)]
+    pts = [(x * ss, wave_y(x) * ss) for x in xs]
+    d.line(pts, fill=GOLD_BOTTOM + (235,), width=int(1.6 * ss))
+    for i in range(0, W + 6, 6):
+        x = float(i)
+        y = wave_y(x - 14) + 7
+        fade = min(1.0, max(0.0, (x - 20) / 120.0)) * min(1.0, max(0.0, (W - 20 - x) / 120.0))
+        r = 1.0 * ss
+        d.ellipse([x * ss - r, y * ss - r, x * ss + r, y * ss + r], fill=GOLD_TOP + (int(170 * fade),))
+    # the boat: hull on the wave, a mainsail and a jib, a pennant
+    bx = BOAT_X
+    by = wave_y(bx) - 1
+    tilt = math.atan(WAVE_AMP * 2 * math.pi / WAVE_LEN * math.cos(2 * math.pi * bx / WAVE_LEN + WAVE_PHASE))
+
+    def rot(x, y):
+        c, s_ = math.cos(tilt), math.sin(tilt)
+        return ((bx + x * c - y * s_) * ss, (by + x * s_ + y * c) * ss)
+
+    gold = GOLD_TOP + (255,)
+    d.polygon([rot(-15, -3), rot(15, -3), rot(10, 3), rot(-11, 3)], fill=GOLD_BOTTOM + (255,))
+    d.polygon([rot(-1, -5), rot(-1, -36), rot(13, -6)], fill=gold)
+    d.polygon([rot(-3, -6), rot(-3, -30), rot(-14, -7)], fill=GOLD_TOP + (215,))
+    d.line([rot(-1, -3), rot(-1, -40)], fill=gold, width=int(1.2 * ss))
+    d.polygon([rot(-1, -40), rot(5, -38), rot(-1, -36)], fill=gold)
+    out = im.resize((W, H), Image.LANCZOS)
+    glow = out.filter(ImageFilter.GaussianBlur(3))
+    glow.putalpha(glow.getchannel('A').point(lambda a: a * 3 // 4))
+    res = Image.new('RGBA', (W, H), (0, 0, 0, 0))
+    res.alpha_composite(glow)
+    res.alpha_composite(out)
+    return res
 
 
 def build(locales):
@@ -101,6 +158,7 @@ def build(locales):
     face = layout.Face(W, H)
     aod_bg = face.add(Image.new('RGBA', (W, H), (0, 0, 0, 255)), 'aod_bg')
     bg = night()
+    bg.alpha_composite(sea_line())
 
     # --- time: warm serif numerals with a dark halo, as large as fits the sky
     for size in range(200, 80, -2):
@@ -223,7 +281,7 @@ def build(locales):
     vp = 0
     v_refs = face.add_set(v_digits, 'val')
     minus_ref = face.add(s_val.render('-'), 'minus')
-    row_cy = 428
+    row_cy = 432
     vy = s_val.top_for_digits_centred_on(row_cy)
     pct, deg = s_val.render('%'), s_val.render('°')
     sym = 20
