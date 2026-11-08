@@ -21,7 +21,13 @@ from machine import codes, container, draw, layout, simulate  # noqa: E402
 HERE = os.path.dirname(os.path.abspath(__file__))
 FONT_SERIF = os.path.join(ROOT, 'fonts', 'Cormorant.ttf')
 SYMBOLS = draw.Symbols(os.path.join(ROOT, 'fonts', 'Symbols.ttf'), os.path.join(ROOT, 'fonts', 'symbols.codepoints'))
-ART = os.path.join(HERE, 'art', 'night.jpg')
+ARTS = {
+    # a calm night drawn for this face: empty sky above, the golden wave and boat in it
+    'calm': {'file': 'calm.jpg', 'veil_top': 0.25, 'veil_bottom': 0.35, 'sea_line': False},
+    # a richer painting; the wave and boat are drawn over it here
+    'night': {'file': 'night.jpg', 'veil_top': 0.55, 'veil_bottom': 0.82, 'sea_line': True},
+}
+ART = 'calm'
 
 TITLE = 'Lighthouse'
 AUTHOR = 'lighthouse'
@@ -80,7 +86,8 @@ def load_locale(locale):
 
 def night():
     """The painting, darkened towards the screen's edges."""
-    art = Image.open(ART).convert('RGB').resize((W, H), Image.LANCZOS).convert('RGBA')
+    spec = ARTS[ART]
+    art = Image.open(os.path.join(HERE, 'art', spec['file'])).convert('RGB').resize((W, H), Image.LANCZOS).convert('RGBA')
     shade = Image.new('L', (W, H), 0)
     px = []
     for y in range(H):
@@ -96,8 +103,8 @@ def night():
     veil = Image.new('L', (W, H), 0)
     vp = []
     for y in range(H):
-        top = max(0.0, 1.0 - y / 120.0) ** 1.6 * 0.55
-        bottom = min(1.0, max(0.0, (y - 336) / 64.0)) * 0.82
+        top = max(0.0, 1.0 - y / 120.0) ** 1.6 * spec['veil_top']
+        bottom = min(1.0, max(0.0, (y - 336) / 64.0)) * spec['veil_bottom']
         vp.extend([int(255 * max(top, bottom))] * W)
     veil.putdata(vp)
     ink = Image.new('RGBA', (W, H), (3, 6, 18, 255))
@@ -158,7 +165,8 @@ def build(locales):
     face = layout.Face(W, H)
     aod_bg = face.add(Image.new('RGBA', (W, H), (0, 0, 0, 255)), 'aod_bg')
     bg = night()
-    bg.alpha_composite(sea_line())
+    if ARTS[ART]['sea_line']:
+        bg.alpha_composite(sea_line())
 
     # --- time: warm serif numerals with a dark halo, as large as fits the sky
     for size in range(200, 80, -2):
@@ -173,19 +181,19 @@ def build(locales):
     pad = shaded[0][1]
     t_refs = face.add_set([s for s, _ in shaded], 'time')
     tx = (W - total) // 2
-    tcy = 150
+    tcy = 140
     ty = s_time.top_for_digits_centred_on(tcy)
     xs = [tx, tx + cell, tx + 2 * cell + colon.width + 8, tx + 3 * cell + colon.width + 8]
     c_im, c_pad = with_shade(colon)
     bg.alpha_composite(c_im, (tx + 2 * cell + 4 - c_pad, ty - c_pad))
 
     # --- seconds: small, grey, beneath
-    s_sec = serif(34, 500, QUIET)
+    s_sec = serif(32, 600, QUIET)
     sec_digits, sec_cell = s_sec.digits(extra_pad=1)
-    sec_shaded = [with_shade(d, 3, 140) for d in sec_digits]
+    sec_shaded = [with_shade(d, 5, 230) for d in sec_digits]
     sp = sec_shaded[0][1]
     sec_refs = face.add_set([s for s, _ in sec_shaded], 'sec')
-    sy = s_sec.top_for_digits_centred_on(ty + s_time.digit_ink[1] + 34)
+    sy = s_sec.top_for_digits_centred_on(ty + s_time.digit_ink[1] + 28)
     sx = W // 2 - sec_cell
     time_items = [
         layout.image_list(t_refs[0:3], xs[0] - pad, ty - pad, codes.HOUR_TENS),
@@ -371,12 +379,19 @@ def package(locales, out_dir, name):
     return base + '.hwt', len(binary), len(face.images)
 
 
+def use_art(name):
+    global ART
+    ART = name
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     ap.add_argument('locales', nargs='*', default=['all'])
     ap.add_argument('--switchable', default='')
+    ap.add_argument('--art', default=ART, choices=sorted(ARTS))
     ap.add_argument('--out', default=os.path.join(ROOT, 'dist'))
     a = ap.parse_args()
+    use_art(a.art)
     available = sorted(n[:-5] for n in os.listdir(os.path.join(HERE, 'locale')) if n.endswith('.json'))
     wanted = available if a.locales == ['all'] else a.locales
     jobs = [([loc], '%s-%s' % (NAME, loc)) for loc in wanted]
