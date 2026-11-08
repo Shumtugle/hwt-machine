@@ -104,5 +104,26 @@ class NightTram(unittest.TestCase):
         some = simulate.sample_data(); some[codes.UNREAD_MESSAGES] = 1
         self.assertNotEqual(simulate.render(binary, data=none).tobytes(), simulate.render(binary, data=some).tobytes())
 
+class Plumb(unittest.TestCase):
+    def test_weight_whole_at_every_second(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location('plumb', os.path.join(ROOT, 'faces', 'plumb', 'build.py'))
+        plumb = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(plumb)
+        with tempfile.TemporaryDirectory() as out:
+            path, _, _ = plumb.package(['en'], out, 'plumb-en')
+            _, binary, _ = container.read_package(path)
+        track = plumb.draw.Track.line(408, 480, (plumb.THREAD_X, plumb.THREAD_TOP), (plumb.THREAD_X, plumb.THREAD_BOTTOM),
+                                      decade_gap=plumb.DECADE_GAP)
+        for second in range(60):
+            data = simulate.sample_data()
+            data[codes.SECOND_TENS], data[codes.SECOND_UNITS] = divmod(second, 10)
+            screen = simulate.render(binary, data=data)
+            x, y = track.ball_centre(second)
+            for dy in (-4, 0, 4):   # top, middle and bottom of the weight are all red
+                r, g, b, _ = screen.getpixel((int(round(x)), int(round(y + dy))))
+                self.assertTrue(r > 180 and g < 90, 'second %d' % second)
+
+
 if __name__ == '__main__':
     unittest.main()

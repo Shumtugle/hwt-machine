@@ -273,3 +273,39 @@ class Ring:
             cx, cy = self.ball_centre(i)
             d.ellipse([cx * ss - r, cy * ss - r, cx * ss + r, cy * ss + r], fill=color)
         return im.resize((self.width, self.height), Image.LANCZOS)
+
+
+class Track:
+    """Sixty stations along any polyline, for a running mark that does not follow the
+    screen's edge: a thread, a slot, a groove. Same interface as Ring for the mark."""
+
+    def __init__(self, width, height, points):
+        self.width, self.height = width, height
+        self.points = points
+
+    @classmethod
+    def line(cls, width, height, start, end, steps=60, decade_gap=0.0):
+        """Stations along a straight line. decade_gap adds room after every tenth
+        station: the running mark needs its decades apart by more than its own reach,
+        or the covering layer clips the mark near a decade's edge."""
+        (x0, y0), (x1, y1) = start, end
+        length = ((x1 - x0) ** 2 + (y1 - y0) ** 2) ** 0.5
+        breaks = (steps - 1) // 10
+        step = (length - breaks * decade_gap) / float(steps - 1)
+        pts = []
+        for i in range(steps):
+            t = (i * step + (i // 10) * decade_gap) / length
+            pts.append((x0 + (x1 - x0) * t, y0 + (y1 - y0) * t))
+        return cls(width, height, pts)
+
+    def ball_centre(self, i):
+        return self.points[i]
+
+    def draw_balls(self, indices, radius, color, ss=4):
+        im = Image.new('RGBA', (self.width * ss, self.height * ss), (0, 0, 0, 0))
+        d = ImageDraw.Draw(im)
+        r = radius * ss
+        for i in indices:
+            cx, cy = self.points[i]
+            d.ellipse([cx * ss - r, cy * ss - r, cx * ss + r, cy * ss + r], fill=color)
+        return im.resize((self.width, self.height), Image.LANCZOS)

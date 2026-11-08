@@ -48,6 +48,18 @@ Download it in
 or [all three in one](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/night-tram.hwt).
 The message lamp uses a source seen in other faces, not yet confirmed with this one.
 
+## Plumb
+
+Black, and two lines of type: the hour above the minute. A red weight slides down a
+cream thread once a minute, in six lengths of ten seconds. The date hangs from the same
+left margin at the top, the weather and the charge at the foot. No cards, no rings, no
+goals.
+
+[RU](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/plumb-ru.hwt) ·
+[EN](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/plumb-en.hwt) ·
+[FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/plumb-fi.hwt) ·
+[all three](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/plumb.hwt)
+
 ## What the machine does
 
 - **Writes the container byte-exact.** Header, protobuf layout, image table and
@@ -97,6 +109,7 @@ functions it borrows them from (*Date*, *Day of week*, *Sun*), not after the lan
 | `machine/simulate.py` | draws a package the way the watch would |
 | `faces/vibe/` | the Vibe face and its locales |
 | `faces/night-tram/` | the Night Tram face and its locales |
+| `faces/plumb/` | the Plumb face and its locales |
 | `tools/inspect.py` | look inside any face |
 | `docs/` | the live page, its renderer, and the [format notes](docs/FORMAT.md) |
 

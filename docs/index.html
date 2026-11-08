@@ -112,7 +112,7 @@
         <a class="btn primary" id="download" href="faces/vibe-en.hwt" download>Download Vibe</a>
         <a class="btn" href="https://github.com/Shumtugle/hwt-machine/releases">All releases</a>
       </div>
-      <p class="lede" style="font-size:15px;margin-top:16px">Two faces so far, each in Russian, English and Finnish:
+      <p class="lede" style="font-size:15px;margin-top:16px">Each face in Russian, English and Finnish:
         <a id="single-ru" href="faces/vibe-ru.hwt" download>RU</a> ·
         <a id="single-en" href="faces/vibe-en.hwt" download>EN</a> · <a id="single-fi" href="faces/vibe-fi.hwt" download>FI</a>.
         The button downloads the language picked below. The files without a language suffix carry all
@@ -128,6 +128,7 @@
             <button class="chip" data-face="vibe" aria-pressed="true">Vibe</button>
             <button class="chip" data-face="vibe-dial" aria-pressed="false">Vibe · dial</button>
             <button class="chip" data-face="night-tram" aria-pressed="false">Night Tram</button>
+            <button class="chip" data-face="plumb" aria-pressed="false">Plumb</button>
           </div></div>
         <div class="row"><label>Language</label>
           <div class="chips" id="langs">
@@ -227,7 +228,7 @@ python3 -m unittest discover tests</pre>
     state.face = faces[name];
     const dl = document.getElementById('download');
     dl.href = 'faces/' + name + '-' + state.lang + '.hwt';
-    dl.textContent = 'Download ' + ({ 'vibe': 'Vibe', 'vibe-dial': 'Vibe with dial', 'night-tram': 'Night Tram' })[name] +
+    dl.textContent = 'Download ' + ({ 'vibe': 'Vibe', 'vibe-dial': 'Vibe with dial', 'night-tram': 'Night Tram', 'plumb': 'Plumb' })[name] +
       ' · ' + state.lang.toUpperCase();
     for (const l of ['ru', 'en', 'fi']) {
       const a = document.getElementById('single-' + l);
