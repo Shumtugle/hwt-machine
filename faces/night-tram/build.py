@@ -1,6 +1,6 @@
 """Night Tram: ink background, cream numerals, amber lights. A lamp runs along the
-copper frame with the seconds, and six stops along the bottom light up as the day's
-step goal is walked.
+copper frame with the seconds; the small lamp by the date lights up while messages
+wait unread.
 
 Usage: python3 faces/night-tram/build.py [locale ... | all] [--switchable ru,en,fi] [--out DIR]
 """
@@ -49,7 +49,7 @@ WEATHER = ['cloud_off', 'sunny', 'clear_night', 'cloud', 'partly_cloudy_day', 'r
 
 FRAME_INSET, FRAME_RADIUS = 11, 82
 COLUMNS = [84, 204, 324]
-STOPS_Y, STOPS_X = 446, [94 + 44 * i for i in range(6)]
+PULSE_Y = 428
 
 
 def style(size, weight, color, tracking=0, sample=''):
@@ -93,7 +93,7 @@ def copper_frame():
 
 
 def night_arc():
-    """A thin horizon above the time with a crescent and a few stars."""
+    """A thin horizon above the time with a few stars."""
     im = canvas()
     d = ImageDraw.Draw(im)
     R, top = 700, 98
@@ -101,14 +101,6 @@ def night_arc():
     half = math.degrees(math.asin(140 / float(R)))
     d.arc([(cx - R) * SS, (cy - R) * SS, (cx + R) * SS, (cy + R) * SS], 270 - half, 270 + half,
           fill=MINT, width=int(1.3 * SS))
-    # crescent: a disc with an offset disc taken out of it
-    mx, my, mr = W / 2, 80, 8.5
-    moon = Image.new('L', im.size, 0)
-    md = ImageDraw.Draw(moon)
-    md.ellipse([(mx - mr) * SS, (my - mr) * SS, (mx + mr) * SS, (my + mr) * SS], fill=255)
-    md.ellipse([(mx - mr + 5.5) * SS, (my - mr - 3.5) * SS, (mx + mr + 5.5) * SS, (my + mr - 3.5) * SS], fill=0)
-    cream = Image.new('RGBA', im.size, CREAM)
-    im.paste(cream, (0, 0), moon)
 
     def star(x, y, r):
         pts = []
@@ -139,31 +131,6 @@ def battery_cells(level, w=46, h=24):
         x = inner_x0 + k * (cell + 2 * SS)
         d.rectangle([x, 5 * SS, x + cell, h * SS - 5 * SS], fill=CREAM if level > 2 else AMBER)
     return im.resize((w, h), Image.LANCZOS)
-
-
-def stops(lit):
-    """The route: idle grey, or amber with cream-lit stops."""
-    im = canvas()
-    d = ImageDraw.Draw(im)
-    y = STOPS_Y * SS
-    line = AMBER if lit else STOP_IDLE
-    d.line([(STOPS_X[0] * SS, y), (STOPS_X[-1] * SS, y)], fill=line, width=int(1.6 * SS))
-    for x in STOPS_X:
-        r = 6.5 * SS
-        if lit:
-            d.ellipse([x * SS - r, y - r, x * SS + r, y + r], fill=CREAM, outline=AMBER, width=int(1.6 * SS))
-        else:
-            d.ellipse([x * SS - r, y - r, x * SS + r, y + r], fill=(18, 24, 25, 255), outline=STOP_IDLE,
-                      width=int(1.6 * SS))
-    out = down(im)
-    if lit:
-        halo = out.copy().filter(ImageFilter.GaussianBlur(4))
-        halo.putalpha(halo.getchannel('A').point(lambda a: a * 3 // 5))
-        glow = Image.new('RGBA', (W, H), (0, 0, 0, 0))
-        glow.alpha_composite(halo)
-        glow.alpha_composite(out)
-        out = glow
-    return out
 
 
 # ---------------------------------------------------------------- face
@@ -204,8 +171,19 @@ def build(locales):
     sep_x = week_x + week_box + gap
     day_right = sep_x + sep.width + gap + 2 * day_cell
     month_x = day_right + dot_w + gap
-    lamp = draw.dot(lamp_d, AMBER)
-    bg.alpha_composite(lamp, (lamp_x, int(line_cy - lamp_d / 2.0)))
+    # the lamp is lit while there are unread messages, and only glows faintly otherwise
+    lamp_box = lamp_d + 12
+    lamp_frames = []
+    for on in (False, True):
+        fr = Image.new('RGBA', (lamp_box, lamp_box), (0, 0, 0, 0))
+        core = draw.dot(lamp_d, AMBER if on else (96, 58, 24, 255))
+        if on:
+            halo = Image.new('RGBA', (lamp_box, lamp_box), (0, 0, 0, 0))
+            halo.alpha_composite(draw.dot(lamp_d + 6, AMBER[:3] + (150,)), (3, 3))
+            fr.alpha_composite(halo.filter(ImageFilter.GaussianBlur(3)))
+        fr.alpha_composite(core, (6, 6))
+        lamp_frames.append(fr)
+    lamp_xy = (lamp_x - 6, int(line_cy - lamp_d / 2.0) - 6)
     bg.alpha_composite(sep, (sep_x, ly))
 
     def right_aligned(text, st):
@@ -215,6 +193,8 @@ def build(locales):
         return im
 
     date_items = [layout.number(face.add_set(day_digits, 'day'), day_right, ly, codes.ALIGN_RIGHT, codes.DAY_OF_MONTH)]
+    lamp_refs = face.add_set(lamp_frames, 'lamp')
+    lamp_zone = (lamp_xy[0] - 6, lamp_xy[1] - 6, lamp_xy[0] + lamp_box + 6, lamp_xy[1] + lamp_box + 6)
     slots, choices = [], []
     if len(langs) == 1:
         wr = face.add_set([right_aligned(t, s_date) for t in names['weekdays']], 'week')
@@ -308,7 +288,8 @@ def build(locales):
     def centred_right_edge(cx, digits, tail=0):
         return int(round(cx - (digits * v_cell + tail) / 2.0 + digits * v_cell))
 
-    zones = []
+    zones = [(codes.OPEN_MESSAGES, lamp_zone,
+              [layout.image_list(lamp_refs, lamp_xy[0], lamp_xy[1], codes.UNREAD_MESSAGES)])]
     col_w = (COLUMNS[1] - COLUMNS[0])
     # battery
     cx = COLUMNS[0]
@@ -347,11 +328,11 @@ def build(locales):
         layout.number(v_refs, centred_right_edge(cx, 4), vy, codes.ALIGN_RIGHT, codes.STEPS),
     ]))
 
-    # --- pulse, small, above the route
-    s_small = style(22, 500, CREAM)
+    # --- pulse, quiet, at the foot of the face
+    s_small = style(26, 500, CREAM)
     p_digits, p_cell = s_small.digits()
-    heart = SYMBOLS.get('favorite', 16, CREAM)
-    pulse_cy = STOPS_Y - 28
+    heart = SYMBOLS.get('favorite', 19, CREAM)
+    pulse_cy = PULSE_Y
     py_ = s_small.top_for_digits_centred_on(pulse_cy)
     width = 2 * p_cell + 4 + heart.width
     p_right = W // 2 - width // 2 + 2 * p_cell
@@ -359,13 +340,6 @@ def build(locales):
     zones.append((codes.OPEN_HEART_RATE, (W // 2 - 52, pulse_cy - 14, W // 2 + 52, pulse_cy + 14), [
         layout.number(face.add_set(p_digits, 'pulse'), p_right, py_, codes.ALIGN_RIGHT, codes.HEART_RATE),
     ]))
-
-    # --- the route: idle stops on the background, lit route revealed by the step goal
-    bg.alpha_composite(stops(False))
-    lit = stops(True)
-    route_box = (STOPS_X[0] - 12, STOPS_Y - 12, STOPS_X[-1] + 12, STOPS_Y + 12)
-    route_ref = face.add(lit.crop(route_box), 'route')
-    date_items.append(layout.progress(route_ref, route_box, codes.PROGRESS_STEPS))
 
     # --- always-on screen: thin time, quiet date
     a_time = style(size, 300, DIM)

@@ -8,6 +8,7 @@ and PNG previews of both screen modes.
 import argparse
 import io
 import json
+import math
 import os
 import sys
 
@@ -51,12 +52,55 @@ def style(size, weight, color, tracking=0, sample=''):
     return draw.Style(FONT_TEXT, size, weight, color, tracking, sample)
 
 
+# ---------------------------------------------------------------- the dial of the glass widget
+# A square of six hundred units: a fine ring, bars at the quarters, dots at the other
+# hours, and two bar hands of the widget's own widths.
+
+HAND_HOUR_INK = (201, 191, 175, 255)
+HAND_MINUTE_INK = (236, 228, 214, 255)
+
+
+def dial_marks(d, ss=6):
+    u = d * ss / 600.0
+    im = Image.new('RGBA', (d * ss, d * ss), (0, 0, 0, 0))
+    g = ImageDraw.Draw(im)
+    c = d * ss / 2.0
+    r = 268.5 * u
+    g.ellipse([c - r, c - r, c + r, c + r], outline=CREAM[:3] + (102,), width=max(1, int(round(3 * u * 1.4))))
+    for i in range(12):
+        a = math.radians(i * 30)
+        sn, cs = math.sin(a), math.cos(a)
+        if i % 3 == 0:
+            w = 15 * u
+            g.line([(c + 221.5 * u * sn, c - 221.5 * u * cs), (c + 242.5 * u * sn, c - 242.5 * u * cs)],
+                   fill=CREAM, width=int(round(w)))
+            for rr in (221.5, 242.5):
+                x, y = c + rr * u * sn, c - rr * u * cs
+                g.ellipse([x - w / 2, y - w / 2, x + w / 2, y + w / 2], fill=CREAM)
+        else:
+            x, y, rr = c + 234 * u * sn, c - 234 * u * cs, 9.5 * u
+            g.ellipse([x - rr, y - rr, x + rr, y + rr], fill=CREAM)
+    return im.resize((d, d), Image.LANCZOS)
+
+
+def bar_hand(d, width, tip, tail, round_, ink, ss=6):
+    """A rounded bar pointing up; returns (image, pivot x, pivot y)."""
+    u = d / 600.0
+    w = int(math.ceil(width * u)) + 2
+    h = int(math.ceil((tip + tail) * u)) + 2
+    im = Image.new('RGBA', (w * ss, h * ss), (0, 0, 0, 0))
+    r = min(round_, width / 2.0) * u * ss
+    x0 = (w * ss - width * u * ss) / 2.0
+    ImageDraw.Draw(im).rounded_rectangle([x0, ss, x0 + width * u * ss, ss + (tip + tail) * u * ss], radius=r, fill=ink)
+    return im.resize((w, h), Image.LANCZOS), w // 2, int(round(1 + tip * u))
+
+
 def load_locale(locale):
     with open(os.path.join(HERE, 'locale', locale + '.json'), encoding='utf-8') as fh:
         return json.load(fh)
 
 
-def build(locales):
+def build(locales, dial=False):
     """One locale: words drawn straight into the date card. Several: the words become
     choices the wearer switches in the face editor; the first one is the default."""
     langs = [load_locale(l) for l in locales]
@@ -79,15 +123,20 @@ def build(locales):
     # --- date card: day number, weekday above month beside it
     x0, y0, x1, y1 = CARD_DATE
     cy = (y0 + y1) / 2.0
-    s_day = style(74, 600, CREAM, sample=''.join(suffixes))
+    s_day = style(64 if dial else 74, 600, CREAM, sample=''.join(suffixes))
     day_digits, day_cell = s_day.digits()
     dots = [s_day.render(sfx) if sfx else None for sfx in suffixes]
-    day_right = x0 + 14 + 2 * day_cell
+    day_right = x0 + (10 if dial else 14) + 2 * day_cell
     col = day_right + max([d.width for d in dots if d] or [0]) + 12
+    words_right = x1 - 16
+    if dial:
+        dial_d = (y1 - y0) - 14
+        dial_cx, dial_cy = x1 - 10 - dial_d // 2, int(round(cy))
+        words_right = dial_cx - dial_d // 2 - 10
     weekdays = [w for n in langs for w in n['weekdays']]
     months = [m for n in langs for m in n['months']]
-    s_week = draw.fit_style(FONT_TEXT, weekdays, x1 - 16 - col, 32, 500, CREAM)
-    s_month = draw.fit_style(FONT_TEXT, months, x1 - 16 - col, s_week.size, 500, SCARLET_SOFT)
+    s_week = draw.fit_style(FONT_TEXT, weekdays, words_right - col, 32, 500, CREAM)
+    s_month = draw.fit_style(FONT_TEXT, months, words_right - col, s_week.size, 500, SCARLET_SOFT)
     size = min(s_week.size, s_month.size)
     s_week = style(size, 500, CREAM, 1, ''.join(words))
     s_month = style(size, 500, SCARLET_SOFT, 1, ''.join(words))
@@ -109,7 +158,7 @@ def build(locales):
         if dots[0]:
             bg.alpha_composite(dots[0], (day_right, day_y))
     else:
-        zone = (day_right, y0 + 6, x1 - 8, y1 - 6)
+        zone = (day_right, y0 + 6, words_right + 4, y1 - 6)
         zx, zy = zone[0], zone[1]
         zw, zh = zone[2] - zone[0], zone[3] - zone[1]
         frame = Image.new('RGBA', (zw, zh), (0, 0, 0, 0))
@@ -151,7 +200,18 @@ def build(locales):
     sx = xs[3] + t_cell + gap
     sy = t_bot - s_sec.digit_ink[1]
     draw.colon(bg, tx + 2 * t_cell + colon_w / 2.0, t_top, t_bot, 5.5, SCARLET)
-    time_items = mark_items + [
+    dial_items = []
+    if dial:
+        bg.alpha_composite(dial_marks(dial_d), (dial_cx - dial_d // 2, dial_cy - dial_d // 2))
+        h_img, hpx, hpy = bar_hand(dial_d, 43, 150, 16, 21.5, HAND_HOUR_INK)
+        m_img, mpx, mpy = bar_hand(dial_d, 27, 215, 16, 10, HAND_MINUTE_INK)
+        pin = draw.dot(max(7, int(dial_d * 0.075)), SCARLET)
+        dial_items = [
+            layout.hand(face.add(h_img, 'hand_h'), dial_cx, dial_cy, hpx, hpy, codes.HAND_HOUR),
+            layout.hand(face.add(m_img, 'hand_m'), dial_cx, dial_cy, mpx, mpy, codes.HAND_MINUTE),
+            layout.image(face.add(pin, 'pin'), dial_cx - pin.width // 2, dial_cy - pin.height // 2),
+        ]
+    time_items = mark_items + dial_items + [
         layout.image_list(t_refs[0:3], xs[0], ty, codes.HOUR_TENS),
         layout.image_list(t_refs, xs[1], ty, codes.HOUR_UNITS),
         layout.image_list(t_refs[0:6], xs[2], ty, codes.MINUTE_TENS),
@@ -248,8 +308,8 @@ def jpeg(im, size):
     return buf.getvalue()
 
 
-def package(locales, out_dir, name):
-    face, lay = build(locales)
+def package(locales, out_dir, name, dial=False):
+    face, lay = build(locales, dial)
     blank = Image.new('RGBA', (W, H))
     face.set_reserved(layout.THUMB, blank.resize((240, 282)))
     face.set_reserved(layout.PREVIEW, blank)
@@ -279,15 +339,17 @@ def main():
                     help='locales to build one face each, or "all"')
     ap.add_argument('--switchable', default='',
                     help='also build one face with these locales as editor choices')
+    ap.add_argument('--dial', action='store_true', help='the glass widget\'s dial in the date card')
     ap.add_argument('--out', default=os.path.join(ROOT, 'dist'))
     a = ap.parse_args()
     available = sorted(n[:-5] for n in os.listdir(os.path.join(HERE, 'locale')) if n.endswith('.json'))
     wanted = available if a.locales == ['all'] else a.locales
-    jobs = [([loc], 'vibe-%s' % loc) for loc in wanted]
+    stem = 'vibe-dial' if a.dial else 'vibe'
+    jobs = [([loc], '%s-%s' % (stem, loc)) for loc in wanted]
     if a.switchable:
-        jobs.append((a.switchable.split(','), 'vibe'))
+        jobs.append((a.switchable.split(','), stem))
     for locales, name in jobs:
-        path, size, count = package(locales, a.out, name)
+        path, size, count = package(locales, a.out, name, a.dial)
         print('%s  %d bytes  %d images  %s' % (os.path.relpath(path, ROOT), size, count, '+'.join(locales)))
 
 

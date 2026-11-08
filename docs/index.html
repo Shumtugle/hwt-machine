@@ -126,6 +126,7 @@
         <div class="row"><label>Face</label>
           <div class="chips" id="faces">
             <button class="chip" data-face="vibe" aria-pressed="true">Vibe</button>
+            <button class="chip" data-face="vibe-dial" aria-pressed="false">Vibe · dial</button>
             <button class="chip" data-face="night-tram" aria-pressed="false">Night Tram</button>
           </div></div>
         <div class="row"><label>Language</label>
@@ -226,7 +227,8 @@ python3 -m unittest discover tests</pre>
     state.face = faces[name];
     const dl = document.getElementById('download');
     dl.href = 'faces/' + name + '-' + state.lang + '.hwt';
-    dl.textContent = 'Download ' + (name === 'vibe' ? 'Vibe' : 'Night Tram') + ' · ' + state.lang.toUpperCase();
+    dl.textContent = 'Download ' + ({ 'vibe': 'Vibe', 'vibe-dial': 'Vibe with dial', 'night-tram': 'Night Tram' })[name] +
+      ' · ' + state.lang.toUpperCase();
     for (const l of ['ru', 'en', 'fi']) {
       const a = document.getElementById('single-' + l);
       if (a) a.href = 'faces/' + name + '-' + l + '.hwt';

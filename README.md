@@ -24,15 +24,20 @@ or [all three in one](https://github.com/Shumtugle/hwt-machine/raw/main/docs/fac
 (also attached to [Releases](https://github.com/Shumtugle/hwt-machine/releases)) and
 install it with any app that can send a watch face file to the watch.
 
+`--dial` builds the same face with the dial of the glass phone widget it grew from in the
+date card: a fine ring, bars at the quarters, dots between, two bar hands
+([`vibe-dial-ru.hwt`](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/vibe-dial-ru.hwt) and the
+other languages next to it).
+
 Built for 408 × 480 screens (screen code `HWHD13`). Runs on the HUAWEI WATCH FIT 4;
 faces for this screen are reported to work on the FIT 3 as well, memory permitting.
 
 ## Night Tram
 
 Ink background, cream numerals, amber lights: a little of an old instrument, a little of
-an evening city. A lamp runs along the copper frame with the seconds, a horizon with a
-crescent hangs over the time, and six stops along the bottom light up as the day's step
-goal is walked. Battery, weather and steps share one row; the pulse sits above the route.
+an evening city. A lamp runs along the copper frame with the seconds, a thin horizon with
+a few stars hangs over the time, and the small lamp before the date lights up while
+messages wait unread. Battery, weather and steps share one row; the pulse sits below.
 
 ![Night Tram in English, Russian, Finnish, and its always-on screen](docs/img/night-tram.png)
 
@@ -41,8 +46,7 @@ Download it in
 [Russian](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/night-tram-ru.hwt) or
 [Finnish](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/night-tram-fi.hwt),
 or [all three in one](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/night-tram.hwt).
-The battery bar runs on a progress source confirmed on the watch; the route uses the
-step-goal source seen in other faces.
+The message lamp uses a source seen in other faces, not yet confirmed with this one.
 
 ## What the machine does
 
