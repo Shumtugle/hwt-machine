@@ -59,6 +59,31 @@ def hand(ref, cx, cy, pivot_x, pivot_y, source, aod=0):
                          (4, 0), (5, 360), (6, source), (9, aod)])
 
 
+# ---------------------------------------------------------------- editable choices
+# A choice zone lets the wearer pick one of several slots in the face editor. Elements
+# inside a slot sit at (0, 0) and carry an offset from the zone's top-left corner.
+
+def slot_image(ref, dx, dy, aod=0):
+    return (codes.IMAGE, [(1, ref), (2, [(1, 0), (2, 0)]), (4, [(1, dx), (2, dy)]), (5, aod)])
+
+
+def slot_image_list(refs, dx, dy, source, aod=0):
+    return (codes.IMAGE_LIST, [(1, r) for r in refs] + [
+        (2, [(1, 0), (2, 0)]), (3, source), (5, [(1, dx), (2, dy)]), (6, aod)])
+
+
+def slot(index, items, thumb, frame, target):
+    """One choice: its elements, a thumbnail for the editor, the editor's selection
+    frame, and what a tap opens while this choice is active."""
+    return [(1, index)] + _wrap(items, 2) + [(3, thumb), (4, frame), (5, target)]
+
+
+def choice_zone(index, box, slot_indices, default):
+    x0, y0, x1, y1 = box
+    return [(1, index), (2, 1), (3, bytes(slot_indices)), (4, default),
+            (5, [(1, x0), (2, y0), (3, x1 - x0), (4, y1 - y0)])]
+
+
 def _wrap(items, field):
     return [(field, [(1, i), (2, kind), (codes.BODY_FIELD[kind], body)]) for i, (kind, body) in enumerate(items)]
 
@@ -72,12 +97,16 @@ def zone(index, target, box, items):
 
 # ---------------------------------------------------------------- whole layout
 
-def layout(title, background_items, zones, date_items, time_items):
+def layout(title, background_items, zones, date_items, time_items, slots=(), choices=()):
     """Four groups in the order the reference faces use: background, touch zones,
-    date, time. zones: [(target, box, items)]."""
+    date, time. zones: [(target, box, items)]; slots: built with slot();
+    choices: [(box, slot indices, default)]."""
+    zone_fields = [(8, zone(i, t, box, items)) for i, (t, box, items) in enumerate(zones)]
+    zone_fields += [(8, choice_zone(len(zones) + i, box, idx, default))
+                    for i, (box, idx, default) in enumerate(choices)]
     groups = [
         [(1, 0), (2, 0), (4, PREVIEW)] + _wrap(background_items, 5),
-        [(1, 3), (2, 0)] + [(8, zone(i, t, box, items)) for i, (t, box, items) in enumerate(zones)],
+        [(1, 3), (2, 0)] + [(7, s) for s in slots] + zone_fields,
         [(1, 2), (2, 0), (4, '')] + _wrap(date_items, 5),
         [(1, 1), (2, 0), (4, '')] + _wrap(time_items, 5),
     ]

@@ -42,7 +42,7 @@ class Vibe(unittest.TestCase):
     def test_build_and_read_back(self):
         import build as vibe
         with tempfile.TemporaryDirectory() as out:
-            path, size, count = vibe.package('en', out)
+            path, size, count = vibe.package(['en'], out, 'vibe-en')
             manifest, binary, previews = container.read_package(path)
             self.assertIn('<screen>HWHD13</screen>', manifest)
             self.assertEqual(set(previews), {'cover.jpg', 'icon_small.jpg', 'aod.jpg'})
@@ -59,7 +59,7 @@ class Vibe(unittest.TestCase):
     def test_running_mark_shows_one_mark(self):
         import build as vibe
         with tempfile.TemporaryDirectory() as out:
-            path, _, _ = vibe.package('en', out)
+            path, _, _ = vibe.package(['en'], out, 'vibe-en')
             _, binary, _ = container.read_package(path)
         ring = vibe.draw.Ring(408, 480)
         for second in (0, 9, 10, 37, 59):
@@ -73,6 +73,19 @@ class Vibe(unittest.TestCase):
                 if r > 200 and g > 180:
                     lit.append(i)
             self.assertEqual(lit, [second], 'second %d' % second)
+
+    def test_switchable_languages(self):
+        import build as vibe
+        with tempfile.TemporaryDirectory() as out:
+            path, _, _ = vibe.package(['ru', 'en'], out, 'vibe')
+            _, binary, _ = container.read_package(path)
+            single, _, _ = vibe.package(['ru'], out, 'vibe-ru')
+            _, binary_ru, _ = container.read_package(single)
+        tree, _ = container.unpack(binary)
+        zones = [g for k, g in tree if k == 1 and dict((a, b) for a, b in g if not isinstance(b, list)).get(1) == 3][0]
+        self.assertEqual(sum(1 for f, _ in zones if f == 7), 2)
+        # the default choice draws exactly what the single-language face draws
+        self.assertEqual(simulate.render(binary).tobytes(), simulate.render(binary_ru).tobytes())
 
 
 if __name__ == '__main__':

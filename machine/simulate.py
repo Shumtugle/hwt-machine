@@ -42,6 +42,14 @@ def _get(node, f, default=None):
     return default
 
 
+def _offset(body, field, origin):
+    """Slot elements carry an offset from their zone; others have none."""
+    off = _get(body, field)
+    if isinstance(off, list) and origin is not None:
+        return origin[0] + _get(off, 1, 0), origin[1] + _get(off, 2, 0)
+    return 0, 0
+
+
 def _put(screen, im, x, y):
     """alpha_composite that tolerates pictures hanging off the screen."""
     x, y = int(x), int(y)
@@ -70,7 +78,7 @@ def render(binary, aod=False, data=None, size=(408, 480)):
         im = imgs[int(ref) - 1]
         return im if im is not None else blank
 
-    def draw(el):
+    def draw(el, origin=(0, 0)):
         kind = _get(el, 2)
         body = _get(el, codes.BODY_FIELD.get(kind, -1))
         if body is None:
@@ -80,7 +88,8 @@ def render(binary, aod=False, data=None, size=(408, 480)):
             if _get(body, 5, 0) != flag:
                 return
             p = _get(body, 2)
-            _put(screen, img(_get(body, 1)), _get(p, 1, 0), _get(p, 2, 0))
+            ox, oy = _offset(body, 4, origin)
+            _put(screen, img(_get(body, 1)), _get(p, 1, 0) + ox, _get(p, 2, 0) + oy)
         elif kind == codes.IMAGE_LIST:
             if _get(body, 6, 0) != flag:
                 return
@@ -88,7 +97,8 @@ def render(binary, aod=False, data=None, size=(408, 480)):
             idx = data.get(_get(body, 3))
             if idx is not None and 0 <= idx < len(refs):
                 p = _get(body, 2)
-                _put(screen, img(refs[idx]), _get(p, 1, 0), _get(p, 2, 0))
+                ox, oy = _offset(body, 5, origin)
+                _put(screen, img(refs[idx]), _get(p, 1, 0) + ox, _get(p, 2, 0) + oy)
         elif kind == codes.NUMBER:
             if _get(body, 13, 0) != flag:
                 return
@@ -102,7 +112,8 @@ def render(binary, aod=False, data=None, size=(408, 480)):
                 parts.insert(0, img(minus))
             width = sum(p.width for p in parts)
             p = _get(body, 3)
-            x, y = _get(p, 1, 0), _get(p, 2, 0)
+            ox, oy = _offset(body, 10, origin)
+            x, y = _get(p, 1, 0) + ox, _get(p, 2, 0) + oy
             align = _get(body, 4, 0)
             if align == codes.ALIGN_RIGHT:
                 x -= width
@@ -139,10 +150,20 @@ def render(binary, aod=False, data=None, size=(408, 480)):
     for k, group in tree:
         if k != 1 or not isinstance(group, list):
             continue
+        slots = {_get(s, 1): s for f, s in group if f == 7 and isinstance(s, list)}
         for f, item in group:
             if f == 5:
                 draw(item)
             elif f == 8 and isinstance(item, list):
+                if _get(item, 2) == 1:
+                    # choice zone: draw the slot picked by default, relative to the zone
+                    chosen = slots.get(_get(item, 4, 0))
+                    r = _get(item, 5, [])
+                    if chosen:
+                        for g, sub in chosen:
+                            if g == 2:
+                                draw(sub, (_get(r, 1, 0), _get(r, 2, 0)))
+                    continue
                 for g, sub in item:
                     if g == 6:
                         draw(sub)

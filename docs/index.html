@@ -109,8 +109,13 @@
         Every bitmap is drawn by the build, every glyph sits on its visible ink, and the package
         is checked by drawing it back before it ever reaches a wrist.</p>
       <div class="buttons">
-        <a class="btn primary" id="download" href="faces/vibe-en.hwt" download>Download Vibe</a>
+        <a class="btn primary" id="download" href="faces/vibe.hwt" download>Download Vibe</a>
         <a class="btn" href="https://github.com/Shumtugle/hwt-machine/releases">All releases</a>
+      </div>
+      <p class="lede" style="font-size:15px;margin-top:16px">One file, three languages: pick Russian, English or Finnish in the
+        watch's face editor. Single-language files: <a href="faces/vibe-ru.hwt" download>RU</a> ·
+        <a href="faces/vibe-en.hwt" download>EN</a> · <a href="faces/vibe-fi.hwt" download>FI</a>.</p>
+      <div>
       </div>
     </div>
     <div class="stage">
@@ -202,21 +207,21 @@ python3 -m unittest discover tests</pre>
   }
   document.getElementById('weather').addEventListener('change', () => tick());
 
+  // one package carries all three languages; the chips pick the choice the watch editor would
+  const ORDER = ['ru', 'en', 'fi'];
   async function loadLang(lang) {
-    if (!faces[lang]) {
-      const r = await fetch('faces/vibe-' + lang + '.hwt');
-      faces[lang] = await HWT.load(await r.arrayBuffer());
+    if (!faces.all) {
+      const r = await fetch('faces/vibe.hwt');
+      faces.all = await HWT.load(await r.arrayBuffer());
     }
     state.lang = lang;
-    state.face = faces[lang];
-    document.getElementById('download').href = 'faces/vibe-' + lang + '.hwt';
-    document.getElementById('download').textContent = 'Download Vibe · ' + lang.toUpperCase();
+    state.face = faces.all;
     tick();
   }
 
   function tick() {
     if (!state.face) return;
-    HWT.render(live, state.face, HWT.sampleData(new Date(), sensors()), state.aod);
+    HWT.render(live, state.face, HWT.sampleData(new Date(), sensors()), state.aod, ORDER.indexOf(state.lang));
     if (peekFace) HWT.render(peek, peekFace, HWT.sampleData(new Date(), sensors()), false);
   }
 

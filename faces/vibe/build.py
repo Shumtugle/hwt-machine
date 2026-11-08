@@ -1,8 +1,9 @@
 """Vibe: black and scarlet, glass cards, the date in words, time with seconds,
 battery, weather, pulse and steps, and a cream mark running around the frame.
 
-Usage: python3 faces/vibe/build.py [locale ... | all] [--out DIR]
-Writes one package per locale plus PNG previews of both screen modes.
+Usage: python3 faces/vibe/build.py [locale ... | all] [--switchable ru,en,fi] [--out DIR]
+Writes one package per locale, one whose language is picked on the watch,
+and PNG previews of both screen modes.
 """
 import argparse
 import io
@@ -13,7 +14,7 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, ROOT)
 
-from PIL import Image  # noqa: E402
+from PIL import Image, ImageDraw  # noqa: E402
 
 from machine import codes, container, draw, effects, layout, simulate  # noqa: E402
 
@@ -22,6 +23,7 @@ FONT_TEXT = os.path.join(ROOT, 'fonts', 'Oswald.ttf')
 SYMBOLS = draw.Symbols(os.path.join(ROOT, 'fonts', 'Symbols.ttf'), os.path.join(ROOT, 'fonts', 'symbols.codepoints'))
 
 TITLE = 'Vibe'
+CHOICE_TARGET = 1               # what the choice slots report as their tap target; copied from faces that switch languages
 AUTHOR = 'vibe'
 SCREEN = 'HWHD13'
 FORMAT_VERSION = '2.5.1'
@@ -49,10 +51,18 @@ def style(size, weight, color, tracking=0, sample=''):
     return draw.Style(FONT_TEXT, size, weight, color, tracking, sample)
 
 
-def build(locale):
-    names = json.load(open(os.path.join(HERE, 'locale', locale + '.json'), encoding='utf-8'))
-    words = names['weekdays'] + names['months']
-    suffix = names.get('day_suffix', '')
+def load_locale(locale):
+    with open(os.path.join(HERE, 'locale', locale + '.json'), encoding='utf-8') as fh:
+        return json.load(fh)
+
+
+def build(locales):
+    """One locale: words drawn straight into the date card. Several: the words become
+    choices the wearer switches in the face editor; the first one is the default."""
+    langs = [load_locale(l) for l in locales]
+    names = langs[0]
+    words = [w for n in langs for w in n['weekdays'] + n['months']]
+    suffixes = [n.get('day_suffix', '') for n in langs]
     face = layout.Face(W, H)
     aod_bg = face.add(Image.new('RGBA', (W, H), (0, 0, 0, 255)), 'aod_bg')
 
@@ -69,27 +79,57 @@ def build(locale):
     # --- date card: day number, weekday above month beside it
     x0, y0, x1, y1 = CARD_DATE
     cy = (y0 + y1) / 2.0
-    s_day = style(74, 600, CREAM, sample=suffix)
+    s_day = style(74, 600, CREAM, sample=''.join(suffixes))
     day_digits, day_cell = s_day.digits()
-    dot = s_day.render(suffix) if suffix else None
+    dots = [s_day.render(sfx) if sfx else None for sfx in suffixes]
     day_right = x0 + 14 + 2 * day_cell
-    col = day_right + (dot.width if dot else 0) + 12
-    s_week = draw.fit_style(FONT_TEXT, names['weekdays'], x1 - 16 - col, 32, 500, CREAM)
-    s_month = draw.fit_style(FONT_TEXT, names['months'], x1 - 16 - col, s_week.size, 500, SCARLET_SOFT)
+    col = day_right + max([d.width for d in dots if d] or [0]) + 12
+    weekdays = [w for n in langs for w in n['weekdays']]
+    months = [m for n in langs for m in n['months']]
+    s_week = draw.fit_style(FONT_TEXT, weekdays, x1 - 16 - col, 32, 500, CREAM)
+    s_month = draw.fit_style(FONT_TEXT, months, x1 - 16 - col, s_week.size, 500, SCARLET_SOFT)
     size = min(s_week.size, s_month.size)
     s_week = style(size, 500, CREAM, 1, ''.join(words))
     s_month = style(size, 500, SCARLET_SOFT, 1, ''.join(words))
     day_y = s_day.top_for_digits_centred_on(cy)
     d_top, d_bot = day_y + s_day.digit_ink[0], day_y + s_day.digit_ink[1]
-    if dot:
-        bg.alpha_composite(dot, (day_right, day_y))
-    week_refs = face.add_set([s_week.render(t) for t in names['weekdays']], 'week')
-    month_refs = face.add_set([s_month.render(t) for t in names['months']], 'month')
+    week_y = d_top - s_week.cap_ink[0]
+    month_y = d_bot - s_month.cap_ink[1]
     date_items = [
         layout.number(face.add_set(day_digits, 'day'), day_right, day_y, codes.ALIGN_RIGHT, codes.DAY_OF_MONTH),
-        layout.image_list([week_refs[0]] + week_refs, col, d_top - s_week.cap_ink[0], codes.WEEKDAY),
-        layout.image_list([month_refs[0]] + month_refs, col, d_bot - s_month.cap_ink[1], codes.MONTH),
     ]
+    slots, choices = [], []
+    if len(langs) == 1:
+        week_refs = face.add_set([s_week.render(t) for t in names['weekdays']], 'week')
+        month_refs = face.add_set([s_month.render(t) for t in names['months']], 'month')
+        date_items += [
+            layout.image_list([week_refs[0]] + week_refs, col, week_y, codes.WEEKDAY),
+            layout.image_list([month_refs[0]] + month_refs, col, month_y, codes.MONTH),
+        ]
+        if dots[0]:
+            bg.alpha_composite(dots[0], (day_right, day_y))
+    else:
+        zone = (day_right, y0 + 6, x1 - 8, y1 - 6)
+        zx, zy = zone[0], zone[1]
+        zw, zh = zone[2] - zone[0], zone[3] - zone[1]
+        frame = Image.new('RGBA', (zw, zh), (0, 0, 0, 0))
+        ImageDraw.Draw(frame).rounded_rectangle([1, 1, zw - 2, zh - 2], radius=12, outline=SCARLET, width=2)
+        frame_ref = face.add(frame, 'choice_frame')
+        for i, (n, d) in enumerate(zip(langs, dots)):
+            week_refs = face.add_set([s_week.render(t) for t in n['weekdays']], ('week', i))
+            month_refs = face.add_set([s_month.render(t) for t in n['months']], ('month', i))
+            items = [
+                layout.slot_image_list([week_refs[0]] + week_refs, col - zx, week_y - zy, codes.WEEKDAY),
+                layout.slot_image_list([month_refs[0]] + month_refs, col - zx, month_y - zy, codes.MONTH),
+            ]
+            thumb = Image.new('RGBA', (zw, zh), (0, 0, 0, 0))
+            thumb.alpha_composite(s_week.render(n['weekdays'][6]), (col - zx, week_y - zy))
+            thumb.alpha_composite(s_month.render(n['months'][10]), (col - zx, month_y - zy))
+            if d:
+                items.append(layout.slot_image(face.add(d, ('dot', i)), 0, day_y - zy))
+                thumb.alpha_composite(d, (0, day_y - zy))
+            slots.append(layout.slot(i, items, face.add(thumb, ('thumb', i)), frame_ref, CHOICE_TARGET))
+        choices.append((zone, list(range(len(langs))), 0))
 
     # --- time card: HH:MM as large as fits, seconds smaller and quieter on the same baseline
     x0, y0, x1, y1 = CARD_TIME
@@ -166,7 +206,7 @@ def build(locale):
 
     # --- always-on screen: black, thin time without seconds, quiet date
     a_time = style(118, 300, DIM)
-    a_day = style(54, 400, DIM, sample=suffix)
+    a_day = style(54, 400, DIM, sample=suffixes[0])
     a_word = style(26, 400, DIM, 1, ''.join(words))
     at_digits, at_cell = a_time.digits(extra_pad=2)
     at_refs = face.add_set(at_digits, 'aod_time')
@@ -187,7 +227,7 @@ def build(locale):
     ady = a_day.top_for_digits_centred_on(100)
     a_top, a_bot = ady + a_day.digit_ink[0], ady + a_day.digit_ink[1]
     a_right = 40 + 2 * ad_cell
-    a_dot = a_day.render(suffix) if suffix else None
+    a_dot = a_day.render(suffixes[0]) if suffixes[0] else None
     acol = a_right + (a_dot.width if a_dot else 0) + 12
     date_items += [
         layout.number(face.add_set(ad_digits, 'aod_day'), a_right, ady, codes.ALIGN_RIGHT, codes.DAY_OF_MONTH, aod=1),
@@ -199,7 +239,7 @@ def build(locale):
 
     face.set_reserved(layout.BACKGROUND, bg)
     background = [layout.image(layout.BACKGROUND, 0, 0), layout.image(aod_bg, 0, 0, aod=1)]
-    return face, layout.layout(TITLE, background, zones, date_items, time_items)
+    return face, layout.layout(TITLE, background, zones, date_items, time_items, slots, choices)
 
 
 def jpeg(im, size):
@@ -208,8 +248,8 @@ def jpeg(im, size):
     return buf.getvalue()
 
 
-def package(locale, out_dir):
-    face, lay = build(locale)
+def package(locales, out_dir, name):
+    face, lay = build(locales)
     blank = Image.new('RGBA', (W, H))
     face.set_reserved(layout.THUMB, blank.resize((240, 282)))
     face.set_reserved(layout.PREVIEW, blank)
@@ -226,7 +266,7 @@ def package(locale, out_dir):
         'aod.jpg': jpeg(aod, (816, 960)),
     }
     os.makedirs(out_dir, exist_ok=True)
-    base = os.path.join(out_dir, 'vibe-%s' % locale)
+    base = os.path.join(out_dir, name)
     container.write_package(base + '.hwt', binary, TITLE, AUTHOR, SCREEN, FORMAT_VERSION, previews)
     normal.convert('RGB').save(base + '.png')
     aod.convert('RGB').save(base + '-aod.png')
@@ -235,14 +275,20 @@ def package(locale, out_dir):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
-    ap.add_argument('locales', nargs='*', default=['all'])
+    ap.add_argument('locales', nargs='*', default=['all'],
+                    help='locales to build one face each, or "all"')
+    ap.add_argument('--switchable', default='ru,en,fi',
+                    help='locales of the face whose language is picked on the watch; empty to skip')
     ap.add_argument('--out', default=os.path.join(ROOT, 'dist'))
     a = ap.parse_args()
     available = sorted(n[:-5] for n in os.listdir(os.path.join(HERE, 'locale')) if n.endswith('.json'))
     wanted = available if a.locales == ['all'] else a.locales
-    for loc in wanted:
-        path, size, count = package(loc, a.out)
-        print('%s  %d bytes  %d images' % (os.path.relpath(path, ROOT), size, count))
+    jobs = [([loc], 'vibe-%s' % loc) for loc in wanted]
+    if a.switchable:
+        jobs.append((a.switchable.split(','), 'vibe'))
+    for locales, name in jobs:
+        path, size, count = package(locales, a.out, name)
+        print('%s  %d bytes  %d images  %s' % (os.path.relpath(path, ROOT), size, count, '+'.join(locales)))
 
 
 if __name__ == '__main__':

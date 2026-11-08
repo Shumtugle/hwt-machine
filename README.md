@@ -15,7 +15,9 @@ the month in words, 24-hour time with seconds, battery, weather, pulse and steps
 cream mark that runs around the frame once a minute. Tapping a tile opens the matching
 screen on the watch.
 
-Download it in [English](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/vibe-en.hwt),
+[`vibe.hwt`](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/vibe.hwt) carries Russian, English and Finnish at once: pick the language in the
+watch's face editor, the way other faces switch theirs. Or take a single-language file:
+[English](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/vibe-en.hwt),
 [Russian](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/vibe-ru.hwt) or
 [Finnish](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/vibe-fi.hwt)
 (also attached to [Releases](https://github.com/Shumtugle/hwt-machine/releases)) and
@@ -46,15 +48,16 @@ faces for this screen are reported to work on the FIT 3 as well, memory permitti
 Python 3 and Pillow.
 
 ```sh
-python3 faces/vibe/build.py all          # every locale into dist/
-python3 faces/vibe/build.py ru           # one locale
+python3 faces/vibe/build.py all          # every locale, plus the switchable face, into dist/
+python3 faces/vibe/build.py ru --switchable ''   # just one locale
 python3 tools/inspect.py dist/vibe-ru.hwt --images out/ --render screen.png
 python3 -m unittest discover tests
 cp dist/*.hwt docs/faces/                # refresh the faces on the live page
 ```
 
 A new language is one JSON file in `faces/vibe/locale/` with seven weekdays, twelve
-months and an optional suffix after the day number.
+months and an optional suffix after the day number. Add it to `--switchable` to put it
+in the all-in-one face.
 
 ## Layout of the repository
 

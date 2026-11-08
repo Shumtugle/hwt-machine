@@ -133,10 +133,18 @@ code in `6`. No font travels with the face; the watch uses its own.
 ### Touch zone (group field 8)
 
 `1` index, `2` 0, `5` box `{x, y, w, h}`, `6` elements (as above), `8` target to open.
-With `2` set to 1 and a byte list in `3`, the zone is an editable slot whose choices are
-listed in group field 7; each choice has its own elements, a thumbnail in `3` and a
-selection frame in `4`. Language variants of a face are done this way: the wearer picks
-them in the face editor.
+### Choice zone and slots (group fields 8 and 7)
+
+A zone with `2` set to 1 is a choice: `3` holds the slot indices as raw bytes, `4` the
+default slot, `5` the box. The wearer switches choices in the face editor. Language
+variants of a face are done this way.
+
+A slot (group field 7): `1` slot index, `2` elements (repeated), `3` thumbnail ref,
+`4` selection-frame ref (both the size of the zone), `5` tap target while the slot is
+active. Elements inside a slot sit at position `(0, 0)` and carry an offset from the
+zone's top-left corner: field `4` for images, `5` for image lists, `10` for numbers.
+Offsets may be negative. Simulated here; on the watch it is observed in other faces,
+not yet verified with one built by this machine.
 
 ## Data sources
 

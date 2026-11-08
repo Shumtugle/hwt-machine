@@ -168,8 +168,15 @@ const HWT = (() => {
     return d;
   }
 
-  function render(ctx, face, data, aod) {
+  // pick: which choice to show in editable zones, by position in the zone's list;
+  // undefined shows each zone's default, as the watch does before anything is chosen.
+  function render(ctx, face, data, aod, pick) {
     const flag = aod ? 1 : 0;
+    let origin = [0, 0];
+    const off = (body, field) => {
+      const o = get(body, field);
+      return Array.isArray(o) ? [origin[0] + get(o, 1, 0), origin[1] + get(o, 2, 0)] : [0, 0];
+    };
     const skipped = new Set();
     ctx.save();
     ctx.globalCompositeOperation = 'source-over';
@@ -181,15 +188,15 @@ const HWT = (() => {
       if (!Array.isArray(body)) { skipped.add(kind); return; }
       if (kind === 1) {
         if (get(body, 5, 0) !== flag) return;
-        const p = get(body, 2, []), im = face.image(get(body, 1));
-        if (im) ctx.drawImage(im, get(p, 1, 0), get(p, 2, 0));
+        const p = get(body, 2, []), im = face.image(get(body, 1)), [ox, oy] = off(body, 4);
+        if (im) ctx.drawImage(im, get(p, 1, 0) + ox, get(p, 2, 0) + oy);
       } else if (kind === 2) {
         if (get(body, 6, 0) !== flag) return;
         const refs = all(body, 1).filter((r) => typeof r === 'string');
         const idx = data[get(body, 3)];
         if (idx === undefined || idx < 0 || idx >= refs.length) return;
-        const p = get(body, 2, []), im = face.image(refs[idx]);
-        if (im) ctx.drawImage(im, get(p, 1, 0), get(p, 2, 0));
+        const p = get(body, 2, []), im = face.image(refs[idx]), [ox, oy] = off(body, 5);
+        if (im) ctx.drawImage(im, get(p, 1, 0) + ox, get(p, 2, 0) + oy);
       } else if (kind === 3) {
         if (get(body, 13, 0) !== flag) return;
         const refs = all(body, 1).filter((r) => typeof r === 'string');
@@ -199,9 +206,9 @@ const HWT = (() => {
         const minus = get(body, 6, '');
         if (v < 0 && minus && face.image(minus)) parts.unshift(face.image(minus));
         const width = parts.reduce((a, p) => a + p.width, 0);
-        const p = get(body, 3, []);
-        let x = get(p, 1, 0);
-        const y = get(p, 2, 0), align = get(body, 4, 0);
+        const p = get(body, 3, []), [ox, oy] = off(body, 10);
+        let x = get(p, 1, 0) + ox;
+        const y = get(p, 2, 0) + oy, align = get(body, 4, 0);
         if (align === 2) x -= width; else if (align === 1) x -= Math.floor(width / 2);
         for (const part of parts) { ctx.drawImage(part, x, y); x += part.width; }
       } else if (kind === 5) {
@@ -239,9 +246,24 @@ const HWT = (() => {
     };
     for (const [k, group] of face.tree) {
       if (k !== 1 || !Array.isArray(group)) continue;
+      const slots = new Map(group.filter(([f, v]) => f === 7 && Array.isArray(v)).map(([, v]) => [get(v, 1, 0), v]));
       for (const [f, item] of group) {
         if (f === 5 && Array.isArray(item)) draw(item);
-        else if (f === 8 && Array.isArray(item)) for (const [g, sub] of item) if (g === 6 && Array.isArray(sub)) draw(sub);
+        else if (f === 8 && Array.isArray(item)) {
+          if (get(item, 2) === 1) {
+            const list = get(item, 3, '');
+            const ids = typeof list === 'string' ? [...list].map((c) => c.charCodeAt(0)) :
+              Array.isArray(list) ? list.flat() : [];
+            let chosen = get(item, 4, 0);
+            if (pick !== undefined && ids.length) chosen = ids[Math.min(pick, ids.length - 1)];
+            const slot = slots.get(chosen), r = get(item, 5, []);
+            if (slot) {
+              origin = [get(r, 1, 0), get(r, 2, 0)];
+              for (const [g, sub] of slot) if (g === 2 && Array.isArray(sub)) draw(sub);
+              origin = [0, 0];
+            }
+          } else for (const [g, sub] of item) if (g === 6 && Array.isArray(sub)) draw(sub);
+        }
       }
     }
     ctx.restore();
