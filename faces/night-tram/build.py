@@ -27,7 +27,7 @@ AUTHOR = 'night-tram'
 NAME = 'night-tram'
 SCREEN = 'HWHD13'
 FORMAT_VERSION = '2.5.1'
-CHOICE_FUNCTIONS = [1, 2, 9]  # function code per language slot; the editor names and dedupes slots by it
+CHOICE_FUNCTIONS = [codes.FUNCTION_DATE, codes.FUNCTION_WEEKDAY, codes.FUNCTION_SUN]  # one per language slot
 W, H = 408, 480
 SS = 4
 

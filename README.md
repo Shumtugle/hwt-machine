@@ -18,7 +18,9 @@ screen on the watch.
 Download it in
 [English](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/vibe-en.hwt),
 [Russian](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/vibe-ru.hwt) or
-[Finnish](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/vibe-fi.hwt)
+[Finnish](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/vibe-fi.hwt),
+or [all three in one](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/vibe.hwt)
+(switch in the face editor: *Date* is Russian, *Day of week* English, *Sun* Finnish)
 (also attached to [Releases](https://github.com/Shumtugle/hwt-machine/releases)) and
 install it with any app that can send a watch face file to the watch.
 
@@ -37,7 +39,8 @@ goal is walked. Battery, weather and steps share one row; the pulse sits above t
 Download it in
 [English](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/night-tram-en.hwt),
 [Russian](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/night-tram-ru.hwt) or
-[Finnish](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/night-tram-fi.hwt).
+[Finnish](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/night-tram-fi.hwt),
+or [all three in one](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/night-tram.hwt).
 The battery bar runs on a progress source confirmed on the watch; the route uses the
 step-goal source seen in other faces.
 
@@ -74,9 +77,9 @@ cp dist/*.hwt docs/faces/                # refresh the faces on the live page
 A new language is one JSON file in `faces/vibe/locale/` with seven weekdays, twelve
 months and an optional suffix after the day number.
 
-`--switchable ru,en,fi` also builds one face with the locales as editor choices. The
-watch lists choices by function rather than by name, so this is an experiment; see the
-format notes.
+`--switchable ru,en,fi` also builds one face carrying all three languages, switched in
+the watch's face editor. It works; the editor names the three choices after the
+functions it borrows them from (*Date*, *Day of week*, *Sun*), not after the languages.
 
 ## Layout of the repository
 

@@ -143,12 +143,20 @@ A slot (group field 7): `1` slot index, `2` elements (repeated), `3` thumbnail r
 slot sit at position `(0, 0)` and carry an offset from the zone's top-left corner: field
 `4` for images, `5` for image lists, `10` for numbers. Offsets may be negative.
 
-Verified on the watch: the editor shows the zone with its selection frame and lists the
-choices **by function**, under the function's own name (code 1 appears as *Calendar →
-Date*). Slots that share a function code fold into one entry, so three language slots
-with the same code offer nothing to choose. A face that switches variants of one
-function needs a different code per slot, and the editor will show those codes' names,
-not the variant's.
+Verified on the watch: slots, offsets and choices work. The editor shows the zone with
+its selection frame and lists the choices **by function**, under the function's own
+name. Slots that share a function code fold into one entry, so variants of one thing
+(languages, say) need a different code per slot, and the editor shows those codes'
+names, not the variant's. Codes seen so far:
+
+| function code | name in the editor |
+|---|---|
+| 1 | Date (under Calendar) |
+| 2 | Day of week |
+| 9 | Sun |
+
+A language-switching face built with codes 1, 2 and 9 switches correctly between its
+three languages; the entries just read *Date*, *Day of week* and *Sun*.
 
 ## Data sources
 
@@ -192,5 +200,5 @@ around the frame is still possible; see the running mark in the machine's effect
 | 17 | battery: nothing on newer watches | verified |
 | 50 | settings | observed |
 
-In choice slots the same field names a *function*; code 1 is shown as Calendar → Date.
+In choice slots the same field names a *function*; see the table above.
 | 18 | messages | observed |

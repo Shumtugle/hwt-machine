@@ -74,3 +74,9 @@ OPEN_WEATHER = 21      # verified
 OPEN_SETTINGS = 50     # observed
 OPEN_BATTERY = 17      # does nothing on newer watches                 verified
 OPEN_MESSAGES = 18     # observed
+
+# ---- function codes of choice slots: the editor lists slots under these names
+#      and folds slots that share a code, so variants of one thing need distinct codes
+FUNCTION_DATE = 1      # shown as Date                                  verified
+FUNCTION_WEEKDAY = 2   # shown as Day of week                           verified
+FUNCTION_SUN = 9       # shown as Sun                                   verified

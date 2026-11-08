@@ -23,7 +23,7 @@ FONT_TEXT = os.path.join(ROOT, 'fonts', 'Oswald.ttf')
 SYMBOLS = draw.Symbols(os.path.join(ROOT, 'fonts', 'Symbols.ttf'), os.path.join(ROOT, 'fonts', 'symbols.codepoints'))
 
 TITLE = 'Vibe'
-CHOICE_FUNCTIONS = [1, 2, 9]  # function code per language slot; the editor names and dedupes slots by it
+CHOICE_FUNCTIONS = [codes.FUNCTION_DATE, codes.FUNCTION_WEEKDAY, codes.FUNCTION_SUN]  # one per language slot
 AUTHOR = 'vibe'
 SCREEN = 'HWHD13'
 FORMAT_VERSION = '2.5.1'
@@ -278,7 +278,7 @@ def main():
     ap.add_argument('locales', nargs='*', default=['all'],
                     help='locales to build one face each, or "all"')
     ap.add_argument('--switchable', default='',
-                    help='also build one face with these locales as editor choices (experimental)')
+                    help='also build one face with these locales as editor choices')
     ap.add_argument('--out', default=os.path.join(ROOT, 'dist'))
     a = ap.parse_args()
     available = sorted(n[:-5] for n in os.listdir(os.path.join(HERE, 'locale')) if n.endswith('.json'))
