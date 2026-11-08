@@ -60,6 +60,17 @@ charge: the watch says so itself when it runs low.
 [FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/plumb-fi.hwt) ·
 [all three](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/plumb.hwt)
 
+## Lighthouse
+
+A painted night sea with a lighthouse on a cliff and a small ship under sail. The time
+in a warm serif across the stars, the seconds quiet beneath it, the date above; battery,
+weather, pulse and steps along the water.
+
+[RU](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/lighthouse-ru.hwt) ·
+[EN](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/lighthouse-en.hwt) ·
+[FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/lighthouse-fi.hwt) ·
+[all three](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/lighthouse.hwt)
+
 ## What the machine does
 
 - **Writes the container byte-exact.** Header, protobuf layout, image table and
@@ -110,6 +121,7 @@ functions it borrows them from (*Date*, *Day of week*, *Sun*), not after the lan
 | `faces/vibe/` | the Vibe face and its locales |
 | `faces/night-tram/` | the Night Tram face and its locales |
 | `faces/plumb/` | the Plumb face and its locales |
+| `faces/lighthouse/` | the Lighthouse face, its painting and its locales |
 | `tools/inspect.py` | look inside any face |
 | `docs/` | the live page, its renderer, and the [format notes](docs/FORMAT.md) |
 
@@ -121,6 +133,7 @@ Everything known about the format, verified or only observed, is in
 ## Licence
 
 Code: MIT, see [LICENSE](LICENSE).
-The text face is under the SIL Open Font License 1.1 ([fonts/OFL.txt](fonts/OFL.txt)).
+The text faces are under the SIL Open Font License 1.1
+([Oswald](fonts/OFL-Oswald.txt), [Cormorant](fonts/OFL-Cormorant.txt)).
 The symbol font is a subset of an icon font under the Apache License 2.0
-([fonts/LICENSE-symbols.txt](fonts/LICENSE-symbols.txt)), reduced to the glyphs Vibe uses.
+([fonts/LICENSE-symbols.txt](fonts/LICENSE-symbols.txt)), reduced to the glyphs the faces use.

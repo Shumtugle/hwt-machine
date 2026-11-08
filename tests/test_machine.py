@@ -125,5 +125,18 @@ class Plumb(unittest.TestCase):
                 self.assertTrue(r > 180 and g < 90, 'second %d' % second)
 
 
+class Lighthouse(unittest.TestCase):
+    def test_build_and_draw(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location('lighthouse', os.path.join(ROOT, 'faces', 'lighthouse', 'build.py'))
+        lh = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(lh)
+        with tempfile.TemporaryDirectory() as out:
+            path, _, _ = lh.package(['ru', 'en'], out, 'lighthouse')
+            _, binary, _ = container.read_package(path)
+        simulate.render(binary)
+        self.assertEqual(simulate.render.skipped, [])
+
+
 if __name__ == '__main__':
     unittest.main()

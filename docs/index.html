@@ -81,7 +81,7 @@
   footer { padding: 50px 0 40px; color: #7d7262; font-size: 14px; }
   footer a { color: var(--ink-dim); }
 
-  .faces { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .faces { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
   .face { background: var(--card); border: 1px solid var(--rim); border-radius: 22px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
   .face canvas { width: 100%; aspect-ratio: 408/480; border-radius: 28px; background: #000; display: block; }
   .face h3 { margin: 2px 2px 0; font-family: 'Machine', sans-serif; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; font-size: 20px; }
@@ -140,6 +140,7 @@
             <button class="chip" data-face="vibe-dial" aria-pressed="false">Vibe · dial</button>
             <button class="chip" data-face="night-tram" aria-pressed="false">Night Tram</button>
             <button class="chip" data-face="plumb" aria-pressed="false">Plumb</button>
+            <button class="chip" data-face="lighthouse" aria-pressed="false">Lighthouse</button>
           </div></div>
         <div class="row"><label>Language</label>
           <div class="chips" id="langs">
@@ -213,7 +214,7 @@ python3 -m unittest discover tests</pre>
   </section>
 
   <footer>
-    MIT licence. Text face under the SIL Open Font License, symbols under the Apache License 2.0;
+    MIT licence. Text faces under the SIL Open Font License, symbols under the Apache License 2.0;
     both licences ship next to the fonts. <a href="https://github.com/Shumtugle/hwt-machine">Source on GitHub</a>.
   </footer>
 </div>
@@ -247,7 +248,7 @@ python3 -m unittest discover tests</pre>
     state.face = faces[name];
     const dl = document.getElementById('download');
     dl.href = 'faces/' + name + '-' + state.lang + '.hwt';
-    dl.textContent = 'Download ' + ({ 'vibe': 'Vibe', 'vibe-dial': 'Vibe with dial', 'night-tram': 'Night Tram', 'plumb': 'Plumb' })[name] +
+    dl.textContent = 'Download ' + ({ 'vibe': 'Vibe', 'vibe-dial': 'Vibe with dial', 'night-tram': 'Night Tram', 'plumb': 'Plumb', 'lighthouse': 'Lighthouse' })[name] +
       ' · ' + state.lang.toUpperCase();
     for (const l of ['ru', 'en', 'fi']) {
       const a = document.getElementById('single-' + l);
@@ -311,6 +312,7 @@ python3 -m unittest discover tests</pre>
     ['vibe', 'Vibe', 'Black and scarlet glass cards: the date in words, time with seconds, battery, weather, pulse, steps, a cream mark running round the frame.'],
     ['vibe-dial', 'Vibe · dial', 'Vibe with the dial of the glass phone widget it grew from: a fine ring, quarter bars and two bar hands.'],
     ['night-tram', 'Night Tram', 'Ink, cream and amber: a lamp on the copper frame counts the seconds, a small lamp by the date wakes for unread messages.'],
+    ['lighthouse', 'Lighthouse', 'A painted night sea and a lighthouse on a cliff; the time in a warm serif across the stars, everything else along the water.'],
   ];
   const list = document.getElementById('face-list');
   const gallery = [];

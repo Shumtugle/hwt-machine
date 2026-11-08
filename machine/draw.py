@@ -14,9 +14,10 @@ def ink(im):
     return (box[1], box[3]) if box else (0, im.height)
 
 
-def variable_font(path, size, **axes):
-    """Open a font and set its variation axes by name (e.g. Weight=600)."""
-    f = ImageFont.truetype(path, size)
+def variable_font(path, size, shaping=False, **axes):
+    """Open a font and set its variation axes by name (e.g. Weight=600). With shaping,
+    OpenType features (such as lining figures) can be asked for when drawing."""
+    f = ImageFont.truetype(path, size, layout_engine=ImageFont.Layout.RAQM if shaping else ImageFont.Layout.BASIC)
     try:
         current = f.get_variation_axes()
     except OSError:
@@ -36,21 +37,29 @@ class Style:
 
     BASE_SAMPLE = '0123456789%-HIÄÅ'
 
-    def __init__(self, font_path, size, weight, color, tracking=0, sample=''):
+    def __init__(self, font_path, size, weight, color, tracking=0, sample='', features=None, fill=None):
         """sample: every character the style will ever render, so the shared box
-        has room for the tallest accent and the deepest descender."""
+        has room for the tallest accent and the deepest descender. features: OpenType
+        features such as 'lnum'. fill: a function (width, height) -> RGBA image used
+        instead of the flat colour, e.g. a gradient."""
         self.size, self.weight, self.color, self.tracking = size, weight, color, tracking
-        self.font = variable_font(font_path, size, Weight=weight)
-        box = self.font.getbbox(self.BASE_SAMPLE + ''.join(sorted(set(sample))))
+        self.features = features
+        self.fill = fill
+        self.font = variable_font(font_path, size, shaping=bool(features), Weight=weight)
+        kw = {'features': features} if features else {}
+        box = self.font.getbbox(self.BASE_SAMPLE + ''.join(sorted(set(sample))), **kw)
         self.top, self.bottom = box[1], box[3]
         self.height = self.bottom - self.top
         self.digit_ink = ink(self.render('0123456789'))
         self.cap_ink = ink(self.render('HIT'))
 
+    def _kw(self):
+        return {'features': self.features} if self.features else {}
+
     def width(self, s):
         if not s:
             return 0
-        return sum(self.font.getlength(c) for c in s) + self.tracking * (len(s) - 1)
+        return sum(self.font.getlength(c, **self._kw()) for c in s) + self.tracking * (len(s) - 1)
 
     def render(self, s, cell=None):
         """Render s; with cell set the result is exactly cell px wide, text centred."""
@@ -60,13 +69,17 @@ class Style:
         d = ImageDraw.Draw(im)
         x = (cw - w) / 2.0
         for c in s:
-            d.text((x, -self.top), c, font=self.font, fill=self.color)
-            x += self.font.getlength(c) + self.tracking
+            d.text((x, -self.top), c, font=self.font, fill=self.color, **self._kw())
+            x += self.font.getlength(c, **self._kw()) + self.tracking
+        if self.fill:
+            painted = self.fill(im.width, im.height)
+            painted.putalpha(ImageChops.multiply(painted.getchannel('A'), im.getchannel('A')))
+            im = painted
         return im
 
     def digits(self, extra_pad=0):
         """Ten digit images of one width, so numbers never jitter."""
-        cell = int(math.ceil(max(self.font.getlength(str(i)) for i in range(10)))) + extra_pad
+        cell = int(math.ceil(max(self.font.getlength(str(i), **self._kw()) for i in range(10)))) + extra_pad
         return [self.render(str(i), cell) for i in range(10)], cell
 
     def top_for_digits_centred_on(self, cy):
