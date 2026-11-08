@@ -52,8 +52,8 @@ The message lamp uses a source seen in other faces, not yet confirmed with this 
 
 Black, and two lines of type: the hour above the minute. A red weight slides down a
 cream thread once a minute, in six lengths of ten seconds. The date hangs from the same
-left margin at the top, the weather and the charge at the foot. No cards, no rings, no
-goals.
+left margin at the top, the weather at the foot. No cards, no rings, no goals, no
+charge: the watch says so itself when it runs low.
 
 [RU](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/plumb-ru.hwt) ·
 [EN](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/plumb-en.hwt) ·

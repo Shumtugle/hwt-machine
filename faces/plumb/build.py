@@ -1,6 +1,6 @@
 """Plumb: black, the hour set above the minute like two lines of type, and a red
 weight sliding down a cream thread once a minute. The date sits at the top, the
-weather and the charge at the foot; everything hangs from one left margin.
+weather at the foot; everything hangs from one left margin.
 
 Usage: python3 faces/plumb/build.py [locale ... | all] [--switchable ru,en,fi] [--out DIR]
 """
@@ -176,8 +176,8 @@ def build(locales):
                                      CHOICE_FUNCTIONS[i % len(CHOICE_FUNCTIONS)]))
         choices.append((zone, list(range(len(langs))), 0))
 
-    # --- the foot: weather and charge, one quiet line from the margin
-    s_foot = style(26, 400, CREAM_DIM, sample='%°')
+    # --- the foot: the sky and its warmth, one quiet line from the margin
+    s_foot = style(26, 400, CREAM_DIM, sample='°')
     f_digits, f_cell = s_foot.digits()
     f_refs = face.add_set(f_digits, 'foot')
     minus_ref = face.add(s_foot.render('-'), 'minus')
@@ -188,19 +188,10 @@ def build(locales):
     deg = s_foot.render('°')
     temp_right = MARGIN + sky[0].width + 8 + 2 * f_cell
     bg.alpha_composite(deg, (temp_right, fy))
-    sep = s_foot.render('·')
-    sep_x = temp_right + deg.width + 14
-    bg.alpha_composite(sep, (sep_x, fy))
-    pct = s_foot.render('%')
-    bat_right = sep_x + sep.width + 14 + 3 * f_cell
-    bg.alpha_composite(pct, (bat_right, fy))
     zones = [
-        (codes.OPEN_WEATHER, (MARGIN - 8, foot_cy - 22, sep_x - 4, foot_cy + 22), [
+        (codes.OPEN_WEATHER, (MARGIN - 8, foot_cy - 22, temp_right + deg.width + 12, foot_cy + 22), [
             layout.image_list(face.add_set(sky, 'sky'), MARGIN, sky_y, codes.WEATHER_ICON),
             layout.number(f_refs, temp_right, fy, codes.ALIGN_RIGHT, codes.TEMPERATURE, minus=minus_ref),
-        ]),
-        (codes.OPEN_SETTINGS, (sep_x + 6, foot_cy - 22, bat_right + pct.width + 8, foot_cy + 22), [
-            layout.number(f_refs, bat_right, fy, codes.ALIGN_RIGHT, codes.BATTERY_PERCENT),
         ]),
     ]
 
