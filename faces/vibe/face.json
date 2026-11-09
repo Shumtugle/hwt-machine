@@ -37,7 +37,7 @@
     {"type": "time", "id": "time", "size": 120, "weight": 600, "color": "cream", "pad": 2,
      "x": "screen.center", "align": "center", "y": {"digits_middle": 216},
      "colon": {"width": 26, "radius": 5.5, "color": "scarlet"},
-     "seconds": {"size": 38, "weight": 500, "color": "seconds", "pad": 1, "gap": 10}},
+     "seconds": {"size": 38, "weight": 500, "color": "seconds", "pad": 1, "gap": 10, "quiet": true}},
 
     {"type": "tap", "box": [24, 308, 201, 378], "open": "settings", "card": {"radius": 18}, "elements": [
       {"type": "battery_icon", "color": "cream", "low_color": "scarlet",
@@ -68,9 +68,9 @@
     "elements": [
       {"type": "day", "id": "aod_day", "size": 54, "weight": 400, "color": "dim",
        "x": 40, "y": {"digits_middle": 100}},
-      {"type": "weekday", "size": 26, "weight": 400, "tracking": 1, "color": "dim",
+      {"type": "weekday", "size": 24, "weight": 400, "tracking": 1, "color": "dim",
        "x": "aod_day.right+12", "y": {"caps_top": "aod_day.digits_top"}},
-      {"type": "month", "size": 26, "weight": 400, "tracking": 1, "color": "dim",
+      {"type": "month", "size": 24, "weight": 400, "tracking": 1, "color": "dim",
        "x": "aod_day.right+12", "y": {"caps_bottom": "aod_day.digits_bottom"}},
       {"type": "time", "size": 118, "weight": 300, "color": "dim", "pad": 2,
        "x": "screen.center", "align": "center", "y": {"digits_middle": 240},

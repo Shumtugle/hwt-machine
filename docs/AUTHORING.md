@@ -16,7 +16,9 @@ the PNGs before calling a face finished.
 Two complete descriptions ship with the repository and are the best reference:
 `faces/vibe/face.json` (cards, tiles, a mark running around the frame) and
 `faces/plumb/face.json` (bare type, a mark sliding down a thread). Both build into the
-exact pixels of the hand-written faces they replace.
+exact pixels of the hand-written faces they replace, except where the checks below
+found a fault in the original (Vibe's always-on words are a size smaller, so the
+descenders of one line clear the next).
 
 ## What the machine does for you
 
@@ -29,13 +31,16 @@ Write positions and styles; leave the format to the machine. It always:
   choices, each under its own function code (the editor folds choices that share one);
 - builds the running second mark from the only two sources the watch offers, the tens
   and the units of the second;
-- refuses tap targets that do nothing and anything placed off the screen.
+- refuses tap targets that do nothing and anything placed off the screen;
+- looks at the result: elements that collide, anything under the second mark's path,
+  text that cannot be seen against what is under it, ink in the rounded corners.
 
 ## The screen
 
 408 × 480 pixels, origin at the top left, y grows downwards. Corners are rounded, so
 keep text a good 16 px inside the edge, and further near the corners. The screen code is
-`HWHD13`; it is the default and the only one supported.
+`HWHD13`; it is the default and the only one supported. The corner rounding is
+estimated at a radius of 64 px; ink beyond it gets a warning.
 
 ## Top level
 
@@ -104,6 +109,9 @@ to put on a value:
 the screen (`center` is 204, `middle` 240), `parent.*` the tap zone around the element.
 Elements may refer forwards; a circle of references is an error.
 
+Any element may carry `"quiet": true`: it is meant to recede, so low contrast is not
+reported as a warning (it is still an error when it cannot be seen at all).
+
 Edges every element offers: `left`, `right`, `center`, `top`, `bottom`, `middle`,
 `width`, `height`. Text adds `digits_top`, `digits_bottom`, `digits_middle`,
 `caps_top`, `caps_bottom`, `caps_middle`. The box of a number is its widest value with
@@ -129,7 +137,7 @@ Hours and minutes, 24-hour, optionally seconds.
 | `colon` | none | `{"width": 26, "radius": 5.5, "color": "accent", "spread": 0.22}`: two dots on the middle of the digits |
 | `space` | 20 % of size | gap between hours and minutes when there is no colon |
 | `line_gap` | 20 | stacked: pixels between the two lines of ink |
-| `seconds` | none | `{"size": 38, "weight": 500, "color": "...", "gap": 10, "pad": 1}` (or `"scale": 0.32` instead of size): after the minutes, bottoms aligned |
+| `seconds` | none | `{"size": 38, "weight": 500, "color": "...", "gap": 10, "pad": 1, "quiet": false}` (or `"scale": 0.32` instead of size): after the minutes, bottoms aligned |
 | `max_width` | none | shrink the size until the whole time fits this width |
 | `like` | | id of another time; takes its geometry and changes only what is given (see always-on) |
 
@@ -142,6 +150,9 @@ The day of the month, right-aligned in two digit cells so it never moves sideway
 the language's suffix after it. `x` with `align: left` is the left edge of the two cells.
 `right` includes the suffix, so words placed at `"day.right+12"` follow it in every
 language.
+A day before the tenth leaves the left cell empty: a date line centred on the screen
+looks slightly off-centre on those days. The watch cannot centre a number together
+with a word, so left-align the date to a margin, or accept it.
 
 ### `weekday`, `month`
 
@@ -257,13 +268,27 @@ Each choice draws exactly what the single-language face draws.
 
 ## Problems and how they are reported
 
-Every problem is one line: where, what, and what to do.
+Every problem is one line: where, what, and what to do. Besides mistakes in the
+description itself, the machine looks at what it drew, in every language:
+
+| check | level |
+|---|---|
+| two elements share more than a few pixels of ink (every value, every word counted) | error |
+| an element sits on the path of the second mark | error |
+| contrast below 1.5:1 against the background under the element | error |
+| contrast below 3:1 (not for `quiet` elements, nor for the colon) | warning |
+| ink in the rounded corners | warning |
+| ink of a tap zone's element outside the zone | warning |
+
+A problem that occurs in only some languages names them: `elements[3] (fi): ...`.
 
 ```
 error: elements[3].x: no element with id "dya" (did you mean "day"?)
 error: elements[1].colour: "time" has no field "colour" (did you mean "color"?); it takes ...
 error: elements[4]: "weekday" spans [380, 58, 490, 75] and runs 82 px past the right edge of the 408x480 screen
 error: elements[5].open: "battery" does nothing on this watch; open "settings" instead
+error: aod.elements[2]: "month" at aod.elements[2] overlaps "weekday" at aod.elements[1] by 34 px around [123, 101, 200, 103]; move one of them
+warning: elements[4]: "time" (seconds) has contrast 2.7:1 against the background under it, hard to read outdoors; ...
 warning: elements[2].source: "calories" is seen in other faces but not yet confirmed on a watch
 ```
 

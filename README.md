@@ -78,7 +78,9 @@ A face can also be written as data instead of code: a JSON description of the
 background, the elements, their sources, styles and positions. The machine draws,
 packs and checks it, and every problem comes back as one line saying where it is and
 what to change, so a person or a language model can correct the description without
-reading any code.
+reading any code. Before packing, the machine looks at what it drew: colliding
+elements, anything under the second mark's path, text lost against its background,
+ink in the rounded corners.
 
 ```sh
 python3 tools/build.py faces/plumb/face.json --check
@@ -87,7 +89,9 @@ python3 tools/build.py faces/plumb/face.json --langs ru,en,fi
 
 Vibe and Plumb are described this way in `faces/vibe/face.json` and
 `faces/plumb/face.json`, and build into exactly the pixels of their hand-written
-scripts. [docs/AUTHORING.md](docs/AUTHORING.md) is the full vocabulary.
+scripts, but for one fault the checks found in Vibe: on its always-on screen the
+Cyrillic descenders of the weekday touched the month, so those words are now a size
+smaller. [docs/AUTHORING.md](docs/AUTHORING.md) is the full vocabulary.
 
 ## What the machine does
 

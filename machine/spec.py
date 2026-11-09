@@ -23,9 +23,9 @@ import math
 import os
 import re
 
-from PIL import Image, ImageDraw, ImageFilter
+from PIL import Image, ImageChops, ImageDraw, ImageFilter
 
-from . import codes, container, draw, effects, layout, simulate
+from . import check, codes, container, draw, effects, layout, simulate
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FONT_DIR = os.path.join(ROOT, 'fonts')
@@ -70,7 +70,7 @@ WORD_FORMS = {
 }
 
 STYLE_FIELDS = {'style', 'font', 'size', 'weight', 'color', 'tracking', 'features'}
-PLACE_FIELDS = {'id', 'x', 'align', 'y'}
+PLACE_FIELDS = {'id', 'x', 'align', 'y', 'quiet'}
 FIELDS = {
     'time': STYLE_FIELDS | PLACE_FIELDS | {'pad', 'layout', 'line_gap', 'colon', 'space', 'seconds',
                                            'like', 'max_width'},
@@ -193,6 +193,7 @@ class Placed:
         self.children = []
         self.geometry = None
         self.mark = None
+        self.quiet = False
 
 
 # ---------------------------------------------------------------- expressions
@@ -422,6 +423,7 @@ class Resolver:
         self.active.append(key)
         el, path, parent = self.entries[key]
         placed = getattr(self, 'place_' + el['type'])(el, path, parent)
+        placed.quiet = bool(el.get('quiet'))
         self.active.pop()
         self.done[key] = placed
         return placed
@@ -607,14 +609,16 @@ class Resolver:
             def paint(img, cx=cx, ctop=ctop, cbot=cbot, r=r, ccol=ccol, spread=spread):
                 draw.colon(img, cx, ctop, cbot, r, ccol, spread)
             off = (cbot - ctop) * spread
-            pieces.insert(2, Piece('paint', fn=paint, key=('colon', cx, ctop, cbot, r, ccol, spread),
+            pieces.insert(2, Piece('paint', fn=paint, key=('colon', cx, ctop, cbot, r, ccol, spread), role='colon',
                                    bbox=(int(cx - r), int((ctop + cbot) / 2.0 - off - r),
                                          int(math.ceil(cx + r)), int(math.ceil((ctop + cbot) / 2.0 + off + r)))))
         if secs and not like:
             sx = cols[3] + cell + sgap
             sy = last_y + b - sst.digit_ink[1]
-            pieces += [Piece('list', ims=sdigits[:6], x=sx, y=sy, source=codes.SECOND_TENS),
-                       Piece('list', ims=sdigits, x=sx + scell, y=sy, source=codes.SECOND_UNITS)]
+            quiet = bool(secs.get('quiet'))
+            pieces += [Piece('list', ims=sdigits[:6], x=sx, y=sy, source=codes.SECOND_TENS, role='seconds', quiet=quiet),
+                       Piece('list', ims=sdigits, x=sx + scell, y=sy, source=codes.SECOND_UNITS, role='seconds',
+                             quiet=quiet)]
         box = (tx, ys[0] + t, tx + total, last_y + b)
         p = Placed('time', 'time', pieces, self.edges(box, st, ys[0]), box, path)
         p.edges.update(digits_top=ys[0] + t, digits_bottom=last_y + b, digits_middle=(ys[0] + t + last_y + b) / 2.0)
@@ -639,7 +643,7 @@ class Resolver:
             dr = left + md * cell
             pieces = [Piece('number', ims=digits, x=dr, y=y, align=codes.ALIGN_RIGHT, source=source,
                             minus=minus_im, width=md * cell),
-                      Piece('image', im=unit_im, x=dr + gap, y=y) if unit_im else None]
+                      Piece('image', im=unit_im, x=dr + gap, y=y, role='unit') if unit_im else None]
             box = (left, y + st.digit_ink[0], dr + (gap + uw if unit_im else 0), y + st.digit_ink[1])
         else:
             x = int(round(self.value(el['x'], path + '.x', parent)))
@@ -1000,10 +1004,44 @@ def build(spec, base_dir='.', langs=None):
                 if q is not None and q.kind in ('image', 'paint'):
                     _paint_static(bg, q)
 
-    # --- checks of geometry, on the default language
-    _check_geometry(b, first, problems)
+    # --- checks: bounds and cards, then what collides, hides or cannot be read
+    for l in b.langs:
+        _check_geometry(b, runs[l][1], problems)
     if aod_placed:
         _check_geometry(b, aod_placed, problems, aod=True)
+    problems[:] = list(dict.fromkeys(problems))
+    if problems:
+        raise SpecError(problems)
+    plain = Image.new('RGBA', (W, H), (0, 0, 0, 255))
+    for i, layer in enumerate(spec.get('background', [])):
+        paint_layer(b, plain, layer, 'background[%d]' % i)
+    for pl, _ in shared:
+        for q in pl.pieces if pl.kind == 'tap' else ():
+            _paint_static(plain, q)
+    mark_area = None
+    for pl, _ in shared:
+        if pl.kind == 'seconds_mark':
+            track, paint, grow = pl.mark
+            m = check.mask(track.draw_balls(range(60), paint.reach + grow, (255, 255, 255, 255)))
+            mark_area = m if mark_area is None else ImageChops.lighter(mark_area, m)
+    found = {}
+    for l in b.langs:
+        errs, warns = check.inspect(_inspectable(b, runs[l][1]), plain, mark_area, (W, H))
+        for kind, msgs in (('e', errs), ('w', warns)):
+            for msg in msgs:
+                found.setdefault((kind, msg), []).append(l)
+    aod_plain = Image.new('RGBA', (W, H), (0, 0, 0, 255))
+    for i, layer in enumerate(aod_spec.get('background', [])):
+        paint_layer(b, aod_plain, layer, 'aod.background[%d]' % i)
+    if aod_placed:
+        errs, warns = check.inspect(_inspectable(b, aod_placed), aod_plain, None, (W, H))
+        for kind, msgs in (('e', errs), ('w', warns)):
+            for msg in msgs:
+                found.setdefault((kind, msg), []).append(None)
+    for (kind, msg), ls in found.items():
+        if None not in ls and len(ls) < len(b.langs):
+            msg = msg.replace(':', ' (%s):' % ', '.join(ls), 1)
+        (problems if kind == 'e' else b.warnings).append(msg)
     if problems:
         raise SpecError(problems)
 
@@ -1069,6 +1107,20 @@ def build(spec, base_dir='.', langs=None):
     title = spec['name']
     lay = layout.layout(title, background, zones, date_items, time_items, slots, choices)
     return Result(face, lay, b.warnings, title, spec.get('author', re.sub(r'\W+', '-', title.lower()).strip('-') or 'face'))
+
+
+def _inspectable(b, placed):
+    items = []
+    for p in placed:
+        if p.kind == 'seconds_mark':
+            continue
+        if p.kind == 'tap':
+            for c in p.children:
+                items.append({'path': c.path, 'kind': c.kind, 'pieces': c.pieces, 'tap_box': p.box,
+                              'quiet': c.quiet})
+        else:
+            items.append({'path': p.path, 'kind': p.kind, 'pieces': p.pieces, 'quiet': p.quiet})
+    return items
 
 
 def _check_geometry(b, placed, problems, aod=False):

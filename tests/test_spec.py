@@ -1,5 +1,4 @@
 """Faces built from descriptions. Run: python3 -m unittest discover tests"""
-import copy
 import importlib.util
 import os
 import sys
@@ -35,16 +34,18 @@ def handmade(name, langs, out):
 class SameAsHandmade(unittest.TestCase):
     """The descriptions draw exactly what the hand-written scripts draw."""
 
-    def check(self, name, lang):
+    def check(self, name, lang, screens=(False, True)):
         with tempfile.TemporaryDirectory() as out:
             new, old = described(name, [lang], out), handmade(name, [lang], out)
-        for aod in (False, True):
+        for aod in screens:
             self.assertEqual(simulate.render(new, aod=aod).tobytes(), simulate.render(old, aod=aod).tobytes(),
                              '%s %s aod=%s' % (name, lang, aod))
         self.assertEqual(simulate.render.skipped, [])
 
     def test_vibe(self):
-        self.check('vibe', 'en')
+        # the always-on words are a size smaller than the script's: there the Cyrillic
+        # descenders of the weekday touched the month below
+        self.check('vibe', 'ru', screens=(False,))
 
     def test_plumb_with_day_suffix(self):
         self.check('plumb', 'fi')
@@ -122,6 +123,33 @@ class Problems(unittest.TestCase):
         def change(d):
             d['background'] += [{'type': 'ticks'}, {'type': 'card', 'box': [2, 2, 100, 100]}]
         self.assertIn('ring of ticks', self.problems(change))
+
+    def test_collision(self):
+        msg = self.problems(lambda d: d['elements'][4]['y'].update(caps_top=40))
+        self.assertIn('overlaps', msg)
+        self.assertIn('elements[4]', msg)
+
+    def test_on_the_path_of_the_mark(self):
+        self.assertIn('path of the second mark', self.problems(lambda d: d['elements'][4].update(x=290, y={'caps_top': 200})))
+
+    def test_invisible(self):
+        self.assertIn('cannot be seen', self.problems(lambda d: d['elements'][4].update(color='#0A0A0A')))
+
+    def warnings(self, change):
+        desc = spec.load(os.path.join(ROOT, 'faces', 'plumb', 'face.json'))
+        change(desc)
+        return '\n'.join(spec.build(desc, os.path.join(ROOT, 'faces', 'plumb'), ['en']).warnings)
+
+    def test_faint_but_allowed_when_quiet(self):
+        self.assertIn('hard to read', self.warnings(lambda d: d['elements'][4].update(color='#3A3A3A')))
+        self.assertNotIn('hard to read', self.warnings(lambda d: d['elements'][4].update(color='#3A3A3A', quiet=True)))
+
+    def test_rounded_corner(self):
+        self.assertIn('rounded corner', self.warnings(lambda d: d['elements'].append(
+            {'type': 'symbol', 'name': 'favorite', 'size': 20, 'color': '#FFFFFF', 'x': 2, 'y': 2})))
+
+    def test_outside_its_tap_zone(self):
+        self.assertIn('outside its tap zone', self.warnings(lambda d: d['elements'][5].update(box=[32, 414, 70, 458])))
 
     def test_seconds_on_always_on(self):
         msg = self.problems(lambda d: d['aod']['elements'][0].update(seconds={'size': 20}))
