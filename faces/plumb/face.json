@@ -1,0 +1,59 @@
+{
+  "name": "Plumb",
+  "notes": "Black; the hour set above the minute like two lines of type; a red weight slides down a cream thread once a minute; the date at the top and the weather at the foot hang from one left margin.",
+  "font": "Oswald",
+  "colors": {
+    "cream": "#ECE2CE",
+    "cream_dim": "#968E80",
+    "thread": "#ECE2CE46",
+    "notch": "#ECE2CE6E",
+    "red": "#E22834",
+    "red_glow": "#E228345A",
+    "dim": "#787064"
+  },
+  "languages": {
+    "default": ["ru", "en", "fi"],
+    "zone": [32, 10, 270, 96],
+    "frame": {"color": "red", "radius": 10}
+  },
+  "background": [
+    {"type": "shapes", "ss": 4, "items": [
+      {"line": [[304, 94], [304, 392]], "width": 1.4, "color": "thread"},
+      {"line": [[297, 112.0], [311, 112.0]], "width": 1.2, "color": "notch"},
+      {"line": [[300, 149.15254237288133], [308, 149.15254237288133]], "width": 1.2, "color": "notch"},
+      {"line": [[300, 200.5762711864407], [308, 200.5762711864407]], "width": 1.2, "color": "notch"},
+      {"line": [[297, 252.0], [311, 252.0]], "width": 1.2, "color": "notch"},
+      {"line": [[300, 303.42372881355936], [308, 303.42372881355936]], "width": 1.2, "color": "notch"},
+      {"line": [[300, 354.8474576271186], [308, 354.8474576271186]], "width": 1.2, "color": "notch"},
+      {"line": [[297, 392.0], [311, 392.0]], "width": 1.2, "color": "notch"},
+      {"ellipse": [301, 91, 307, 97], "color": "thread"}
+    ]}
+  ],
+  "elements": [
+    {"type": "seconds_mark", "path": {"line": {"from": [304, 112], "to": [304, 392], "decade_gap": 26}},
+     "layers": [{"radius": 7.5, "color": "red_glow", "blur": 2.5}, {"radius": 5.2, "color": "red"}],
+     "reach": 10.5},
+
+    {"type": "time", "id": "time", "layout": "stacked", "size": 152, "weight": 500, "color": "cream", "pad": 2,
+     "line_gap": 26, "x": 38, "y": {"digits_top": 112}},
+
+    {"type": "day", "id": "day", "size": 30, "weight": 500, "tracking": 1, "color": "cream",
+     "x": 40, "y": {"caps_bottom": 46}},
+    {"type": "month", "size": 30, "weight": 500, "tracking": 1, "color": "cream",
+     "x": "day.right+8", "max_right": 284, "y": {"caps_bottom": 46}},
+    {"type": "weekday", "size": 21, "weight": 400, "tracking": 2, "color": "cream_dim",
+     "x": 40, "y": {"caps_top": 58}},
+
+    {"type": "tap", "box": [32, 414, "temp.right+12", 458], "open": "weather", "elements": [
+      {"type": "weather_icon", "id": "sky", "size": 26, "color": "cream_dim", "fill": 0,
+       "x": 40, "y": {"middle": 436}},
+      {"type": "number", "id": "temp", "source": "temperature", "size": 26, "weight": 400, "color": "cream_dim",
+       "unit": "°", "x": "sky.right+8", "y": {"digits_middle": 436}}
+    ]}
+  ],
+  "aod": {
+    "elements": [
+      {"type": "time", "like": "time", "weight": 300, "color": "dim"}
+    ]
+  }
+}

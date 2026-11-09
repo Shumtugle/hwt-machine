@@ -72,6 +72,23 @@ its crest, and battery, weather, pulse and steps on the dark water below it.
 [FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/lighthouse-fi.hwt) ·
 [all three](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/lighthouse.hwt)
 
+## Faces from a description
+
+A face can also be written as data instead of code: a JSON description of the
+background, the elements, their sources, styles and positions. The machine draws,
+packs and checks it, and every problem comes back as one line saying where it is and
+what to change, so a person or a language model can correct the description without
+reading any code.
+
+```sh
+python3 tools/build.py faces/plumb/face.json --check
+python3 tools/build.py faces/plumb/face.json --langs ru,en,fi
+```
+
+Vibe and Plumb are described this way in `faces/vibe/face.json` and
+`faces/plumb/face.json`, and build into exactly the pixels of their hand-written
+scripts. [docs/AUTHORING.md](docs/AUTHORING.md) is the full vocabulary.
+
 ## What the machine does
 
 - **Writes the container byte-exact.** Header, protobuf layout, image table and
@@ -98,6 +115,7 @@ python3 faces/vibe/build.py all          # every locale into dist/
 python3 faces/night-tram/build.py all
 python3 faces/vibe/build.py ru           # one locale
 python3 tools/inspect.py dist/vibe-ru.hwt --images out/ --render screen.png
+python3 tools/build.py faces/vibe/face.json  # the same face from its description
 python3 -m unittest discover tests
 cp dist/*.hwt docs/faces/                # refresh the faces on the live page
 ```
@@ -119,12 +137,15 @@ functions it borrows them from (*Date*, *Day of week*, *Sun*), not after the lan
 | `machine/draw.py` | text styles, symbols, glass cards, glow, the tick ring |
 | `machine/effects.py` | the running mark |
 | `machine/simulate.py` | draws a package the way the watch would |
+| `machine/spec.py` | builds a face from a description, and explains what is wrong with one |
+| `machine/locales/` | weekday and month names for the descriptions |
 | `faces/vibe/` | the Vibe face and its locales |
 | `faces/night-tram/` | the Night Tram face and its locales |
 | `faces/plumb/` | the Plumb face and its locales |
 | `faces/lighthouse/` | the Lighthouse face, its painting and its locales |
 | `tools/inspect.py` | look inside any face |
-| `docs/` | the live page, its renderer, and the [format notes](docs/FORMAT.md) |
+| `tools/build.py` | build a face from a description |
+| `docs/` | the live page, its renderer, the [format notes](docs/FORMAT.md) and the [authoring guide](docs/AUTHORING.md) |
 
 ## Format
 

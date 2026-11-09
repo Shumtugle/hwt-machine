@@ -66,7 +66,8 @@ def _all(node, f):
     return [v for k, v in node if k == f]
 
 
-def render(binary, aod=False, data=None, size=(408, 480)):
+def render(binary, aod=False, data=None, size=(408, 480), choice=None):
+    """choice: slot to draw in every choice zone instead of its default."""
     data = data or sample_data()
     tree, imgs = unpack(binary)
     screen = Image.new('RGBA', size, (0, 0, 0, 255))
@@ -172,7 +173,7 @@ def render(binary, aod=False, data=None, size=(408, 480)):
             elif f == 8 and isinstance(item, list):
                 if _get(item, 2) == 1:
                     # choice zone: draw the slot picked by default, relative to the zone
-                    chosen = slots.get(_get(item, 4, 0))
+                    chosen = slots.get(_get(item, 4, 0) if choice is None else choice)
                     r = _get(item, 5, [])
                     if chosen:
                         for g, sub in chosen:

@@ -1,0 +1,80 @@
+{
+  "name": "Vibe",
+  "notes": "Black and scarlet, glass cards, the date in words, time with seconds, four tiles, a cream mark running around the frame.",
+  "font": "Oswald",
+  "colors": {
+    "cream": "#ECE0C8",
+    "scarlet": "#FF283C",
+    "scarlet_soft": "#FF6870",
+    "seconds": "#C62232",
+    "glow": "#A8081C",
+    "tick": "#320A0F",
+    "tick_major": "#500F17",
+    "dim": "#968C78",
+    "dim_colon": "#961422"
+  },
+  "languages": {
+    "default": ["ru", "en", "fi"],
+    "zone": [118, 30, 372, 118],
+    "frame": {"color": "scarlet", "radius": 12}
+  },
+  "background": [
+    {"type": "glow", "color": "glow"},
+    {"type": "card", "box": [24, 24, 384, 124], "radius": 24},
+    {"type": "card", "box": [16, 134, 392, 298], "radius": 24},
+    {"type": "ticks", "color": "tick", "major_color": "tick_major"}
+  ],
+  "elements": [
+    {"type": "seconds_mark", "path": "ring", "layers": [{"radius": 4.2, "color": "cream"}]},
+
+    {"type": "day", "id": "day", "size": 74, "weight": 600, "color": "cream",
+     "x": 38, "y": {"digits_middle": 74}},
+    {"type": "weekday", "size": 32, "weight": 500, "tracking": 1, "color": "cream",
+     "x": "day.right+12", "max_right": 368, "y": {"caps_top": "day.digits_top"}},
+    {"type": "month", "size": 32, "weight": 500, "tracking": 1, "color": "scarlet_soft",
+     "x": "day.right+12", "max_right": 368, "y": {"caps_bottom": "day.digits_bottom"}},
+
+    {"type": "time", "id": "time", "size": 120, "weight": 600, "color": "cream", "pad": 2,
+     "x": "screen.center", "align": "center", "y": {"digits_middle": 216},
+     "colon": {"width": 26, "radius": 5.5, "color": "scarlet"},
+     "seconds": {"size": 38, "weight": 500, "color": "seconds", "pad": 1, "gap": 10}},
+
+    {"type": "tap", "box": [24, 308, 201, 378], "open": "settings", "card": {"radius": 18}, "elements": [
+      {"type": "battery_icon", "color": "cream", "low_color": "scarlet",
+       "x": "parent.left+16", "y": {"middle": "parent.middle"}},
+      {"type": "number", "source": "battery", "size": 32, "weight": 500, "color": "cream",
+       "unit": "%", "gap": 2, "x": "parent.right-16", "align": "right", "y": {"digits_middle": "parent.middle"}}
+    ]},
+    {"type": "tap", "box": [207, 308, 384, 378], "open": "weather", "card": {"radius": 18}, "elements": [
+      {"type": "weather_icon", "size": 38, "color": "cream",
+       "x": "parent.left+16", "y": {"middle": "parent.middle"}},
+      {"type": "number", "source": "temperature", "size": 32, "weight": 500, "color": "cream",
+       "unit": "°", "gap": 2, "x": "parent.right-14", "align": "right", "y": {"digits_middle": "parent.middle"}}
+    ]},
+    {"type": "tap", "box": [24, 386, 201, 452], "open": "heart_rate", "card": {"radius": 18}, "elements": [
+      {"type": "symbol", "name": "favorite", "size": 34, "color": "scarlet",
+       "x": "parent.left+16", "y": {"middle": "parent.middle"}},
+      {"type": "number", "source": "heart_rate", "size": 32, "weight": 500, "color": "cream",
+       "x": "parent.right-16", "align": "right", "y": {"digits_middle": "parent.middle"}}
+    ]},
+    {"type": "tap", "box": [207, 386, 384, 452], "open": "steps", "card": {"radius": 18}, "elements": [
+      {"type": "symbol", "name": "footprint", "size": 32, "color": "scarlet_soft",
+       "x": "parent.left+16", "y": {"middle": "parent.middle"}},
+      {"type": "number", "source": "steps", "size": 32, "weight": 500, "color": "cream",
+       "x": "parent.right-16", "align": "right", "y": {"digits_middle": "parent.middle"}}
+    ]}
+  ],
+  "aod": {
+    "elements": [
+      {"type": "day", "id": "aod_day", "size": 54, "weight": 400, "color": "dim",
+       "x": 40, "y": {"digits_middle": 100}},
+      {"type": "weekday", "size": 26, "weight": 400, "tracking": 1, "color": "dim",
+       "x": "aod_day.right+12", "y": {"caps_top": "aod_day.digits_top"}},
+      {"type": "month", "size": 26, "weight": 400, "tracking": 1, "color": "dim",
+       "x": "aod_day.right+12", "y": {"caps_bottom": "aod_day.digits_bottom"}},
+      {"type": "time", "size": 118, "weight": 300, "color": "dim", "pad": 2,
+       "x": "screen.center", "align": "center", "y": {"digits_middle": 240},
+       "colon": {"width": 26, "radius": 4, "color": "dim_colon"}}
+    ]
+  }
+}
