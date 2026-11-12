@@ -217,10 +217,15 @@ a glance and want the comfortable size; readings looked at on purpose do at size
 | 8 | altitude, m (`229`) | text, style 149 | **verified** |
 | 26 | emotional wellbeing; `--` while its measurement is off | text, style 149 | verified |
 | 143 / 144 / 147 | something that reads `0` | text | seen on a wrist, meaning unknown |
+| 65 / 66 / 67 / 68 / 69 | steps, one digit each: ten-thousands to units | image list | observed, in a face for this screen |
+| 12 / 13 | hours / minutes as numbers | number | observed, in a face for this screen |
+| 15 | a small count shown beside a standing figure; its own tap target 15 | number | observed, in a face for this screen |
+| 370 / 372 / 374 / 384 / 238 | running-fitness figures shown with labels such as training load and recovery time | number | observed, in a face for this screen |
+| 163 | battery as an angle: a hand swept from start to end angle (fields 4 and 5, e.g. −90 to 90) | hand | observed, in a face for this screen |
 | 140 / 141 / 145 / 148 | nothing drawn | text | tried on a wrist |
 | 150 | hour hand | hand | verified |
 | 153 | minute hand | hand | verified |
-| 154 | second hand | hand | observed |
+| 154 | second hand | hand | observed, also in a face for this screen |
 
 Weather icon order (observed): unknown, sunny, clear night, cloudy, partly cloudy, rain,
 thunderstorm, snow, wind, haze, fog.

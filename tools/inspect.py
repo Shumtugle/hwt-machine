@@ -49,7 +49,7 @@ def element(el, indent):
     body = next((v for k, v in el if k not in (1, 2) and isinstance(v, list)), [])
     refs = [v for k, v in body if k == 1 and isinstance(v, str)]
     rest = [(k, v) for k, v in body if not (k == 1 and isinstance(v, str))]
-    src = {codes.IMAGE_LIST: 3, codes.NUMBER: 5, codes.HAND: 6, codes.TEXT: 5, codes.TEXT_FORMATTED: 5}.get(kind)
+    src = {codes.IMAGE_LIST: 3, codes.NUMBER: 5, codes.HAND: 6, codes.TEXT: 5, codes.TEXT_FORMATTED: 6}.get(kind)
     label = ''
     if src is not None and get(body, src) is not None:
         label = '  <%s>' % SOURCE_NAMES.get(get(body, src), 'source %s' % get(body, src))
