@@ -70,17 +70,18 @@ TAP_TARGETS = {
     'recorder': (codes.OPEN_RECORDER, False),
 }
 
-# values the watch writes itself, in its own font: name -> (source, sample)
+# values the watch writes itself, in its own font: name -> (source, the widest value it
+# may write, which the checks measure)
 TEXT_SOURCES = {
-    'sleep': (codes.SLEEP, '7h23m'),
-    'distance': (codes.DISTANCE, '1.94'),
-    'calories': (codes.CALORIES, '535'),
-    'pressure': (codes.PRESSURE, '990'),
-    'altitude': (codes.ALTITUDE, '229'),
+    'sleep': (codes.SLEEP, '12h59m'),
+    'distance': (codes.DISTANCE, '99.99'),
+    'calories': (codes.CALORIES, '9999'),
+    'pressure': (codes.PRESSURE, '1099'),
+    'altitude': (codes.ALTITUDE, '-999'),
     'emotions': (codes.EMOTIONS, '--'),
-    'steps': (codes.STEPS, '7645'),
-    'heart_rate': (codes.HEART_RATE, '72'),
-    'battery': (codes.BATTERY_PERCENT, '80'),
+    'steps': (codes.STEPS, '99999'),
+    'heart_rate': (codes.HEART_RATE, '199'),
+    'battery': (codes.BATTERY_PERCENT, '100'),
 }
 TEXT_STYLE_VERIFIED = 149
 DEAD_TAP_TARGETS = {'battery': 'does nothing on this watch; open "settings" instead'}
