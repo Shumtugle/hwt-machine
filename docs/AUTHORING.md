@@ -52,8 +52,16 @@ circle around `(93, 93)`, `(315, 93)`, `(93, 387)` and `(315, 387)`: near the
 bottom corners a row of readings at y ≈ 435 may start no further left than x ≈ 27.
 Backgrounds (fills, glows, pictures) may run to the edge; they simply get cropped.
 
-The build warns about any ink outside this area, element by element, for background
+Along the straight edges the screen shows to within 3 px of the glass; only the
+corners are lost.
+
+The build warns about any ink in the corners, element by element, for background
 layers that draw (cards, ticks, shapes, dials) and for the path of a second mark.
+
+**Text must be read on a wrist.** Measured there: capitals or digits 21 px tall (Oswald
+size 25) are the smallest read without strain, 26 px (size 32) read in comfort, and the
+light weight (300) reads well from size 28. The build warns below 21 px, and below
+26 px for anything not marked `"quiet": true`. Date and time are never quiet.
 
 ## Top level
 

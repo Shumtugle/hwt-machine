@@ -172,10 +172,19 @@ Seen on a wrist (same on all three watch generations that share this screen):
 | rounded rectangle 11 px in from every edge, corner radius 82 | a 1.4 px line drawn on it shows whole, corners included — **verified** |
 | rounded rectangle 3 px in, corner radius 64 | ticks and a running mark drawn on it disappear in the corners |
 
-So ink that must be seen stays inside `[11, 11, 397, 469]` with corners of radius 82,
-whose quarter circles are centred on `(93, 93)`, `(315, 93)`, `(93, 387)` and
-`(315, 387)`. How much of the 11 px strip along the straight edges is visible has not
-been measured. Backgrounds may run to the edge and are cropped.
+| lines 3, 6 and 9 px in from every edge | all visible along the four straight edges; they fade where the glass turns into the corners — **verified** |
+
+So the straight edges show to within 3 px, and the corners are what the bezel takes.
+Ink that must be seen in a corner stays inside the quarter circles of radius 82 centred
+on `(93, 93)`, `(315, 93)`, `(93, 387)` and `(315, 387)`. Where the 3 px lines fade,
+the glass itself turns with a radius of roughly 77 px at the very edge (an estimate
+from a photograph). Backgrounds may run to the edge and are cropped.
+
+## Legibility
+
+Read on a wrist, Oswald at size 25 (capitals and digits 21 px, about 1.5 mm) is the
+smallest read without strain and size 32 (26 px, about 1.9 mm) reads in comfort; the
+light weight reads well at size 28 and above.
 
 ## Data sources
 
@@ -199,10 +208,14 @@ been measured. Backgrounds may run to the edge and are cropped.
 | 20 / 21 | temperature high / low | number | observed |
 | 12 / 13 / 14 | hours / minutes / seconds | number | observed |
 | 121 / 122 | sunrise / sunset | text | observed |
-| 142 | sleep last night, formatted by the watch (`7h30m`) | text | observed, in a face for another watch |
-| 146 | distance walked, km | text | observed, in a face for this screen |
-| 26 | stress | text | observed, in a face for another watch |
-| 7 / 8 | air pressure / altitude (as drawn next to their icons) | number | observed, in a face for another watch |
+| 142 | sleep last night, formatted by the watch (`7h23m`) | text, style 149 | **verified** |
+| 146 | distance walked today, km (`1.94`) | text, style 149 | **verified** |
+| 1 | calories (`535`) | text, style 149 | **verified** |
+| 7 | air pressure, hPa (`990`) | text, style 149 | **verified** |
+| 8 | altitude, m (`229`) | text, style 149 | **verified** |
+| 26 | stress; `--` without a reading | text, style 149 | verified to exist |
+| 143 / 144 / 147 | something that reads `0` | text | seen on a wrist, meaning unknown |
+| 140 / 141 / 145 / 148 | nothing drawn | text | tried on a wrist |
 | 150 | hour hand | hand | verified |
 | 153 | minute hand | hand | verified |
 | 154 | second hand | hand | observed |

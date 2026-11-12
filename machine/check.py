@@ -16,6 +16,10 @@ OVERLAP_PIXELS = 4       # fewer shared pixels than this are antialiasing, not a
 # drawn further out (inset 3, radius 64) loses its corners under the bezel.
 SAFE_INSET = 11
 SAFE_RADIUS = 82
+# Heights of capitals and digits read on a wrist, in pixels: the smallest read without
+# strain, and the size read in comfort (about 1.5 mm and 1.9 mm on this screen).
+READ_MIN = 21
+READ_COMFORT = 26
 CONTRAST_ERROR = 1.5     # below this a value disappears into its background
 CONTRAST_WARNING = 3.0   # below this it is hard to read on a wrist outdoors
 
@@ -98,8 +102,8 @@ def _solid(fp):
 
 def outside_safe(size):
     """Two masks of what lies outside the confirmed area: (corners, edge strips).
-    In the corners ink is hidden under the bezel; in the strips along the straight
-    edges it is merely unconfirmed."""
+    In the corners ink is hidden under the bezel; the strips along the straight edges
+    show to within 3 px of the glass."""
     w, h = size
     out = Image.new('L', size, 255)
     ImageDraw.Draw(out).rounded_rectangle([SAFE_INSET, SAFE_INSET, w - 1 - SAFE_INSET, h - 1 - SAFE_INSET],
@@ -127,9 +131,10 @@ def bezel_messages(where, what, m, size):
         out.append('%s: %d px of %s lie in a corner under the bezel around %s and will not be seen; keep ink inside '
                    'a rounded rectangle %d px in from the edges with corners of radius %d' % (
                        where, nc, what, list(bc), SAFE_INSET, SAFE_RADIUS))
-    if ne >= OVERLAP_PIXELS:
-        out.append('%s: %d px of %s lie closer than %d px to the edge around %s, outside the area confirmed '
-                   'visible' % (where, ne, what, SAFE_INSET, list(be)))
+    # the strips along the straight edges show to within 3 px of the glass
+    if ne >= OVERLAP_PIXELS and be and (be[0] < 3 or be[1] < 3 or be[2] > size[0] - 3 or be[3] > size[1] - 3):
+        out.append('%s: %d px of %s lie closer than 3 px to the edge around %s, where the glass may cut them' % (
+            where, ne, what, list(be)))
     return out
 
 
@@ -150,6 +155,16 @@ def inspect(items, plain_bg, mark_area, size, label=''):
         if not _count(m):
             continue
         box = list(m.getbbox())
+
+        # legibility on a wrist
+        ink_h = it.get('ink_h')
+        if ink_h and ink_h < READ_MIN:
+            warnings.append('%s%s: "%s" is %d px tall, smaller than the smallest size read on a wrist (%d px of '
+                            'capitals or digits); make it larger' % (it['path'], where, it['kind'], ink_h, READ_MIN))
+        elif ink_h and ink_h < READ_COMFORT and not it.get('quiet'):
+            warnings.append('%s%s: "%s" is %d px tall, readable but below the comfortable %d px; fine for '
+                            'secondary readings, or add "quiet": true' % (it['path'], where, it['kind'], ink_h,
+                                                                          READ_COMFORT))
 
         # the corners under the bezel and the strips along the edges
         warnings.extend(bezel_messages(it['path'] + where, '"%s"' % it['kind'], m, size))

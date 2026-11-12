@@ -78,8 +78,9 @@ class Instruments(unittest.TestCase):
         return simulate.render(self.binary, aod=aod, data=simulate.sample_data(datetime.datetime(2026, 11, 9, *t)))
 
     def test_only_the_second_hand_is_unconfirmed(self):
-        self.assertEqual(len(self.result.warnings), 1)
-        self.assertIn('second hand', self.result.warnings[0])
+        unconfirmed = [w for w in self.result.warnings if 'confirmed' in w]
+        self.assertEqual(len(unconfirmed), 1)
+        self.assertIn('second hand', unconfirmed[0])
 
     def test_hands_turn(self):
         quarter = self.at((3, 0, 30))           # hour hand to the right, minute hand up
@@ -111,6 +112,8 @@ class LitWindow(unittest.TestCase):
         dark = [p for p in im.crop((30, 270, 380, 370)).getdata() if sum(p[:3]) < 150]
         self.assertGreater(len(dark), 3000)                         # lit segments are dark
         self.assertTrue(any('31 pictures' in w for w in result.warnings))
+        # the date line set like a maker's name proved too small on a wrist
+        self.assertTrue(any('elements[4]' in w and 'smallest size read on a wrist' in w for w in result.warnings))
 
 
 class Languages(unittest.TestCase):

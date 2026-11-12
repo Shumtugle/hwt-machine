@@ -206,6 +206,7 @@ class Placed:
         self.geometry = None
         self.mark = None
         self.quiet = False
+        self.ink_h = None
 
 
 # ---------------------------------------------------------------- expressions
@@ -444,6 +445,12 @@ class Resolver:
         el, path, parent = self.entries[key]
         placed = getattr(self, 'place_' + el['type'])(el, path, parent)
         placed.quiet = bool(el.get('quiet'))
+        e = placed.edges
+        if el['type'] in ('time', 'day', 'number') and 'digits_top' in e:
+            placed.ink_h = int(round(e['digits_bottom'] - e['digits_top'])) if el['type'] != 'time' else \
+                int(round(placed.geometry and (e['digits_bottom'] - e['digits_top']) or 0))
+        elif el['type'] in ('weekday', 'month', 'text') and 'caps_top' in e:
+            placed.ink_h = int(round(e['caps_bottom'] - e['caps_top']))
         self.active.pop()
         self.done[key] = placed
         return placed
@@ -1272,9 +1279,9 @@ def _inspectable(b, placed):
         if p.kind == 'tap':
             for c in p.children:
                 items.append({'path': c.path, 'kind': c.kind, 'pieces': c.pieces, 'tap_box': p.box,
-                              'quiet': c.quiet})
+                              'quiet': c.quiet, 'ink_h': c.ink_h})
         else:
-            items.append({'path': p.path, 'kind': p.kind, 'pieces': p.pieces, 'quiet': p.quiet})
+            items.append({'path': p.path, 'kind': p.kind, 'pieces': p.pieces, 'quiet': p.quiet, 'ink_h': p.ink_h})
     return items
 
 
