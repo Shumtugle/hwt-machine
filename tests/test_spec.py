@@ -113,7 +113,17 @@ class LitWindow(unittest.TestCase):
         self.assertGreater(len(dark), 3000)                         # lit segments are dark
         self.assertTrue(any('31 pictures' in w for w in result.warnings))
         # the date line set like a maker's name proved too small on a wrist
-        self.assertTrue(any('elements[4]' in w and 'smallest size read on a wrist' in w for w in result.warnings))
+        self.assertTrue(any('elements[4]' in w and 'read at a glance' in w for w in result.warnings))
+
+
+class Etalon(unittest.TestCase):
+    """The reference face passes every check, in every language, without a warning."""
+
+    def test_clean(self):
+        desc = spec.load(os.path.join(ROOT, 'faces', 'etalon', 'face.json'))
+        for langs in (['ru'], ['en'], ['fi'], ['ru', 'en', 'fi']):
+            result = spec.build(desc, os.path.join(ROOT, 'faces', 'etalon'), langs)
+            self.assertEqual(result.warnings, [], langs)
 
 
 class Languages(unittest.TestCase):

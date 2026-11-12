@@ -16,10 +16,12 @@ OVERLAP_PIXELS = 4       # fewer shared pixels than this are antialiasing, not a
 # drawn further out (inset 3, radius 64) loses its corners under the bezel.
 SAFE_INSET = 11
 SAFE_RADIUS = 82
-# Heights of capitals and digits read on a wrist, in pixels: the smallest read without
-# strain, and the size read in comfort (about 1.5 mm and 1.9 mm on this screen).
-READ_MIN = 21
-READ_COMFORT = 26
+# Heights of capitals and digits read on a wrist, in pixels (a pixel is 0.07 mm here).
+# The time and the date are read at a glance and need the comfortable height; other
+# readings are looked at on purpose and may be smaller.
+READ_GLANCE = 26
+READ_LOOK = 18
+GLANCE_KINDS = ('time', 'day', 'weekday', 'month')
 CONTRAST_ERROR = 1.5     # below this a value disappears into its background
 CONTRAST_WARNING = 3.0   # below this it is hard to read on a wrist outdoors
 
@@ -166,13 +168,12 @@ def inspect(items, plain_bg, mark_area, size, label=''):
 
         # legibility on a wrist
         ink_h = it.get('ink_h')
-        if ink_h and ink_h < READ_MIN:
-            warnings.append('%s%s: "%s" is %d px tall, smaller than the smallest size read on a wrist (%d px of '
-                            'capitals or digits); make it larger' % (it['path'], where, it['kind'], ink_h, READ_MIN))
-        elif ink_h and ink_h < READ_COMFORT and not it.get('quiet'):
-            warnings.append('%s%s: "%s" is %d px tall, readable but below the comfortable %d px; fine for '
-                            'secondary readings, or add "quiet": true' % (it['path'], where, it['kind'], ink_h,
-                                                                          READ_COMFORT))
+        if ink_h and it['kind'] in GLANCE_KINDS and ink_h < READ_GLANCE:
+            warnings.append('%s%s: "%s" is %d px tall; the time and the date are read at a glance and need %d px '
+                            'of capitals or digits; make it larger' % (it['path'], where, it['kind'], ink_h, READ_GLANCE))
+        elif ink_h and ink_h < READ_LOOK:
+            warnings.append('%s%s: "%s" is %d px tall, smaller than the %d px read on a wrist; make it larger' % (
+                it['path'], where, it['kind'], ink_h, READ_LOOK))
 
         # the corners under the bezel and the strips along the edges
         warnings.extend(bezel_messages(it['path'] + where, '"%s"' % it['kind'], m, size))

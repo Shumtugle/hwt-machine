@@ -13,12 +13,14 @@ The build writes one `.hwt` per language, one carrying all languages as choices 
 watch's face editor, and a PNG of the normal and the always-on screen for each. Look at
 the PNGs before calling a face finished.
 
-Four complete descriptions ship with the repository and are the best reference:
+Five complete descriptions ship with the repository and are the best reference:
 `faces/vibe/face.json` (cards, tiles, a mark running around the frame),
 `faces/plumb/face.json` (bare type, a mark sliding down a thread) and
 `faces/duo/face.json` (hands on a small dial, crystal digits, a hanging date) and
 `faces/kide/face.json` (the same instruments with a lit amber crystal window, a date
-built outwards from the middle, readings at the corners). Both build into the
+built outwards from the middle, readings at the corners) and `faces/etalon/face.json`,
+the reference: built on what was measured on a wrist, it passes every check without a
+single warning. Both build into the
 exact pixels of the hand-written faces they replace, except where the checks below
 found a fault in the original (Vibe's always-on words are a size smaller, so the
 descenders of one line clear the next).
@@ -58,10 +60,10 @@ corners are lost.
 The build warns about any ink in the corners, element by element, for background
 layers that draw (cards, ticks, shapes, dials) and for the path of a second mark.
 
-**Text must be read on a wrist.** Measured there: capitals or digits 21 px tall (Oswald
-size 25) are the smallest read without strain, 26 px (size 32) read in comfort, and the
-light weight (300) reads well from size 28. The build warns below 21 px, and below
-26 px for anything not marked `"quiet": true`. Date and time are never quiet.
+**Text must be read on a wrist**, and not all of it the same way. Measured there: the
+time and the date are read at a glance and need capitals or digits at least 26 px tall
+(Oswald size 32); everything else is looked at on purpose and reads from 18 px (size
+22). The light weight (300) reads well from size 28. The build warns below each.
 
 ## Top level
 

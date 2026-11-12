@@ -184,7 +184,9 @@ from a photograph). Backgrounds may run to the edge and are cropped.
 
 Read on a wrist, Oswald at size 25 (capitals and digits 21 px, about 1.5 mm) is the
 smallest read without strain and size 32 (26 px, about 1.9 mm) reads in comfort; the
-light weight reads well at size 28 and above.
+light weight reads well at size 28 and above. The time and the date must be caught at
+a glance and want the comfortable size; readings looked at on purpose do at size 22
+(18 px), which is also the height of system text in style 149.
 
 ## Data sources
 

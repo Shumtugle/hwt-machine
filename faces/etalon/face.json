@@ -1,0 +1,415 @@
+{
+ "name": "Etalon",
+ "notes": "Built on measurements made on a wrist. The time and the full date are caught at a glance: capitals and digits of at least 26 px, the light weight, nothing in the corners. Below them, read on purpose: weather, charge, pulse and last night's sleep. A small dial, a copy of the screen, keeps the hands as ornament.",
+ "font": "Oswald",
+ "colors": {
+  "cream": "#F2E3C6",
+  "soft": "#A89C88",
+  "scarlet": "#FF4A4A",
+  "tick": "#6E665A",
+  "dim": "#8A8070",
+  "dim_tick": "#4A453E"
+ },
+ "languages": {
+  "default": [
+   "ru",
+   "en",
+   "fi"
+  ],
+  "frame": {
+   "color": "cream",
+   "radius": 10
+  }
+ },
+ "background": [
+  {
+   "type": "dial",
+   "box": [
+    26,
+    30,
+    158,
+    186
+   ],
+   "radius": 31,
+   "inset": 4,
+   "frame": {
+    "color": "cream",
+    "width": 2.5
+   },
+   "minute": {
+    "color": "tick",
+    "length": 5,
+    "width": 1.2
+   },
+   "hour": {
+    "color": "cream",
+    "length": 12,
+    "width": 3
+   }
+  }
+ ],
+ "elements": [
+  {
+   "type": "hands",
+   "centre": [
+    92,
+    108
+   ],
+   "hour": {
+    "length": 33,
+    "tail": 8,
+    "width": 7,
+    "color": "cream",
+    "inner": {
+     "color": "#000000",
+     "inset": 2,
+     "from": 0.32,
+     "to": 0.86
+    }
+   },
+   "minute": {
+    "length": 53,
+    "tail": 8,
+    "width": 5.5,
+    "color": "cream",
+    "inner": {
+     "color": "#000000",
+     "inset": 1.7,
+     "from": 0.24,
+     "to": 0.9
+    }
+   },
+   "pin": [
+    {
+     "radius": 6,
+     "color": "cream"
+    },
+    {
+     "radius": 4,
+     "color": "#000000"
+    },
+    {
+     "radius": 2.2,
+     "color": "cream"
+    }
+   ]
+  },
+  {
+   "type": "weekday",
+   "id": "wd",
+   "case": "lower",
+   "size": 36,
+   "weight": 300,
+   "color": "cream",
+   "x": 236,
+   "max_right": 392,
+   "y": {
+    "caps_bottom": 90
+   }
+  },
+  {
+   "type": "month",
+   "case": "lower",
+   "size": 44,
+   "weight": 300,
+   "color": "cream",
+   "x": "wd.left",
+   "max_right": 392,
+   "y": {
+    "caps_bottom": 150
+   }
+  },
+  {
+   "type": "day",
+   "size": 44,
+   "weight": 300,
+   "color": "cream",
+   "x": "wd.left-10",
+   "align": "right",
+   "y": {
+    "digits_bottom": 150
+   }
+  },
+  {
+   "type": "tap",
+   "box": [
+    24,
+    196,
+    384,
+    328
+   ],
+   "open": "alarms",
+   "elements": [
+    {
+     "type": "time",
+     "id": "time",
+     "size": 140,
+     "weight": 300,
+     "color": "cream",
+     "pad": 2,
+     "x": "screen.center",
+     "align": "center",
+     "y": {
+      "digits_middle": 262
+     },
+     "colon": {
+      "width": 26,
+      "radius": 5,
+      "color": "soft"
+     }
+    }
+   ]
+  },
+  {
+   "type": "tap",
+   "box": [
+    "v_sky.left-18",
+    340,
+    196,
+    384
+   ],
+   "open": "weather",
+   "elements": [
+    {
+     "type": "number",
+     "size": 30,
+     "weight": 400,
+     "color": "cream",
+     "align": "right",
+     "source": "temperature",
+     "unit": "°",
+     "gap": 1,
+     "x": "sky.left-8",
+     "y": {
+      "digits_middle": 362
+     },
+     "id": "v_sky"
+    },
+    {
+     "type": "weather_icon",
+     "fill": 0,
+     "size": 32,
+     "color": "soft",
+     "x": 190,
+     "y": {
+      "middle": 362
+     },
+     "id": "sky",
+     "align": "right"
+    }
+   ]
+  },
+  {
+   "type": "tap",
+   "box": [
+    "v_cell.left-6",
+    340,
+    384,
+    384
+   ],
+   "open": "settings",
+   "elements": [
+    {
+     "type": "number",
+     "size": 30,
+     "weight": 400,
+     "color": "cream",
+     "align": "right",
+     "source": "battery",
+     "unit": "%",
+     "gap": 2,
+     "x": "cell.left-8",
+     "y": {
+      "digits_middle": 362
+     },
+     "id": "v_cell"
+    },
+    {
+     "type": "battery_icon",
+     "color": "soft",
+     "low_color": "scarlet",
+     "width": 34,
+     "height": 18,
+     "x": 378,
+     "y": {
+      "middle": 362
+     },
+     "id": "cell",
+     "align": "right"
+    }
+   ]
+  },
+  {
+   "type": "tap",
+   "box": [
+    "v_heart.left-6",
+    398,
+    196,
+    442
+   ],
+   "open": "heart_rate",
+   "elements": [
+    {
+     "type": "number",
+     "size": 30,
+     "weight": 400,
+     "color": "cream",
+     "align": "right",
+     "source": "heart_rate",
+     "x": "heart.left-8",
+     "y": {
+      "digits_middle": 420
+     },
+     "id": "v_heart"
+    },
+    {
+     "type": "symbol",
+     "fill": 0,
+     "size": 30,
+     "color": "scarlet",
+     "name": "favorite",
+     "x": 190,
+     "y": {
+      "middle": 420
+     },
+     "id": "heart",
+     "align": "right"
+    }
+   ]
+  },
+  {
+   "type": "tap",
+   "box": [
+    "v_moon.left-6",
+    398,
+    384,
+    442
+   ],
+   "open": "sleep",
+   "elements": [
+    {
+     "type": "system_text",
+     "source": "sleep",
+     "x": "moon.left-8",
+     "align": "right",
+     "width": 130,
+     "height": 31,
+     "color": "cream",
+     "y": 405,
+     "id": "v_moon"
+    },
+    {
+     "type": "symbol",
+     "fill": 0,
+     "size": 30,
+     "color": "soft",
+     "name": "clear_night",
+     "x": 378,
+     "y": {
+      "middle": 420
+     },
+     "id": "moon",
+     "align": "right"
+    }
+   ]
+  }
+ ],
+ "aod": {
+  "background": [
+   {
+    "type": "dial",
+    "box": [
+     26,
+     30,
+     158,
+     186
+    ],
+    "radius": 31,
+    "inset": 4,
+    "frame": {
+     "color": "dim_tick",
+     "width": 2
+    },
+    "hour": {
+     "color": "dim_tick",
+     "length": 11,
+     "width": 2.4
+    }
+   }
+  ],
+  "elements": [
+   {
+    "type": "hands",
+    "centre": [
+     92,
+     108
+    ],
+    "hour": {
+     "length": 33,
+     "tail": 8,
+     "width": 6,
+     "color": "dim"
+    },
+    "minute": {
+     "length": 53,
+     "tail": 8,
+     "width": 4.5,
+     "color": "dim"
+    },
+    "pin": [
+     {
+      "radius": 4,
+      "color": "dim"
+     }
+    ]
+   },
+   {
+    "type": "weekday",
+    "id": "awd",
+    "case": "lower",
+    "size": 36,
+    "weight": 300,
+    "color": "dim",
+    "x": 236,
+    "max_right": 392,
+    "y": {
+     "caps_bottom": 90
+    }
+   },
+   {
+    "type": "month",
+    "case": "lower",
+    "size": 44,
+    "weight": 300,
+    "color": "dim",
+    "x": "awd.left",
+    "max_right": 392,
+    "y": {
+     "caps_bottom": 150
+    }
+   },
+   {
+    "type": "day",
+    "size": 44,
+    "weight": 300,
+    "color": "dim",
+    "x": "awd.left-10",
+    "align": "right",
+    "y": {
+     "digits_bottom": 150
+    }
+   },
+   {
+    "type": "time",
+    "like": "time",
+    "weight": 200,
+    "color": "dim",
+    "colon": {
+     "width": 26,
+     "radius": 4,
+     "color": "dim"
+    }
+   }
+  ]
+ }
+}
