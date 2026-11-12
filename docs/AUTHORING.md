@@ -38,10 +38,20 @@ Write positions and styles; leave the format to the machine. It always:
 
 ## The screen
 
-408 × 480 pixels, origin at the top left, y grows downwards. Corners are rounded, so
-keep text a good 16 px inside the edge, and further near the corners. The screen code is
-`HWHD13`; it is the default and the only one supported. The corner rounding is
-estimated at a radius of 64 px; ink beyond it gets a warning.
+408 × 480 pixels, origin at the top left, y grows downwards. The screen code is
+`HWHD13`; it is the default and the only one supported.
+
+**The visible area is smaller than the picture.** The glass is rounded and the bezel
+covers the corners. Everything that must be seen goes inside a rounded rectangle
+**11 px in from every edge with corners of radius 82**, that is `[11, 11, 397, 469]`.
+A line drawn exactly there shows whole on the watch; the same line drawn at 3 px with
+corners of radius 64 loses its corners. In the corners the boundary is a quarter
+circle around `(93, 93)`, `(315, 93)`, `(93, 387)` and `(315, 387)`: near the
+bottom corners a row of readings at y ≈ 435 may start no further left than x ≈ 27.
+Backgrounds (fills, glows, pictures) may run to the edge; they simply get cropped.
+
+The build warns about any ink outside this area, element by element, for background
+layers that draw (cards, ticks, shapes, dials) and for the path of a second mark.
 
 ## Top level
 

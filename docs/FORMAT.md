@@ -158,6 +158,21 @@ names, not the variant's. Codes seen so far:
 A language-switching face built with codes 1, 2 and 9 switches correctly between its
 three languages; the entries just read *Date*, *Day of week* and *Sun*.
 
+## Visible area
+
+The picture is 408 × 480, but the glass is rounded and the bezel covers the corners.
+Seen on a wrist (same on all three watch generations that share this screen):
+
+| boundary | result |
+|---|---|
+| rounded rectangle 11 px in from every edge, corner radius 82 | a 1.4 px line drawn on it shows whole, corners included — **verified** |
+| rounded rectangle 3 px in, corner radius 64 | ticks and a running mark drawn on it disappear in the corners |
+
+So ink that must be seen stays inside `[11, 11, 397, 469]` with corners of radius 82,
+whose quarter circles are centred on `(93, 93)`, `(315, 93)`, `(93, 387)` and
+`(315, 387)`. How much of the 11 px strip along the straight edges is visible has not
+been measured. Backgrounds may run to the edge and are cropped.
+
 ## Data sources
 
 | code | value | used with | status |

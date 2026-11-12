@@ -1121,6 +1121,18 @@ def build(spec, base_dir='.', langs=None):
             track, paint, grow = pl.mark
             m = check.mask(track.draw_balls(range(60), paint.reach + grow, (255, 255, 255, 255)))
             mark_area = m if mark_area is None else ImageChops.lighter(mark_area, m)
+    # the background's own drawings and the second mark's path, against the bezel
+    for i, layer in enumerate(spec.get('background', [])):
+        if layer.get('type') in ('card', 'ticks', 'shapes', 'dial'):
+            alone = Image.new('RGBA', (W, H), (0, 0, 0, 0))
+            paint_layer(b, alone, layer, 'background[%d]' % i)
+            b.warnings.extend(check.bezel_messages('background[%d]' % i, 'the "%s" layer' % layer['type'],
+                                                   check.mask(alone), (W, H)))
+    for pl, _ in shared:
+        if pl.kind == 'seconds_mark':
+            track, paint, grow = pl.mark
+            b.warnings.extend(check.bezel_messages(pl.path, 'the second mark\'s path',
+                                                   check.mask(paint(range(60))), (W, H)))
     found = {}
     for l in b.langs:
         errs, warns = check.inspect(_inspectable(b, runs[l][1]), plain, mark_area, (W, H))

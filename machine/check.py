@@ -11,7 +11,11 @@ from . import codes, simulate
 
 INK = 40                 # alpha above which a pixel counts as drawn
 OVERLAP_PIXELS = 4       # fewer shared pixels than this are antialiasing, not a collision
-CORNER_RADIUS = 64       # estimated rounding of the visible screen; the tick ring follows it
+# The area confirmed visible on a wrist: a rounded rectangle 11 px in from every edge with
+# corners of radius 82. A frame drawn on exactly this line shows whole on the watch; one
+# drawn further out (inset 3, radius 64) loses its corners under the bezel.
+SAFE_INSET = 11
+SAFE_RADIUS = 82
 CONTRAST_ERROR = 1.5     # below this a value disappears into its background
 CONTRAST_WARNING = 3.0   # below this it is hard to read on a wrist outdoors
 
@@ -92,11 +96,41 @@ def _solid(fp):
     return fp.getchannel('A').point(lambda a: 255 if a > 200 else 0)
 
 
-def _rounded_outside(size):
+def outside_safe(size):
+    """Two masks of what lies outside the confirmed area: (corners, edge strips).
+    In the corners ink is hidden under the bezel; in the strips along the straight
+    edges it is merely unconfirmed."""
     w, h = size
-    m = Image.new('L', size, 255)
-    ImageDraw.Draw(m).rounded_rectangle([0, 0, w - 1, h - 1], radius=CORNER_RADIUS, fill=0)
-    return m
+    out = Image.new('L', size, 255)
+    ImageDraw.Draw(out).rounded_rectangle([SAFE_INSET, SAFE_INSET, w - 1 - SAFE_INSET, h - 1 - SAFE_INSET],
+                                          radius=SAFE_RADIUS, fill=0)
+    k = SAFE_INSET + SAFE_RADIUS
+    corners = Image.new('L', size, 0)
+    d = ImageDraw.Draw(corners)
+    for x0, y0 in ((0, 0), (w - k, 0), (0, h - k), (w - k, h - k)):
+        d.rectangle([x0, y0, x0 + k - 1, y0 + k - 1], fill=255)
+    corners = ImageChops.multiply(out, corners)
+    return corners, ImageChops.subtract(out, corners)
+
+
+def hidden(m, size):
+    """(pixels in the corners, their box, pixels in the edge strips, their box)."""
+    corners, strips = outside_safe(size)
+    c, e = ImageChops.multiply(m, corners), ImageChops.multiply(m, strips)
+    return _count(c), c.getbbox(), _count(e), e.getbbox()
+
+
+def bezel_messages(where, what, m, size):
+    out = []
+    nc, bc, ne, be = hidden(m, size)
+    if nc >= OVERLAP_PIXELS:
+        out.append('%s: %d px of %s lie in a corner under the bezel around %s and will not be seen; keep ink inside '
+                   'a rounded rectangle %d px in from the edges with corners of radius %d' % (
+                       where, nc, what, list(bc), SAFE_INSET, SAFE_RADIUS))
+    if ne >= OVERLAP_PIXELS:
+        out.append('%s: %d px of %s lie closer than %d px to the edge around %s, outside the area confirmed '
+                   'visible' % (where, ne, what, SAFE_INSET, list(be)))
+    return out
 
 
 def _describe(item):
@@ -109,7 +143,6 @@ def inspect(items, plain_bg, mark_area, size, label=''):
     Returns (errors, warnings)."""
     errors, warnings = [], []
     where = (' (%s)' % label) if label else ''
-    outside = _rounded_outside(size)
     done = []
     for it in items:
         fp = footprint(it['pieces'], size)
@@ -118,11 +151,8 @@ def inspect(items, plain_bg, mark_area, size, label=''):
             continue
         box = list(m.getbbox())
 
-        # the rounded corners of the screen
-        cut = ImageChops.multiply(m, outside)
-        if _count(cut) >= OVERLAP_PIXELS:
-            warnings.append('%s%s: %d px of "%s" fall in a rounded corner of the screen around %s and may be cut '
-                            'off; move it inwards' % (it['path'], where, _count(cut), it['kind'], list(cut.getbbox())))
+        # the corners under the bezel and the strips along the edges
+        warnings.extend(bezel_messages(it['path'] + where, '"%s"' % it['kind'], m, size))
 
         # the path of the second mark
         if mark_area is not None:

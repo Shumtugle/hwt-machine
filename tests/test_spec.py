@@ -178,7 +178,7 @@ class Problems(unittest.TestCase):
         self.assertNotIn('hard to read', self.warnings(lambda d: d['elements'][4].update(color='#3A3A3A', quiet=True)))
 
     def test_rounded_corner(self):
-        self.assertIn('rounded corner', self.warnings(lambda d: d['elements'].append(
+        self.assertIn('under the bezel', self.warnings(lambda d: d['elements'].append(
             {'type': 'symbol', 'name': 'favorite', 'size': 20, 'color': '#FFFFFF', 'x': 2, 'y': 2})))
 
     def test_outside_its_tap_zone(self):
