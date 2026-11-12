@@ -63,6 +63,39 @@ class SameAsHandmade(unittest.TestCase):
             self.assertTrue(r > 180 and g < 90, 'second %d' % second)
 
 
+class Instruments(unittest.TestCase):
+    """Hands, a dial and crystal digits."""
+
+    @classmethod
+    def setUpClass(cls):
+        desc = spec.load(os.path.join(ROOT, 'faces', 'duo', 'face.json'))
+        cls.result = spec.build(desc, os.path.join(ROOT, 'faces', 'duo'), ['en'])
+        with tempfile.TemporaryDirectory() as out:
+            cls.binary, _, _ = spec.package(cls.result, os.path.join(out, 'duo.hwt'))
+
+    def at(self, t, aod=False):
+        import datetime
+        return simulate.render(self.binary, aod=aod, data=simulate.sample_data(datetime.datetime(2026, 11, 9, *t)))
+
+    def test_only_the_second_hand_is_unconfirmed(self):
+        self.assertEqual(len(self.result.warnings), 1)
+        self.assertIn('second hand', self.result.warnings[0])
+
+    def test_hands_turn(self):
+        quarter = self.at((3, 0, 30))           # hour hand to the right, minute hand up
+        # sampled between the pin and the slit, where the hands are solid
+        self.assertGreater(sum(quarter.getpixel((88 + 9, 111))[:3]), 500)
+        self.assertGreater(sum(quarter.getpixel((88, 111 - 9))[:3]), 500)
+        self.assertLess(sum(quarter.getpixel((88 - 30, 111))[:3]), 100)
+
+    def test_blank_leading_digit(self):
+        early, late = self.at((8, 5, 0)), self.at((18, 5, 0))
+        box = (24, 250, 92, 370)               # the first digit cell
+        bright = lambda im: max(max(p[:3]) for p in im.crop(box).getdata())
+        self.assertLess(bright(early), 80)     # unlit segments only
+        self.assertGreater(bright(late), 200)
+
+
 class Languages(unittest.TestCase):
     def test_every_choice_draws_its_single_face(self):
         with tempfile.TemporaryDirectory() as out:

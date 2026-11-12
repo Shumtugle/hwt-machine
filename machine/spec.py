@@ -33,7 +33,7 @@ LOCALE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'locales')
 
 SCREENS = {'HWHD13': (408, 480)}
 FORMAT_VERSION = '2.5.1'
-FONTS = {'Oswald': 'Oswald.ttf', 'Cormorant': 'Cormorant.ttf'}
+FONTS = {'Oswald': 'Oswald.ttf', 'Cormorant': 'Cormorant.ttf', 'Segments': None}   # Segments: drawn, digits only
 SYMBOLS = draw.Symbols(os.path.join(FONT_DIR, 'Symbols.ttf'), os.path.join(FONT_DIR, 'symbols.codepoints'))
 
 # name -> (data source, digits to reserve, verified on a watch)
@@ -69,11 +69,11 @@ WORD_FORMS = {
     'month': {'full': 'months', 'standalone': 'months_standalone', 'short': 'months_short'},
 }
 
-STYLE_FIELDS = {'style', 'font', 'size', 'weight', 'color', 'tracking', 'features'}
+STYLE_FIELDS = {'style', 'font', 'size', 'weight', 'color', 'tracking', 'features', 'segments'}
 PLACE_FIELDS = {'id', 'x', 'align', 'y', 'quiet'}
 FIELDS = {
     'time': STYLE_FIELDS | PLACE_FIELDS | {'pad', 'layout', 'line_gap', 'colon', 'space', 'seconds',
-                                           'like', 'max_width'},
+                                           'like', 'max_width', 'leading_zero'},
     'day': STYLE_FIELDS | PLACE_FIELDS | {'pad', 'suffix', 'gap', 'digits'},
     'weekday': STYLE_FIELDS | PLACE_FIELDS | {'form', 'case', 'max_right'},
     'month': STYLE_FIELDS | PLACE_FIELDS | {'form', 'case', 'max_right'},
@@ -83,13 +83,14 @@ FIELDS = {
     'weather_icon': PLACE_FIELDS | {'size', 'color', 'fill', 'weight', 'icons'},
     'battery_icon': PLACE_FIELDS | {'color', 'low_color', 'width', 'height'},
     'seconds_mark': {'id', 'path', 'layers', 'reach', 'cover_grow'},
+    'hands': {'id', 'centre', 'hour', 'minute', 'second', 'pin'},
     'tap': {'id', 'box', 'open', 'card', 'elements'},
 }
 REQUIRED = {
     'time': {'size', 'x', 'y'}, 'day': {'size', 'x', 'y'}, 'weekday': {'size', 'x', 'y'},
     'month': {'size', 'x', 'y'}, 'number': {'source', 'size', 'x', 'y'}, 'text': {'text', 'size', 'x', 'y'},
     'symbol': {'name', 'size', 'x', 'y'}, 'weather_icon': {'size', 'x', 'y'}, 'battery_icon': {'x', 'y'},
-    'seconds_mark': {'layers'}, 'tap': {'box', 'open', 'elements'},
+    'seconds_mark': {'layers'}, 'tap': {'box', 'open', 'elements'}, 'hands': {'centre', 'hour', 'minute'},
 }
 TIME_GROUP = {'time', 'seconds_mark'}
 LAYER_FIELDS = {
@@ -100,7 +101,10 @@ LAYER_FIELDS = {
     'ticks': {'color', 'major_color'},
     'shapes': {'ss', 'items'},
     'picture': {'file'},
+    'dial': {'box', 'radius', 'frame', 'minute', 'hour', 'inset', 'centre'},
 }
+DYNAMIC = ('list', 'number', 'hand', 'overlay')
+HAND_SOURCES = {'hour': codes.HAND_HOUR, 'minute': codes.HAND_MINUTE, 'second': codes.HAND_SECOND}
 TOP_FIELDS = {'name', 'author', 'screen', 'font', 'colors', 'styles', 'ring', 'background', 'elements',
               'aod', 'languages', 'locales', 'notes'}
 Y_ANCHORS = ('top', 'middle', 'bottom', 'digits_top', 'digits_middle', 'digits_bottom',
@@ -170,14 +174,21 @@ class Piece:
             return ('paint', self.key)
         if self.kind == 'list':
             return ('list', tuple(_digest(i) for i in self.ims), self.x, self.y, self.source)
+        if self.kind == 'overlay':
+            return ('overlay', _digest(self.im), self.x, self.y)
+        if self.kind == 'hand':
+            return ('hand', _digest(self.im), self.cx, self.cy, self.px, self.py, self.source)
         return ('number', tuple(_digest(i) for i in self.ims), self.x, self.y, self.align, self.source,
                 _digest(self.minus) if self.minus is not None else None)
 
     def box(self):
         if self.kind == 'paint':
             return self.bbox
-        if self.kind == 'image':
+        if self.kind in ('image', 'overlay'):
             return (self.x, self.y, self.x + self.im.width, self.y + self.im.height)
+        if self.kind == 'hand':
+            r = self.reach
+            return (int(self.cx - r), int(self.cy - r), int(math.ceil(self.cx + r)), int(math.ceil(self.cy + r)))
         w = max(i.width for i in self.ims)
         h = max(i.height for i in self.ims)
         if self.kind == 'list':
@@ -352,7 +363,14 @@ class Builder:
         raise SpecError(['%s: "%s" is not a colour; use "#RRGGBB", "#RRGGBBAA", [r, g, b, a] or a palette name%s' % (
             path, v, _near(v, known) if known else '')])
 
-    def style(self, font, size, weight, color, tracking=0, sample='', features=None):
+    def style(self, font, size, weight, color, tracking=0, sample='', features=None, segments=None):
+        if font == 'Segments':
+            sg = segments or {}
+            key = ('seg', size, color, sg.get('ghost'), sg.get('aspect', 0.5), sg.get('thickness', 0.13))
+            if key not in self._styles:
+                self._styles[key] = draw.Segments(size, color, sg.get('ghost'), sg.get('aspect', 0.5),
+                                                  sg.get('thickness', 0.13))
+            return self._styles[key]
         key = (font, size, weight, color, tracking, sample, tuple(features or ()))
         if key not in self._styles:
             self._styles[key] = draw.Style(os.path.join(FONT_DIR, FONTS[font]), size, weight, color, tracking,
@@ -477,7 +495,16 @@ class Resolver:
         if not isinstance(size, int) or not 6 <= size <= 400:
             raise SpecError(['%s.size: give a whole number of pixels between 6 and 400' % path])
         color = self.b.color(s.get('color', '#FFFFFF'), path + '.color')
-        return self.b.style(font, size, s.get('weight', 400), color, s.get('tracking', 0), sample, s.get('features'))
+        seg = None
+        if font == 'Segments':
+            seg = dict(s.get('segments') or {})
+            for k in seg:
+                if k not in ('ghost', 'aspect', 'thickness'):
+                    raise SpecError(['%s.segments.%s: unknown; segments take "ghost", "aspect", "thickness"' % (path, k)])
+            if seg.get('ghost') is not None:
+                seg['ghost'] = self.b.color(seg['ghost'], path + '.segments.ghost')
+        return self.b.style(font, size, s.get('weight', 400), color, s.get('tracking', 0), sample, s.get('features'),
+                            seg)
 
     def place_y(self, yv, path, parent, height, st=None):
         """Top of the picture so that the named line lands on the given value."""
@@ -555,8 +582,8 @@ class Resolver:
             if secs:
                 ss = dict(secs)
                 ssize = ss.get('size') or max(8, int(size * ss.get('scale', 0.32)))
-                sst = self.style(dict(el, size=ssize, weight=ss.get('weight', el.get('weight', 400)),
-                                      color=ss.get('color', el.get('color', '#FFFFFF'))), path + '.seconds')
+                over = dict((k, ss[k]) for k in ('font', 'segments', 'weight', 'color', 'tracking') if k in ss)
+                sst = self.style(dict(el, size=ssize, **over), path + '.seconds')
                 sdigits, scell = sst.digits(extra_pad=ss.get('pad', 1))
                 sgap = ss.get('gap', 10)
             cw = colon.get('width', 26) if colon else el.get('space', int(round(size * 0.2)))
@@ -599,6 +626,9 @@ class Resolver:
             ys = [rows[0]] * 4
         sources = [(codes.HOUR_TENS, 3), (codes.HOUR_UNITS, 10), (codes.MINUTE_TENS, 6), (codes.MINUTE_UNITS, 10)]
         pieces = [Piece('list', ims=digits[:n], x=cols[i], y=ys[i], source=src) for i, (src, n) in enumerate(sources)]
+        if el.get('leading_zero', True) is False:
+            blank = st.blank(pad) if hasattr(st, 'blank') else Image.new('RGBA', digits[0].size, (0, 0, 0, 0))
+            pieces[0].ims = [blank] + digits[1:3]
         last_y = ys[3]
         if colon and not stacked:
             ccol = self.b.color(colon.get('color', el.get('color', '#FFFFFF')), path + '.colon.color')
@@ -606,10 +636,21 @@ class Resolver:
             ctop, cbot = ys[0] + t, ys[0] + b
             r, spread = colon.get('radius', 5), colon.get('spread', 0.22)
 
-            def paint(img, cx=cx, ctop=ctop, cbot=cbot, r=r, ccol=ccol, spread=spread):
-                draw.colon(img, cx, ctop, cbot, r, ccol, spread)
+            square = colon.get('shape', 'round') == 'square'
+            if colon.get('shape', 'round') not in ('round', 'square'):
+                raise SpecError(['%s.colon.shape: use "round" or "square"' % path])
+
+            def paint(img, cx=cx, ctop=ctop, cbot=cbot, r=r, ccol=ccol, spread=spread, square=square):
+                if not square:
+                    draw.colon(img, cx, ctop, cbot, r, ccol, spread)
+                    return
+                mid, off = (ctop + cbot) / 2.0, (cbot - ctop) * spread
+                g = ImageDraw.Draw(img)
+                for cy in (mid - off, mid + off):
+                    g.rectangle([int(round(cx - r)), int(round(cy - r)), int(round(cx + r)) - 1, int(round(cy + r)) - 1],
+                                fill=ccol)
             off = (cbot - ctop) * spread
-            pieces.insert(2, Piece('paint', fn=paint, key=('colon', cx, ctop, cbot, r, ccol, spread), role='colon',
+            pieces.insert(2, Piece('paint', fn=paint, key=('colon', cx, ctop, cbot, r, ccol, spread, square), role='colon',
                                    bbox=(int(cx - r), int((ctop + cbot) / 2.0 - off - r),
                                          int(math.ceil(cx + r)), int(math.ceil((ctop + cbot) / 2.0 + off + r)))))
         if secs and not like:
@@ -626,34 +667,23 @@ class Resolver:
         return p
 
     def _number(self, el, path, parent, source, max_digits, unit, minus, kind):
-        """Digits of a source. With a unit (or the day's suffix) the digits are
-        right-aligned in a box of max_digits cells and the unit follows them, so the
-        unit stays put; x and align then place that whole box."""
+        """Digits of a source, right-aligned inside a box of max_digits cells: the only
+        alignment confirmed on a watch, and the value never moves. A unit (or the
+        day's suffix) follows the cells. x and align place the whole box."""
         st = self.style(el, path, self.numeric_sample(el.get('unit', '')))
         digits, cell = st.digits(extra_pad=el.get('pad', 0))
         md = el.get('digits', max_digits)
         y = self.place_y(el['y'], path + '.y', parent, st.height, st)
         minus_im = st.render('-') if minus else None
-        align = el.get('align', 'left')
-        if kind == 'day' or unit:
-            unit_im = st.render(unit) if unit else None
-            uw = unit_im.width if unit_im else 0
-            gap = el.get('gap', 0)
-            left = self.place_x(el, path, parent, md * cell + gap + uw)
-            dr = left + md * cell
-            pieces = [Piece('number', ims=digits, x=dr, y=y, align=codes.ALIGN_RIGHT, source=source,
-                            minus=minus_im, width=md * cell),
-                      Piece('image', im=unit_im, x=dr + gap, y=y, role='unit') if unit_im else None]
-            box = (left, y + st.digit_ink[0], dr + (gap + uw if unit_im else 0), y + st.digit_ink[1])
-        else:
-            x = int(round(self.value(el['x'], path + '.x', parent)))
-            a = {'left': codes.ALIGN_LEFT, 'center': codes.ALIGN_CENTER, 'right': codes.ALIGN_RIGHT}[align]
-            if a != codes.ALIGN_RIGHT:
-                self.b.note_warning('%s.align: "%s" numbers are seen in other faces; only "right" is confirmed '
-                                    'on a watch' % (path, align))
-            pieces = [Piece('number', ims=digits, x=x, y=y, align=a, source=source, minus=minus_im, width=md * cell)]
-            x0 = {codes.ALIGN_LEFT: x, codes.ALIGN_RIGHT: x - md * cell}.get(a, x - md * cell // 2)
-            box = (x0, y + st.digit_ink[0], x0 + md * cell, y + st.digit_ink[1])
+        unit_im = st.render(unit) if unit else None
+        uw = unit_im.width if unit_im else 0
+        gap = el.get('gap', 0) if unit_im else 0
+        left = self.place_x(el, path, parent, md * cell + gap + uw)
+        dr = left + md * cell
+        pieces = [Piece('number', ims=digits, x=dr, y=y, align=codes.ALIGN_RIGHT, source=source,
+                        minus=minus_im, width=md * cell),
+                  Piece('image', im=unit_im, x=dr + gap, y=y, role='unit') if unit_im else None]
+        box = (left, y + st.digit_ink[0], dr + gap + uw, y + st.digit_ink[1])
         return Placed(kind, 'date', pieces, self.edges(box, st, y), box, path)
 
     def place_day(self, el, path, parent):
@@ -669,6 +699,8 @@ class Resolver:
         sample = ''.join(w for l in self.b.langs for w in self.b.words(kind, form, case, l))
         mine = self.b.words(kind, form, case, self.lang)
         st = self.style(el, path, sample)
+        if isinstance(st, draw.Segments):
+            raise SpecError(['%s.font: segment digits cannot spell words; use "Oswald" or "Cormorant"' % path])
         x = self.value(el['x'], path + '.x', parent)
         if 'max_right' in el:
             limit = self.value(el['max_right'], path + '.max_right', parent)
@@ -778,6 +810,49 @@ class Resolver:
         placed.mark = (track, paint, el.get('cover_grow', 1.5))
         return placed
 
+    def place_hands(self, el, path, parent):
+        """Hour, minute and optionally second hands turning about one centre, with a pin on top."""
+        c = el['centre']
+        if not isinstance(c, list) or len(c) != 2:
+            raise SpecError(['%s.centre: give [x, y]' % path])
+        cx = self.value(c[0], path + '.centre[0]', parent)
+        cy = self.value(c[1], path + '.centre[1]', parent)
+        pieces, reach = [], 0
+        for name in ('hour', 'minute', 'second'):
+            hs = el.get(name)
+            if hs is None:
+                continue
+            hp = '%s.%s' % (path, name)
+            for k in hs:
+                if k not in ('length', 'tail', 'width', 'color', 'inner'):
+                    raise SpecError(['%s.%s: a hand takes "length", "tail", "width", "color", "inner"%s' % (
+                        hp, k, _near(k, ('length', 'tail', 'width', 'color', 'inner')))])
+            if 'length' not in hs:
+                raise SpecError(['%s: give the hand a "length" in pixels from the centre' % hp])
+            tail = hs.get('tail', 0)
+            if tail > hs['length']:
+                raise SpecError(['%s.tail: the tail must be shorter than the hand' % hp])
+            inner = None
+            if hs.get('inner'):
+                inner = dict(hs['inner'])
+                inner['color'] = self.b.color(inner.get('color', '#000000'), hp + '.inner.color')
+                inner.setdefault('inset', 2)
+            ink = self.b.color(hs.get('color', '#FFFFFF'), hp + '.color')
+            im, px, py = draw.hand(hs['length'], tail, hs.get('width', 4), ink, inner)
+            if name == 'second':
+                self.b.note_warning('%s: the second hand is seen in other faces but not yet confirmed on a watch' % hp)
+            pieces.append(Piece('hand', im=im, cx=cx, cy=cy, px=px, py=py, source=HAND_SOURCES[name],
+                                reach=hs['length'], role=name, ink=ink))
+            reach = max(reach, hs['length'])
+        if el.get('pin'):
+            rings = [(r['radius'], self.b.color(r.get('color', '#FFFFFF'), '%s.pin[%d].color' % (path, i)))
+                     for i, r in enumerate(el['pin'])]
+            im = draw.pin(sorted(rings, key=lambda rc: -rc[0]))
+            pieces.append(Piece('overlay', im=im, x=int(round(cx - im.width / 2.0)), y=int(round(cy - im.height / 2.0)),
+                                role='pin'))
+        box = (int(cx - reach), int(cy - reach), int(math.ceil(cx + reach)), int(math.ceil(cy + reach)))
+        return Placed('hands', 'time', pieces, self.edges(box), box, path)
+
     def place_tap(self, el, path, parent):
         bx = el['box']
         if not isinstance(bx, list) or len(bx) != 4:
@@ -853,6 +928,19 @@ def paint_layer(b, img, layer, path):
             else:
                 raise SpecError(['%s: a shape is "line": [[x, y], ...], "ellipse": [l, t, r, b] or "rect": [l, t, r, b]' % p])
         img.alpha_composite(im.resize((W, H), Image.LANCZOS))
+    elif t == 'dial':
+        def part(name):
+            v = layer.get(name)
+            if not v:
+                return None
+            v = dict(v)
+            v['color'] = b.color(v.get('color', '#FFFFFF'), '%s.%s.color' % (path, name))
+            v.setdefault('width', 1)
+            v.setdefault('length', 6)
+            return v
+        img.alpha_composite(draw.dial((W, H), tuple(layer['box']), layer.get('radius', 20), part('frame'),
+                                      part('minute'), part('hour'), layer.get('inset', 5),
+                                      tuple(layer['centre']) if 'centre' in layer else None))
     elif t == 'picture':
         f = os.path.join(b.base_dir, layer['file'])
         if not os.path.exists(f):
@@ -880,6 +968,15 @@ def _layout_items(pieces, face, aod, origin=None):
             refs = face.add_set(p.ims, None)
             out.append(layout.slot_image_list(refs, p.x - origin[0], p.y - origin[1], p.source, aod) if origin
                        else layout.image_list(refs, p.x, p.y, p.source, aod))
+        elif p.kind == 'overlay':
+            ref = face.add(p.im)
+            out.append(layout.slot_image(ref, p.x - origin[0], p.y - origin[1], aod) if origin
+                       else layout.image(ref, p.x, p.y, aod))
+        elif p.kind == 'hand':
+            if origin:
+                raise SpecError(['hands cannot depend on the language'])
+            out.append(layout.hand(face.add(p.im), int(round(p.cx)), int(round(p.cy)), int(round(p.px)),
+                                   int(round(p.py)), p.source, aod))
         elif p.kind == 'number':
             refs = face.add_set(p.ims, None)
             minus = face.add(p.minus) if p.minus is not None else ''
@@ -1052,13 +1149,13 @@ def build(spec, base_dir='.', langs=None):
         if pl.kind == 'tap':
             items = []
             for c in pl.children:
-                items += _layout_items([q for q in c.pieces if q is not None and q.kind in ('list', 'number')], face, 0)
+                items += _layout_items([q for q in c.pieces if q is not None and q.kind in DYNAMIC], face, 0)
             zones.append((pl.target, pl.box, items))
         elif pl.kind == 'seconds_mark':
             marks.append((len(time_items), pl))
             time_items.append(None)
         else:
-            items = _layout_items([q for q in keep if q is not None and q.kind in ('list', 'number')], face, 0)
+            items = _layout_items([q for q in keep if q is not None and q.kind in DYNAMIC], face, 0)
             (time_items if pl.group == 'time' else date_items).extend(items)
 
     slots, choices = [], []
@@ -1093,7 +1190,7 @@ def build(spec, base_dir='.', langs=None):
                 continue
             if q.kind in ('image', 'paint'):
                 _paint_static(aod_bg, q)
-        items = _layout_items([q for q in pl.pieces if q is not None and q.kind in ('list', 'number')], face, 1)
+        items = _layout_items([q for q in pl.pieces if q is not None and q.kind in DYNAMIC], face, 1)
         (time_items if pl.group == 'time' else date_items).extend(items)
 
     # --- the second mark last: its covering layer repaints the finished background

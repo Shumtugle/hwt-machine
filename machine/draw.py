@@ -322,3 +322,162 @@ class Track:
             cx, cy = self.points[i]
             d.ellipse([cx * ss - r, cy * ss - r, cx * ss + r, cy * ss + r], fill=color)
         return im.resize((self.width, self.height), Image.LANCZOS)
+
+
+# ---------------------------------------------------------------- liquid-crystal digits
+
+SEGMENTS_OF = {'0': 'abcdef', '1': 'bc', '2': 'abged', '3': 'abgcd', '4': 'fgbc', '5': 'afgcd',
+               '6': 'afgedc', '7': 'abc', '8': 'abcdefg', '9': 'abcdfg', '-': 'g', ' ': ''}
+
+
+class Segments:
+    """Seven-segment digits with the unlit segments faintly visible, as on a crystal
+    display. Offers what text styles offer to the face builder: digits in fixed cells,
+    the rows of their ink, and pictures of short strings made of digits and '-'."""
+
+    def __init__(self, size, color, ghost=None, aspect=0.5, thickness=0.13, ss=4):
+        self.size, self.color, self.ghost = size, color, ghost
+        self.ss = ss
+        self.h = size
+        self.w = max(4, int(round(size * aspect)))
+        self.t = max(2.0, size * thickness)
+        self.margin = 1
+        self.height = self.h + 2 * self.margin
+        self.top = 0
+        self.digit_ink = self.cap_ink = (self.margin, self.margin + self.h)
+
+    def _polygons(self):
+        W, H, T = self.w, self.h, self.t
+        g = max(0.9, T * 0.22)
+        h2 = T / 2.0
+
+        def horiz(yc):
+            x0, x1 = h2 + g, W - h2 - g
+            return [(x0, yc), (x0 + h2, yc - h2), (x1 - h2, yc - h2), (x1, yc), (x1 - h2, yc + h2), (x0 + h2, yc + h2)]
+
+        def vert(xc, y0, y1):
+            y0, y1 = y0 + g, y1 - g
+            return [(xc, y0), (xc + h2, y0 + h2), (xc + h2, y1 - h2), (xc, y1), (xc - h2, y1 - h2), (xc - h2, y0 + h2)]
+        return {'a': horiz(h2), 'g': horiz(H / 2.0), 'd': horiz(H - h2),
+                'f': vert(h2, h2, H / 2.0), 'b': vert(W - h2, h2, H / 2.0),
+                'e': vert(h2, H / 2.0, H - h2), 'c': vert(W - h2, H / 2.0, H - h2)}
+
+    def _cell(self, lit, pad, ghosts=True):
+        ss = self.ss
+        cw = self.w + 2 * pad
+        im = Image.new('RGBA', (cw * ss, self.height * ss), (0, 0, 0, 0))
+        d = ImageDraw.Draw(im)
+        ox, oy = pad * ss, self.margin * ss
+        for name, poly in self._polygons().items():
+            on = name in lit
+            if not on and (self.ghost is None or not ghosts):
+                continue
+            d.polygon([(ox + x * ss, oy + y * ss) for x, y in poly], fill=self.color if on else self.ghost)
+        return im.resize((cw, self.height), Image.LANCZOS)
+
+    def digits(self, extra_pad=0):
+        cells = [self._cell(SEGMENTS_OF[str(i)], extra_pad) for i in range(10)]
+        return cells, cells[0].width
+
+    def blank(self, extra_pad=0):
+        return self._cell('', extra_pad)
+
+    def width(self, s):
+        return len(s) * self.w
+
+    def render(self, s, cell=None):
+        if any(c not in SEGMENTS_OF for c in s):
+            raise ValueError('segment digits draw only 0-9 and -')
+        parts = [self._cell(SEGMENTS_OF[c], 1, ghosts=False) for c in s]
+        out = Image.new('RGBA', (sum(p.width for p in parts), self.height), (0, 0, 0, 0))
+        x = 0
+        for p in parts:
+            out.alpha_composite(p, (x, 0))
+            x += p.width
+        return out
+
+
+# ---------------------------------------------------------------- dials and hands
+
+def inside_rounded(x, y, box, radius):
+    l, t, r, b = box
+    if not (l <= x <= r and t <= y <= b):
+        return False
+    dx = max(l + radius - x, 0, x - (r - radius))
+    dy = max(t + radius - y, 0, y - (b - radius))
+    return dx * dx + dy * dy <= radius * radius
+
+
+def edge_point(centre, angle, box, radius):
+    """Where a ray from centre at angle (degrees clockwise from 12) leaves a rounded box."""
+    cx, cy = centre
+    sn, cs = math.sin(math.radians(angle)), -math.cos(math.radians(angle))
+    lo, hi = 0.0, float(max(box[2] - box[0], box[3] - box[1]))
+    for _ in range(40):
+        mid = (lo + hi) / 2.0
+        if inside_rounded(cx + sn * mid, cy + cs * mid, box, radius):
+            lo = mid
+        else:
+            hi = mid
+    return cx + sn * lo, cy + cs * lo, sn, cs
+
+
+def dial(size, box, radius, frame=None, minute=None, hour=None, inset=6, centre=None, ss=4):
+    """A rounded-rectangle dial: an outline and radial ticks that follow it.
+    frame/minute/hour: dicts with color, width (and length for ticks), or None."""
+    W, H = size
+    im = Image.new('RGBA', (W * ss, H * ss), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    l, t, r, b = box
+    if centre is None:
+        centre = ((l + r) / 2.0, (t + b) / 2.0)
+    fw = frame['width'] if frame else 0
+    if frame:
+        d.rounded_rectangle([l * ss, t * ss, r * ss, b * ss], radius=radius * ss, outline=frame['color'],
+                            width=max(1, int(round(fw * ss))))
+    inner = (l + fw + inset, t + fw + inset, r - fw - inset, b - fw - inset)
+    inner_r = max(0, radius - fw - inset)
+    for i in range(60):
+        spec = hour if (hour and i % 5 == 0) else minute
+        if not spec:
+            continue
+        x, y, sn, cs = edge_point(centre, i * 6, inner, inner_r)
+        ln = spec['length']
+        d.line([(x * ss, y * ss), ((x - sn * ln) * ss, (y - cs * ln) * ss)], fill=spec['color'],
+               width=max(1, int(round(spec['width'] * ss))))
+    return im.resize((W, H), Image.LANCZOS)
+
+
+def hand(length, tail, width, color, inner=None, ss=4):
+    """A rounded bar pointing to 12, optionally with a darker slit along it.
+    Returns (image, pivot x, pivot y)."""
+    m = 2
+    w = int(math.ceil(width)) + 2 * m
+    h = int(math.ceil(length + tail)) + 2 * m
+    im = Image.new('RGBA', (w * ss, h * ss), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    x0 = (w - width) / 2.0
+    py = m + length
+    d.rounded_rectangle([x0 * ss, m * ss, (x0 + width) * ss, (m + length + tail) * ss],
+                        radius=width / 2.0 * ss, fill=color)
+    if inner:
+        iw = width - 2 * inner['inset']
+        if iw > 0:
+            ix = (w - iw) / 2.0
+            y_tip = py - length * inner.get('to', 0.9)
+            y_base = py - length * inner.get('from', 0.25)
+            d.rounded_rectangle([ix * ss, y_tip * ss, (ix + iw) * ss, y_base * ss], radius=iw / 2.0 * ss,
+                                fill=inner['color'])
+    return im.resize((w, h), Image.LANCZOS), w / 2.0, py
+
+
+def pin(rings, ss=8):
+    """Concentric discs at the pivot, largest first: [(radius, color), ...]."""
+    rmax = max(r for r, _ in rings)
+    s = int(math.ceil(2 * rmax)) + 2
+    im = Image.new('RGBA', (s * ss, s * ss), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    c = s * ss / 2.0
+    for r, col in rings:
+        d.ellipse([c - r * ss, c - r * ss, c + r * ss, c + r * ss], fill=col)
+    return im.resize((s, s), Image.LANCZOS)

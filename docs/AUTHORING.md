@@ -13,9 +13,10 @@ The build writes one `.hwt` per language, one carrying all languages as choices 
 watch's face editor, and a PNG of the normal and the always-on screen for each. Look at
 the PNGs before calling a face finished.
 
-Two complete descriptions ship with the repository and are the best reference:
-`faces/vibe/face.json` (cards, tiles, a mark running around the frame) and
-`faces/plumb/face.json` (bare type, a mark sliding down a thread). Both build into the
+Three complete descriptions ship with the repository and are the best reference:
+`faces/vibe/face.json` (cards, tiles, a mark running around the frame),
+`faces/plumb/face.json` (bare type, a mark sliding down a thread) and
+`faces/duo/face.json` (hands on a small dial, crystal digits, a hanging date). Both build into the
 exact pixels of the hand-written faces they replace, except where the checks below
 found a fault in the original (Vibe's always-on words are a size smaller, so the
 descenders of one line clear the next).
@@ -65,7 +66,7 @@ estimated at a radius of 64 px; ink beyond it gets a warning.
 |---|---|
 | `name` | title shown on the watch; required |
 | `author` | optional; defaults to the name in lower case |
-| `font` | default font: `Oswald` (condensed sans, weights 200–700) or `Cormorant` (serif, 300–700) |
+| `font` | default font: `Oswald` (condensed sans, weights 200–700), `Cormorant` (serif, 300–700), or `Segments` (drawn seven-segment digits, for numbers and the time only) |
 | `colors` | palette; elements may name these instead of writing colours |
 | `styles` | named text styles; an element takes one with `"style": "label"` and may override any field |
 | `languages.default` | languages built when none are given on the command line; at most 3 |
@@ -123,6 +124,12 @@ its unit, so `right` does not move when the value does.
 (extra pixels between letters), `features` (OpenType features such as `["lnum"]`, for
 Cormorant's lining figures), `style` (a named style).
 
+With `"font": "Segments"` the digits are drawn as on a crystal display; `size` is the
+digit height and `segments` shapes them: `{"ghost": "#262626", "aspect": 0.5,
+"thickness": 0.13}` — `ghost` is the colour of unlit segments (`null` for none),
+`aspect` the width over the height, `thickness` the bar over the height. They draw
+`0`–`9` and `-` only.
+
 ## Elements
 
 ### `time`
@@ -134,11 +141,12 @@ Hours and minutes, 24-hour, optionally seconds.
 | style fields | | the digits |
 | `layout` | `line` | `line`: HH:MM in a row; `stacked`: hour above minute, both left-aligned at `x` |
 | `pad` | 2 | extra pixels per digit cell |
-| `colon` | none | `{"width": 26, "radius": 5.5, "color": "accent", "spread": 0.22}`: two dots on the middle of the digits |
+| `colon` | none | `{"width": 26, "radius": 5.5, "color": "accent", "spread": 0.22, "shape": "round"}`: two dots on the middle of the digits; `"shape": "square"` suits segments |
 | `space` | 20 % of size | gap between hours and minutes when there is no colon |
 | `line_gap` | 20 | stacked: pixels between the two lines of ink |
 | `seconds` | none | `{"size": 38, "weight": 500, "color": "...", "gap": 10, "pad": 1, "quiet": false}` (or `"scale": 0.32` instead of size): after the minutes, bottoms aligned |
 | `max_width` | none | shrink the size until the whole time fits this width |
+| `leading_zero` | true | `false` shows a blank (or, with segments, an unlit) first digit before ten o'clock |
 | `like` | | id of another time; takes its geometry and changes only what is given (see always-on) |
 
 `x` with `align` places the whole row, seconds included. A stacked time is placed by
@@ -178,10 +186,13 @@ A value from a sensor.
 | `calories` | 4 | no |
 | `temperature_high`, `temperature_low` | 2 + minus | no |
 
-`unit` (such as `"%"` or `"°"`) and `gap` (pixels before it): with a unit, the digits
-right-align inside their cells and the unit stays put; `x` and `align` place digits and
-unit together. Without a unit the watch itself aligns the digits; only `right` is
-confirmed. `digits` overrides how many cells to keep.
+A number keeps a box of as many digit cells as its largest value needs, and the digits
+always right-align inside it: that is the only alignment confirmed on a watch, and the
+value never moves. `x` and `align` place the box. `unit` (such as `"%"` or `"°"`) and
+`gap` (pixels before it) follow the cells and stay put. `digits` overrides how many
+cells to keep. A short value leaves its left cells empty, so put the number *before*
+its icon (`"x": "bpm.right+5"` on the icon) and the empty cells fall between groups,
+where they read as spacing.
 
 ### `text`
 
@@ -219,6 +230,20 @@ On a straight line give `decade_gap` more than twice the `reach`, or the mark is
 where one ten seconds meets the next. Keep everything else clear of the mark's path:
 the layer that hides the other strips repaints the background there.
 
+### `hands`
+
+Hands turning about one centre, drawn pointing to 12 and turned by the watch.
+
+| field | meaning |
+|---|---|
+| `centre` | `[x, y]` |
+| `hour`, `minute` | required: `{"length": 38, "tail": 9, "width": 7, "color": "...", "inner": {...}}` |
+| `second` | optional, same fields; not yet confirmed on a watch |
+| `inner` | a darker slit along the hand: `{"color": "#000000", "inset": 2, "from": 0.3, "to": 0.86}` (fractions of the length from the centre) |
+| `pin` | discs on top of the centre, largest first: `[{"radius": 6.5, "color": "..."}, ...]` |
+
+The checks treat a hand as the whole circle it sweeps.
+
 ### `tap`
 
 A zone that opens a screen on the watch when touched; the elements drawn in it go in
@@ -245,6 +270,7 @@ Drawn in order onto black, once, into one picture.
 | `card` | `box`, `radius` 22, `fill_alpha` 14, `rim_alpha` 46: a glass card |
 | `ticks` | `color`, `major_color`: 60 ticks along the ring |
 | `shapes` | `ss` 4 and `items`: `{"line": [[x, y], ...], "width": 1.4, "color": ...}`, `{"ellipse": [l, t, r, b], ...}`, `{"rect": [l, t, r, b], "radius": 0, ...}`, drawn on one supersampled canvas |
+| `dial` | `box`, `radius`, `inset` 5, `frame` `{color, width}`, `minute` and `hour` ticks `{color, length, width}`, `centre` (default: the middle of the box): a rounded-rectangle dial whose radial ticks follow its outline |
 | `picture` | `file`: an image next to the description, scaled to cover the screen. Photos cost size: about 780 KB each |
 
 Cards and tick rings must not touch: a card that would is refused.

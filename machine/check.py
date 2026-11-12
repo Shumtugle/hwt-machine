@@ -37,6 +37,12 @@ def footprint(pieces, size):
             p.fn(canvas)
         elif p.kind == 'list':
             simulate._put(canvas, _union_of(p.ims), p.x, p.y)
+        elif p.kind == 'overlay':
+            simulate._put(canvas, p.im, p.x, p.y)
+        elif p.kind == 'hand':
+            # a turning hand may be anywhere on its circle; its colour is the hand's
+            col = p.ink[:3] + (255,)
+            ImageDraw.Draw(canvas).ellipse([p.cx - p.reach, p.cy - p.reach, p.cx + p.reach, p.cy + p.reach], fill=col)
         elif p.kind == 'number':
             digit = _union_of(p.ims)
             cell = p.ims[0].width
