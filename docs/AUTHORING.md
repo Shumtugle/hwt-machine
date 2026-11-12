@@ -231,7 +231,7 @@ air pressure or altitude.
 
 | field | meaning |
 |---|---|
-| `source` | `sleep` (`7h23m`), `distance` (`1.94` km), `calories`, `pressure` (hPa), `altitude` (m), `emotions` (`--` while its measurement is off), `steps`, `heart_rate` |
+| `source` | `sleep` (`7h23m`), `distance` (`1.94` km), `calories`, `pressure` (hPa), `altitude` (m), `emotions` (`--` while its measurement is off), `steps`, `heart_rate`, `battery` (as text not yet confirmed on this watch) |
 | `x`, `y`, `align` | the box; `y` is its top |
 | `width`, `height` | the box, default 120 × 31 |
 | `color` | any colour |

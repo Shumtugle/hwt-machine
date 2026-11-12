@@ -80,6 +80,7 @@ TEXT_SOURCES = {
     'emotions': (codes.EMOTIONS, '--'),
     'steps': (codes.STEPS, '7645'),
     'heart_rate': (codes.HEART_RATE, '72'),
+    'battery': (codes.BATTERY_PERCENT, '80'),
 }
 TEXT_STYLE_VERIFIED = 149
 DEAD_TAP_TARGETS = {'battery': 'does nothing on this watch; open "settings" instead'}
