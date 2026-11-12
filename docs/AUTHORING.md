@@ -222,6 +222,22 @@ where they read as spacing.
 
 Static words in a style: `{"type": "text", "text": "STEPS", "size": 18, ...}`.
 
+### `system_text`
+
+A value the watch writes itself, in its own font: the only way to show sleep, distance,
+air pressure or altitude.
+
+| field | meaning |
+|---|---|
+| `source` | `sleep` (`7h23m`), `distance` (`1.94` km), `calories`, `pressure` (hPa), `altitude` (m), `emotions` (`--` while its measurement is off), `steps`, `heart_rate` |
+| `x`, `y`, `align` | the box; `y` is its top |
+| `width`, `height` | the box, default 120 × 31 |
+| `color` | any colour |
+| `text_style` | the watch's style code, default 149, the only one confirmed here: its digits are about 18 px tall, below the 21 px read in comfort, so other codes are being tried |
+
+The font, and so the look, is the watch's; previews draw a plain sans of the same size
+in its place.
+
 ### `symbol`
 
 A static icon: `name`, `size`, `color`, `fill` (1 solid, 0 outline), `weight`.
@@ -276,7 +292,7 @@ its `elements`.
 | field | meaning |
 |---|---|
 | `box` | `[left, top, right, bottom]`; values may be references |
-| `open` | `steps`, `heart_rate`, `weather`, `settings` (confirmed), `messages` (not confirmed). `battery` does nothing on this watch |
+| `open` | confirmed: `steps`, `heart_rate`, `weather`, `settings`, `sleep`, `calories`, `emotions`, `altitude`, `pressure`, `activity` (rings), `workouts`, `alarms`, `stopwatch`, `timer`, `contacts`; not confirmed: `messages`, `music`, `recorder`. `battery` does nothing on this watch |
 | `card` | optional glass card on the box: `{"radius": 18, "fill_alpha": 14, "rim_alpha": 46}` or `true` |
 | `elements` | elements inside; `parent.*` refers to the box |
 

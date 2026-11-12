@@ -5,12 +5,18 @@ here doubles as a check that the package decodes back into the intended screen.
 Element kinds it cannot draw are skipped and reported.
 """
 import datetime
+import os
 import math
 
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 
 from . import codes
 from .container import unpack
+
+# system-font text is drawn by the watch in its own sans; a plain sans stands in for it
+_FONTS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'fonts')
+SYSTEM_STAND_IN = next((f for f in ('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
+                                    os.path.join(_FONTS, 'Oswald.ttf')) if os.path.exists(f)))
 
 
 def sample_data(when=None, **values):
@@ -25,7 +31,8 @@ def sample_data(when=None, **values):
         codes.HOURS: t.hour, codes.MINUTES: t.minute, codes.SECONDS: t.second,
         codes.WEATHER_ICON: 4, codes.BATTERY_LEVEL: 8, codes.UNREAD_MESSAGES: 0,
         codes.STEPS: 7645, codes.HEART_RATE: 72, codes.TEMPERATURE: 3, codes.BATTERY_PERCENT: 80,
-        codes.CALORIES: 328,
+        codes.CALORIES: 328, codes.PRESSURE: 990, codes.ALTITUDE: 229, codes.EMOTIONS: '--',
+        codes.SLEEP: '7h23m', codes.DISTANCE: '1.94',
         codes.PROGRESS_STEPS: 76, codes.PROGRESS_BATTERY: 80, codes.PROGRESS_CALORIES: 55,
     }
     d['_time'] = t
@@ -146,6 +153,34 @@ def render(binary, aod=False, data=None, size=(408, 480), choice=None):
             canvas.alpha_composite(im, (half - px, half - py))
             rot = canvas.rotate(-angle, resample=Image.BICUBIC)
             _put(screen, rot, int(round(cx - half)), int(round(cy - half)))
+        elif kind in (codes.TEXT, codes.TEXT_FORMATTED):
+            # the watch writes these in its own font; this draws a stand-in of the same size
+            if _get(body, 9 if kind == codes.TEXT_FORMATTED else 7, 0) != flag:
+                return
+            src = _get(body, 6 if kind == codes.TEXT_FORMATTED else 5)
+            v = data.get(src)
+            if v is None:
+                return
+            text = str(v)
+            if kind == codes.TEXT_FORMATTED:
+                fmt = _get(body, 5)
+                text += {5: '%', 7: '\u00b0'}.get(fmt, '')
+                second = _get(body, 7, 255)
+                if fmt == 2 and second != 255 and data.get(second) is not None:
+                    text = '%s/%s' % (v, data.get(second))
+            r = _get(body, 1)
+            c = _get(body, 2)
+            x, y, w, h = (_get(r, i, 0) for i in (1, 2, 3, 4))
+            ox, oy = _offset(body, 4, origin) if kind == codes.TEXT_FORMATTED else (origin[0], origin[1])
+            font = ImageFont.truetype(SYSTEM_STAND_IN, max(8, int(round(h * 0.8))))
+            col = tuple(_get(c, i, 255) for i in (1, 2, 3, 4)) if c else (255, 255, 255, 255)
+            l, t, rr, bb = font.getbbox(text)
+            al = _get(body, 4, 0)
+            tx = x + {0: 0, 1: (w - (rr - l)) // 2, 2: w - (rr - l)}.get(al, 0) - l
+            ty = y + (h - (bb - t)) // 2 - t
+            layer = Image.new('RGBA', screen.size, (0, 0, 0, 0))
+            ImageDraw.Draw(layer).text((tx + ox, ty + oy), text, font=font, fill=col)
+            screen.alpha_composite(layer)
         elif kind == codes.PROGRESS:
             if _get(body, 6, 0) != flag:
                 return

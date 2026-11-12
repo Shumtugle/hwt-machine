@@ -55,7 +55,33 @@ TAP_TARGETS = {
     'weather': (codes.OPEN_WEATHER, True),
     'settings': (codes.OPEN_SETTINGS, True),
     'messages': (codes.OPEN_MESSAGES, False),
+    'sleep': (codes.OPEN_SLEEP, True),
+    'calories': (codes.OPEN_CALORIES, True),
+    'emotions': (codes.OPEN_EMOTIONS, True),
+    'altitude': (codes.OPEN_ALTITUDE, True),
+    'pressure': (codes.OPEN_PRESSURE, True),
+    'activity': (codes.OPEN_ACTIVITY, True),
+    'workouts': (codes.OPEN_WORKOUTS, True),
+    'alarms': (codes.OPEN_ALARMS, True),
+    'stopwatch': (codes.OPEN_STOPWATCH, True),
+    'timer': (codes.OPEN_TIMER, True),
+    'contacts': (codes.OPEN_CONTACTS, True),
+    'music': (codes.OPEN_MUSIC, False),
+    'recorder': (codes.OPEN_RECORDER, False),
 }
+
+# values the watch writes itself, in its own font: name -> (source, sample)
+TEXT_SOURCES = {
+    'sleep': (codes.SLEEP, '7h23m'),
+    'distance': (codes.DISTANCE, '1.94'),
+    'calories': (codes.CALORIES, '535'),
+    'pressure': (codes.PRESSURE, '990'),
+    'altitude': (codes.ALTITUDE, '229'),
+    'emotions': (codes.EMOTIONS, '--'),
+    'steps': (codes.STEPS, '7645'),
+    'heart_rate': (codes.HEART_RATE, '72'),
+}
+TEXT_STYLE_VERIFIED = 149
 DEAD_TAP_TARGETS = {'battery': 'does nothing on this watch; open "settings" instead'}
 
 WEATHER_SYMBOLS = ['cloud_off', 'sunny', 'clear_night', 'cloud', 'partly_cloudy_day', 'rainy',
@@ -84,6 +110,7 @@ FIELDS = {
     'battery_icon': PLACE_FIELDS | {'color', 'low_color', 'width', 'height'},
     'seconds_mark': {'id', 'path', 'layers', 'reach', 'cover_grow'},
     'hands': {'id', 'centre', 'hour', 'minute', 'second', 'pin'},
+    'system_text': {'id', 'source', 'x', 'y', 'width', 'height', 'align', 'color', 'text_style', 'quiet'},
     'tap': {'id', 'box', 'open', 'card', 'elements'},
 }
 REQUIRED = {
@@ -91,6 +118,7 @@ REQUIRED = {
     'month': {'size', 'x', 'y'}, 'number': {'source', 'size', 'x', 'y'}, 'text': {'text', 'size', 'x', 'y'},
     'symbol': {'name', 'size', 'x', 'y'}, 'weather_icon': {'size', 'x', 'y'}, 'battery_icon': {'x', 'y'},
     'seconds_mark': {'layers'}, 'tap': {'box', 'open', 'elements'}, 'hands': {'centre', 'hour', 'minute'},
+    'system_text': {'source', 'x', 'y'},
 }
 TIME_GROUP = {'time', 'seconds_mark'}
 LAYER_FIELDS = {
@@ -104,7 +132,7 @@ LAYER_FIELDS = {
     'dial': {'box', 'radius', 'frame', 'minute', 'hour', 'inset', 'centre'},
     'lcd': {'box', 'radius', 'centre', 'edge', 'focus', 'reach', 'power', 'rim', 'rim_alpha', 'outline'},
 }
-DYNAMIC = ('list', 'number', 'hand', 'overlay')
+DYNAMIC = ('list', 'number', 'hand', 'overlay', 'systext')
 HAND_SOURCES = {'hour': codes.HAND_HOUR, 'minute': codes.HAND_MINUTE, 'second': codes.HAND_SECOND}
 TOP_FIELDS = {'name', 'author', 'screen', 'font', 'colors', 'styles', 'ring', 'background', 'elements',
               'aod', 'languages', 'locales', 'notes'}
@@ -179,6 +207,8 @@ class Piece:
             return ('overlay', _digest(self.im), self.x, self.y)
         if self.kind == 'hand':
             return ('hand', _digest(self.im), self.cx, self.cy, self.px, self.py, self.source)
+        if self.kind == 'systext':
+            return ('systext', self.rect, self.color, self.style, self.align, self.source)
         return ('number', tuple(_digest(i) for i in self.ims), self.x, self.y, self.align, self.source,
                 _digest(self.minus) if self.minus is not None else None)
 
@@ -187,6 +217,9 @@ class Piece:
             return self.bbox
         if self.kind in ('image', 'overlay'):
             return (self.x, self.y, self.x + self.im.width, self.y + self.im.height)
+        if self.kind == 'systext':
+            x, y, w, h = self.rect
+            return (x, y, x + w, y + h)
         if self.kind == 'hand':
             r = self.reach
             return (int(self.cx - r), int(self.cy - r), int(math.ceil(self.cx + r)), int(math.ceil(self.cy + r)))
@@ -307,6 +340,11 @@ class Builder:
                     p, el['source'], _near(el['source'], NUMBER_SOURCES), _known(NUMBER_SOURCES)))
             elif t == 'number' and el.get('source') in NUMBER_SOURCES and not NUMBER_SOURCES[el['source']][2]:
                 self.warnings.append('%s.source: "%s" is seen in other faces but not yet confirmed on a watch' % (p, el['source']))
+            if t == 'system_text' and el.get('source') not in TEXT_SOURCES:
+                self.errors.append('%s.source: unknown "%s"%s; the watch writes %s' % (
+                    p, el.get('source'), _near(el.get('source'), TEXT_SOURCES), _known(TEXT_SOURCES)))
+            if t == 'system_text' and aod:
+                self.errors.append('%s: system text on the always-on screen is not confirmed; leave it out' % p)
             if t == 'symbol' and 'name' in el and el['name'] not in SYMBOLS.cp:
                 self.errors.append('%s.name: no symbol "%s"%s' % (p, el['name'], _near(el['name'], SYMBOLS.cp)))
             if t in ('weekday', 'month') and el.get('form', 'full') not in WORD_FORMS[t]:
@@ -898,6 +936,24 @@ class Resolver:
         box = (int(cx - reach), int(cy - reach), int(math.ceil(cx + reach)), int(math.ceil(cy + reach)))
         return Placed('hands', 'time', pieces, self.edges(box), box, path)
 
+    def place_system_text(self, el, path, parent):
+        """A value the watch writes in its own font into a box. Its size is the watch's to
+        choose by the style code; only style 149 has been seen on this screen."""
+        src, sample = TEXT_SOURCES[el['source']]
+        w, h = el.get('width', 120), el.get('height', 31)
+        align = el.get('align', 'left')
+        x = self.place_x(el, path, parent, w)
+        y = self.place_y(el['y'], path + '.y', parent, h)
+        col = self.b.color(el.get('color', '#FFFFFF'), path + '.color')
+        style = el.get('text_style', TEXT_STYLE_VERIFIED)
+        if style != TEXT_STYLE_VERIFIED:
+            self.b.note_warning('%s.text_style: %s is seen in other faces; only %d is confirmed on this screen' % (
+                path, style, TEXT_STYLE_VERIFIED))
+        piece = Piece('systext', rect=(x, y, w, h), color=col, style=style, source=src, sample=sample,
+                      align={'left': 0, 'center': 1, 'right': 2}[align])
+        box = (x, y, x + w, y + h)
+        return Placed('system_text', 'date', [piece], self.edges(box), box, path)
+
     def place_tap(self, el, path, parent):
         bx = el['box']
         if not isinstance(bx, list) or len(bx) != 4:
@@ -1025,6 +1081,13 @@ def _layout_items(pieces, face, aod, origin=None):
             ref = face.add(p.im)
             out.append(layout.slot_image(ref, p.x - origin[0], p.y - origin[1], aod) if origin
                        else layout.image(ref, p.x, p.y, aod))
+        elif p.kind == 'systext':
+            if origin:
+                raise SpecError(['system text cannot depend on the language'])
+            x, y, w, h = p.rect
+            out.append((codes.TEXT, [(1, [(1, x), (2, y), (3, w), (4, h)]),
+                                     (2, [(1, p.color[0]), (2, p.color[1]), (3, p.color[2]), (4, p.color[3])]),
+                                     (3, p.style), (4, p.align), (5, p.source), (7, aod)]))
         elif p.kind == 'hand':
             if origin:
                 raise SpecError(['hands cannot depend on the language'])

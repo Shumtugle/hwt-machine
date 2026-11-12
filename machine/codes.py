@@ -47,6 +47,11 @@ TEMPERATURE_HIGH = 20  # observed
 TEMPERATURE_LOW = 21   # observed
 BATTERY_PERCENT = 9    # verified
 DAY_OF_MONTH = 17      # verified
+PRESSURE = 7           # air pressure, hPa                              verified as text
+ALTITUDE = 8           # metres                                         verified as text
+EMOTIONS = 26          # emotional wellbeing; '--' when not measured    verified as text
+SLEEP = 142            # last night, formatted by the watch: 7h23m       verified as text
+DISTANCE = 146         # today, km with decimals: 1.94                   verified as text
 HOURS = 12             # observed
 MINUTES = 13           # observed
 SECONDS = 14           # observed
@@ -74,6 +79,19 @@ OPEN_WEATHER = 21      # verified
 OPEN_SETTINGS = 50     # observed
 OPEN_BATTERY = 17      # does nothing on newer watches                 verified
 OPEN_MESSAGES = 18     # observed
+OPEN_CALORIES = 12     # verified
+OPEN_EMOTIONS = 16     # emotional wellbeing                            verified
+OPEN_ALTITUDE = 22     # verified
+OPEN_PRESSURE = 23     # air pressure                                   verified
+OPEN_ACTIVITY = 24     # activity rings                                 verified
+OPEN_SLEEP = 25        # verified
+OPEN_WORKOUTS = 26     # verified
+OPEN_ALARMS = 28       # verified
+OPEN_STOPWATCH = 29    # verified
+OPEN_TIMER = 30        # verified
+OPEN_CONTACTS = 35     # verified
+OPEN_MUSIC = 36        # something with sound; labelled music elsewhere   observed
+OPEN_RECORDER = 38     # something with sound; voice notes, it seems      observed
 
 # ---- function codes of choice slots: the editor lists slots under these names
 #      and folds slots that share a code, so variants of one thing need distinct codes

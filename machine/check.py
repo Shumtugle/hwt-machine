@@ -45,6 +45,14 @@ def footprint(pieces, size):
             p.fn(canvas)
         elif p.kind == 'list':
             simulate._put(canvas, _union_of(p.ims), p.x, p.y)
+        elif p.kind == 'systext':
+            # the watch's own font; a plain sans of the same size stands in for it
+            from PIL import ImageFont
+            x, y, w, h = p.rect
+            font = ImageFont.truetype(simulate.SYSTEM_STAND_IN, max(8, int(round(h * 0.8))))
+            l, t, r, b = font.getbbox(p.sample)
+            tx = x + {0: 0, 1: (w - (r - l)) // 2, 2: w - (r - l)}.get(p.align, 0) - l
+            ImageDraw.Draw(canvas).text((tx, y + (h - (b - t)) // 2 - t), p.sample, font=font, fill=p.color)
         elif p.kind == 'overlay':
             simulate._put(canvas, p.im, p.x, p.y)
         elif p.kind == 'hand':

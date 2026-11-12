@@ -213,7 +213,7 @@ light weight reads well at size 28 and above.
 | 1 | calories (`535`) | text, style 149 | **verified** |
 | 7 | air pressure, hPa (`990`) | text, style 149 | **verified** |
 | 8 | altitude, m (`229`) | text, style 149 | **verified** |
-| 26 | stress; `--` without a reading | text, style 149 | verified to exist |
+| 26 | emotional wellbeing; `--` while its measurement is off | text, style 149 | verified |
 | 143 / 144 / 147 | something that reads `0` | text | seen on a wrist, meaning unknown |
 | 140 / 141 / 145 / 148 | nothing drawn | text | tried on a wrist |
 | 150 | hour hand | hand | verified |
@@ -236,12 +236,18 @@ around the frame is still possible; see the running mark in the machine's effect
 | 17 | battery: nothing on newer watches | verified |
 | 50 | settings | observed |
 | 18 | messages | observed |
-| 25 | sleep, judging by its place on a sleep value | observed, in a face for another watch |
-| 16 | stress, by its place on a stress value | observed, in a face for another watch |
-| 24 | distance, by its place on a distance value | observed |
-| 12 | calories, by its place on a calories value | observed, in a face for this screen |
-| 36 / 26 / 35 / 30 | music / workout / calls / timer, by labels printed beside them | observed, in a face for another watch |
-| 22 / 23 | altitude / air pressure, by their icons | observed, in a face for another watch |
-| 38 | on a phone icon | observed, in a face for this screen |
+| 12 | calories | verified |
+| 16 | emotional wellbeing | verified |
+| 22 | altitude | verified |
+| 23 | air pressure | verified |
+| 24 | activity rings | verified |
+| 25 | sleep | verified |
+| 26 | workouts | verified |
+| 28 | alarms | verified |
+| 29 | stopwatch | verified |
+| 30 | timer | verified |
+| 35 | contacts | verified |
+| 36 | something with sound, labelled music in another face | observed |
+| 38 | something with sound, voice notes it seems | observed |
 
 In choice slots the same field names a *function*; see the table above.
