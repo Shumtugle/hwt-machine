@@ -126,8 +126,9 @@ right edge; units such as `%` or `°` are best drawn as a fixed image just after
 
 ### System-font text (kinds 0 and 10)
 
-`1` box `{x, y, w, h}`, `2` colour `{r, g, b, a}`, `3` style code (seen: 129, 138, 149,
-150, 157, 158, 161, 163, 166, 169, 176; 149 in faces for this screen), `4` alignment,
+`1` box `{x, y, w, h}`, `2` colour `{r, g, b, a}`, `3` style code (seen: 129, 136, 137, 138,
+149, 150, 157, 158, 161, 163, 166, 169, 176; on this screen 136–138 and 149 with boxes
+about 32–37 px tall and 158 with 41 px, so the code likely sets the size), `4` alignment,
 `5` data source, `7` 0. No font travels with the face; the watch uses its own.
 
 Kind 10 reads differently: `5` is the format, `6` the source and `7` a second source
@@ -222,6 +223,8 @@ a glance and want the comfortable size; readings looked at on purpose do at size
 | 15 | a small count shown beside a standing figure; its own tap target 15 | number | observed, in a face for this screen |
 | 370 / 372 / 374 / 384 / 238 | running-fitness figures shown with labels such as training load and recovery time | number | observed, in a face for this screen |
 | 163 | battery as an angle: a hand swept from start to end angle (fields 4 and 5, e.g. −90 to 90) | hand | observed, in a face for this screen |
+| 169 | air pressure as an angle: a hand over a printed scale (fields 4 and 5: 404 to −76) | hand | observed, in a face for this screen |
+| 126 | a time of day next to a sunrise/sunset label (`07:07`), with tap target 9 | text | observed, in a face for this screen |
 | 140 / 141 / 145 / 148 | nothing drawn | text | tried on a wrist |
 | 150 | hour hand | hand | verified |
 | 153 | minute hand | hand | verified |
