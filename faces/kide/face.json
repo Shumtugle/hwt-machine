@@ -1,0 +1,465 @@
+{
+ "name": "Kide",
+ "notes": "Hands on a small copy of the screen above a lit crystal window. The date is set across the case like a maker's name, the day in the middle; weather and charge face the dial; steps and pulse sit at the lower corners like the labels of buttons.",
+ "font": "Oswald",
+ "colors": {
+  "white": "#F2E2C6",
+  "cream": "#F2E2C6",
+  "soft": "#B8A88E",
+  "amber": "#F0B060",
+  "tick": "#7A6E5E",
+  "lamp": "#FAC470",
+  "lamp_edge": "#BE7024",
+  "seg": "#2C180A",
+  "seg_ghost": "#2C180A1A",
+  "seg_shadow": "#6E34085F",
+  "case": "#3A3834",
+  "low": "#FF5030",
+  "dim": "#8A7E6C",
+  "dim_tick": "#4A443C"
+ },
+ "languages": {
+  "default": [
+   "ru",
+   "en",
+   "fi"
+  ],
+  "frame": {
+   "color": "amber",
+   "radius": 8
+  }
+ },
+ "background": [
+  {
+   "type": "dial",
+   "box": [
+    26,
+    30,
+    158,
+    186
+   ],
+   "radius": 31,
+   "inset": 4,
+   "frame": {
+    "color": "white",
+    "width": 3
+   },
+   "minute": {
+    "color": "tick",
+    "length": 5,
+    "width": 1.2
+   },
+   "hour": {
+    "color": "white",
+    "length": 12,
+    "width": 3.2
+   }
+  },
+  {
+   "type": "lcd",
+   "box": [
+    18,
+    246,
+    390,
+    390
+   ],
+   "radius": 22,
+   "centre": "lamp",
+   "edge": "lamp_edge",
+   "outline": {
+    "color": "case",
+    "width": 2
+   }
+  }
+ ],
+ "elements": [
+  {
+   "type": "hands",
+   "id": "hands",
+   "centre": [
+    92,
+    108
+   ],
+   "hour": {
+    "length": 33,
+    "tail": 8,
+    "width": 7.5,
+    "color": "white",
+    "inner": {
+     "color": "#000000",
+     "inset": 2,
+     "from": 0.32,
+     "to": 0.86
+    }
+   },
+   "minute": {
+    "length": 53,
+    "tail": 8,
+    "width": 6,
+    "color": "white",
+    "inner": {
+     "color": "#000000",
+     "inset": 1.8,
+     "from": 0.24,
+     "to": 0.9
+    }
+   },
+   "second": {
+    "length": 56,
+    "tail": 13,
+    "width": 1.6,
+    "color": "white"
+   },
+   "pin": [
+    {
+     "radius": 6.5,
+     "color": "white"
+    },
+    {
+     "radius": 4.5,
+     "color": "#000000"
+    },
+    {
+     "radius": 2.4,
+     "color": "white"
+    }
+   ]
+  },
+  {
+   "type": "tap",
+   "box": [
+    176,
+    34,
+    392,
+    108
+   ],
+   "open": "weather",
+   "elements": [
+    {
+     "type": "weather_icon",
+     "id": "sky",
+     "fill": 0,
+     "size": 52,
+     "color": "cream",
+     "x": 180,
+     "y": {
+      "middle": 72
+     }
+    },
+    {
+     "type": "number",
+     "weight": 300,
+     "color": "cream",
+     "id": "temp",
+     "source": "temperature",
+     "size": 56,
+     "unit": "°",
+     "gap": 1,
+     "x": 388,
+     "align": "right",
+     "y": {
+      "digits_middle": 72
+     }
+    }
+   ]
+  },
+  {
+   "type": "tap",
+   "box": [
+    176,
+    114,
+    392,
+    182
+   ],
+   "open": "settings",
+   "elements": [
+    {
+     "type": "battery_icon",
+     "id": "cell",
+     "color": "cream",
+     "low_color": "low",
+     "width": 40,
+     "height": 21,
+     "x": 186,
+     "y": {
+      "middle": 148
+     }
+    },
+    {
+     "type": "number",
+     "weight": 300,
+     "color": "soft",
+     "id": "charge",
+     "source": "battery",
+     "size": 40,
+     "unit": "%",
+     "gap": 2,
+     "x": 388,
+     "align": "right",
+     "y": {
+      "digits_middle": 148
+     }
+    }
+   ]
+  },
+  {
+   "type": "day",
+   "id": "day",
+   "centred": true,
+   "size": 18,
+   "weight": 500,
+   "color": "amber",
+   "x": "screen.center",
+   "align": "center",
+   "y": {
+    "caps_middle": 218
+   }
+  },
+  {
+   "type": "weekday",
+   "size": 16,
+   "weight": 400,
+   "tracking": 3,
+   "color": "amber",
+   "x": "day.left-10",
+   "align": "right",
+   "y": {
+    "caps_middle": 218
+   }
+  },
+  {
+   "type": "month",
+   "size": 16,
+   "weight": 400,
+   "tracking": 3,
+   "color": "amber",
+   "x": "day.right+10",
+   "max_right": 386,
+   "y": {
+    "caps_middle": 218
+   }
+  },
+  {
+   "type": "time",
+   "id": "time",
+   "font": "Segments",
+   "size": 104,
+   "color": "seg",
+   "pad": 7,
+   "segments": {
+    "ghost": "seg_ghost",
+    "shadow": {
+     "color": "seg_shadow",
+     "dx": 2,
+     "dy": 3,
+     "blur": 1.1
+    }
+   },
+   "leading_zero": false,
+   "x": "screen.center",
+   "align": "center",
+   "y": {
+    "digits_middle": 318
+   },
+   "colon": {
+    "width": 22,
+    "radius": 5,
+    "shape": "square",
+    "spread": 0.18,
+    "color": "seg"
+   },
+   "seconds": {
+    "size": 40,
+    "color": "seg",
+    "pad": 2,
+    "gap": 10,
+    "segments": {
+     "ghost": "seg_ghost",
+     "shadow": {
+      "color": "seg_shadow",
+      "dx": 1,
+      "dy": 2,
+      "blur": 0.8
+     }
+    }
+   }
+  },
+  {
+   "type": "tap",
+   "box": [
+    30,
+    418,
+    142,
+    454
+   ],
+   "open": "steps",
+   "elements": [
+    {
+     "type": "number",
+     "weight": 300,
+     "color": "cream",
+     "id": "steps",
+     "source": "steps",
+     "size": 24,
+     "x": 38,
+     "y": {
+      "digits_middle": 436
+     }
+    },
+    {
+     "type": "symbol",
+     "id": "foot",
+     "name": "footprint",
+     "fill": 0,
+     "size": 20,
+     "color": "amber",
+     "x": "steps.right+5",
+     "y": {
+      "middle": 436
+     }
+    }
+   ]
+  },
+  {
+   "type": "tap",
+   "box": [
+    288,
+    418,
+    378,
+    454
+   ],
+   "open": "heart_rate",
+   "elements": [
+    {
+     "type": "symbol",
+     "id": "heart",
+     "name": "favorite",
+     "fill": 0,
+     "size": 20,
+     "color": "amber",
+     "x": 370,
+     "align": "right",
+     "y": {
+      "middle": 436
+     }
+    },
+    {
+     "type": "number",
+     "weight": 300,
+     "color": "cream",
+     "id": "bpm",
+     "source": "heart_rate",
+     "size": 24,
+     "x": "heart.left-5",
+     "align": "right",
+     "y": {
+      "digits_middle": 436
+     }
+    }
+   ]
+  }
+ ],
+ "aod": {
+  "background": [
+   {
+    "type": "dial",
+    "box": [
+     26,
+     30,
+     158,
+     186
+    ],
+    "radius": 31,
+    "inset": 4,
+    "frame": {
+     "color": "dim_tick",
+     "width": 2
+    },
+    "hour": {
+     "color": "dim_tick",
+     "length": 11,
+     "width": 2.6
+    }
+   }
+  ],
+  "elements": [
+   {
+    "type": "hands",
+    "centre": [
+     92,
+     108
+    ],
+    "hour": {
+     "length": 33,
+     "tail": 8,
+     "width": 6,
+     "color": "dim"
+    },
+    "minute": {
+     "length": 53,
+     "tail": 8,
+     "width": 4.5,
+     "color": "dim"
+    },
+    "pin": [
+     {
+      "radius": 4,
+      "color": "dim"
+     }
+    ]
+   },
+   {
+    "type": "time",
+    "like": "time",
+    "color": "dim",
+    "segments": {
+     "ghost": null
+    },
+    "colon": {
+     "width": 22,
+     "radius": 5,
+     "shape": "square",
+     "spread": 0.18,
+     "color": "dim"
+    }
+   },
+   {
+    "type": "day",
+    "id": "aod_day",
+    "centred": true,
+    "size": 18,
+    "weight": 400,
+    "color": "dim",
+    "x": "screen.center",
+    "align": "center",
+    "y": {
+     "caps_middle": 218
+    }
+   },
+   {
+    "type": "weekday",
+    "size": 16,
+    "weight": 300,
+    "tracking": 3,
+    "color": "dim",
+    "x": "aod_day.left-10",
+    "align": "right",
+    "y": {
+     "caps_middle": 218
+    }
+   },
+   {
+    "type": "month",
+    "size": 16,
+    "weight": 300,
+    "tracking": 3,
+    "color": "dim",
+    "x": "aod_day.right+10",
+    "max_right": 386,
+    "y": {
+     "caps_middle": 218
+    }
+   }
+  ]
+ }
+}

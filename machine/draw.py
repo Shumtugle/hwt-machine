@@ -5,7 +5,7 @@ digits, capitals and symbols line up the way the eye expects.
 """
 import math
 
-from PIL import Image, ImageChops, ImageDraw, ImageFont
+from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageFont
 
 
 def ink(im):
@@ -133,9 +133,10 @@ def battery(level, color, low_color, w=40, h=22, ss=4):
     im = Image.new('RGBA', (w * ss, h * ss), (0, 0, 0, 0))
     d = ImageDraw.Draw(im)
     body_w = (w - 4) * ss
-    d.rounded_rectangle([ss, ss, body_w, h * ss - ss], radius=5 * ss, outline=color, width=2 * ss)
+    shell = low_color if level <= 1 else color   # under a fifth the whole cell warns
+    d.rounded_rectangle([ss, ss, body_w, h * ss - ss], radius=5 * ss, outline=shell, width=2 * ss)
     d.rounded_rectangle([body_w + ss, h * ss // 2 - 4 * ss, w * ss - ss, h * ss // 2 + 4 * ss],
-                        radius=2 * ss, fill=color)
+                        radius=2 * ss, fill=shell)
     inner = [4 * ss, 4 * ss, body_w - 3 * ss, h * ss - 4 * ss]
     if level > 0:
         span = inner[2] - inner[0]
@@ -335,13 +336,14 @@ class Segments:
     display. Offers what text styles offer to the face builder: digits in fixed cells,
     the rows of their ink, and pictures of short strings made of digits and '-'."""
 
-    def __init__(self, size, color, ghost=None, aspect=0.5, thickness=0.13, ss=4):
-        self.size, self.color, self.ghost = size, color, ghost
+    def __init__(self, size, color, ghost=None, aspect=0.5, thickness=0.13, shadow=None, ss=4):
+        """shadow: (color, dx, dy, blur) cast by lit segments on the reflector behind them."""
+        self.size, self.color, self.ghost, self.shadow = size, color, ghost, shadow
         self.ss = ss
         self.h = size
         self.w = max(4, int(round(size * aspect)))
         self.t = max(2.0, size * thickness)
-        self.margin = 1
+        self.margin = 1 + (int(math.ceil(max(abs(shadow[1]), abs(shadow[2])) + 2 * shadow[3])) if shadow else 0)
         self.height = self.h + 2 * self.margin
         self.top = 0
         self.digit_ink = self.cap_ink = (self.margin, self.margin + self.h)
@@ -364,16 +366,27 @@ class Segments:
 
     def _cell(self, lit, pad, ghosts=True):
         ss = self.ss
+        pad = max(pad, self.margin - 1) if self.shadow else pad
         cw = self.w + 2 * pad
-        im = Image.new('RGBA', (cw * ss, self.height * ss), (0, 0, 0, 0))
-        d = ImageDraw.Draw(im)
         ox, oy = pad * ss, self.margin * ss
-        for name, poly in self._polygons().items():
-            on = name in lit
-            if not on and (self.ghost is None or not ghosts):
-                continue
-            d.polygon([(ox + x * ss, oy + y * ss) for x, y in poly], fill=self.color if on else self.ghost)
-        return im.resize((cw, self.height), Image.LANCZOS)
+        polys = self._polygons()
+
+        def layer(names, color, dx=0, dy=0):
+            im = Image.new('RGBA', (cw * ss, self.height * ss), (0, 0, 0, 0))
+            d = ImageDraw.Draw(im)
+            for name in names:
+                d.polygon([(ox + (x + dx) * ss, oy + (y + dy) * ss) for x, y in polys[name]], fill=color)
+            return im.resize((cw, self.height), Image.LANCZOS)
+        out = Image.new('RGBA', (cw, self.height), (0, 0, 0, 0))
+        if self.ghost is not None and ghosts:
+            out.alpha_composite(layer([n for n in polys if n not in lit], self.ghost))
+        if self.shadow and lit:
+            col, dx, dy, blur = self.shadow
+            sh = layer(lit, col, dx, dy)
+            out.alpha_composite(sh.filter(ImageFilter.GaussianBlur(blur)) if blur else sh)
+        if lit:
+            out.alpha_composite(layer(lit, self.color))
+        return out
 
     def digits(self, extra_pad=0):
         cells = [self._cell(SEGMENTS_OF[str(i)], extra_pad) for i in range(10)]
@@ -398,6 +411,41 @@ class Segments:
 
 
 # ---------------------------------------------------------------- dials and hands
+
+def lcd_window(size, box, radius, centre, edge, focus=(0.42, 0.38), reach=(0.62, 0.95), power=1.6,
+               rim=7, rim_alpha=140, outline=None, ss=4):
+    """A lit crystal window: light brightest at focus, fading to edge, a shadow along
+    the inside of the rim as if the glass sat below the case, and the case's edge."""
+    W, H = size
+    l, t, r, b = [int(round(v)) for v in box]
+    w, h = r - l, b - t
+    field = Image.new('RGBA', (w, h))
+    px = []
+    for y in range(h):
+        for x in range(w):
+            k = min(1.0, math.hypot((x - w * focus[0]) / (w * reach[0]), (y - h * focus[1]) / (h * reach[1])))
+            k = k ** power
+            px.append(tuple(int(centre[i] * (1 - k) + edge[i] * k) for i in range(3)) + (255,))
+    field.putdata(px)
+    if rim:
+        band = Image.new('L', (w, h), 0)
+        ImageDraw.Draw(band).rounded_rectangle([0, 0, w - 1, h - 1], radius=radius, outline=255, width=rim)
+        band = band.filter(ImageFilter.GaussianBlur(rim * 0.6))
+        dark = Image.new('RGBA', (w, h), (0, 0, 0, 255))
+        dark.putalpha(band.point(lambda v: v * rim_alpha // 255))
+        field.alpha_composite(dark)
+    mask = Image.new('L', (w * ss, h * ss), 0)
+    ImageDraw.Draw(mask).rounded_rectangle([0, 0, w * ss - 1, h * ss - 1], radius=radius * ss, fill=255)
+    field.putalpha(mask.resize((w, h), Image.LANCZOS))
+    out = Image.new('RGBA', (W, H), (0, 0, 0, 0))
+    out.alpha_composite(field, (l, t))
+    if outline:
+        edge_im = Image.new('RGBA', (W * ss, H * ss), (0, 0, 0, 0))
+        ImageDraw.Draw(edge_im).rounded_rectangle([l * ss, t * ss, r * ss, b * ss], radius=radius * ss,
+                                                  outline=outline[0], width=max(1, int(round(outline[1] * ss))))
+        out.alpha_composite(edge_im.resize((W, H), Image.LANCZOS))
+    return out
+
 
 def inside_rounded(x, y, box, radius):
     l, t, r, b = box

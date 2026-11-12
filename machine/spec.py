@@ -74,7 +74,7 @@ PLACE_FIELDS = {'id', 'x', 'align', 'y', 'quiet'}
 FIELDS = {
     'time': STYLE_FIELDS | PLACE_FIELDS | {'pad', 'layout', 'line_gap', 'colon', 'space', 'seconds',
                                            'like', 'max_width', 'leading_zero'},
-    'day': STYLE_FIELDS | PLACE_FIELDS | {'pad', 'suffix', 'gap', 'digits'},
+    'day': STYLE_FIELDS | PLACE_FIELDS | {'pad', 'suffix', 'gap', 'digits', 'centred'},
     'weekday': STYLE_FIELDS | PLACE_FIELDS | {'form', 'case', 'max_right'},
     'month': STYLE_FIELDS | PLACE_FIELDS | {'form', 'case', 'max_right'},
     'number': STYLE_FIELDS | PLACE_FIELDS | {'source', 'pad', 'unit', 'gap', 'digits'},
@@ -102,6 +102,7 @@ LAYER_FIELDS = {
     'shapes': {'ss', 'items'},
     'picture': {'file'},
     'dial': {'box', 'radius', 'frame', 'minute', 'hour', 'inset', 'centre'},
+    'lcd': {'box', 'radius', 'centre', 'edge', 'focus', 'reach', 'power', 'rim', 'rim_alpha', 'outline'},
 }
 DYNAMIC = ('list', 'number', 'hand', 'overlay')
 HAND_SOURCES = {'hour': codes.HAND_HOUR, 'minute': codes.HAND_MINUTE, 'second': codes.HAND_SECOND}
@@ -366,10 +367,11 @@ class Builder:
     def style(self, font, size, weight, color, tracking=0, sample='', features=None, segments=None):
         if font == 'Segments':
             sg = segments or {}
-            key = ('seg', size, color, sg.get('ghost'), sg.get('aspect', 0.5), sg.get('thickness', 0.13))
+            key = ('seg', size, color, sg.get('ghost'), sg.get('aspect', 0.5), sg.get('thickness', 0.13),
+                   sg.get('shadow'))
             if key not in self._styles:
                 self._styles[key] = draw.Segments(size, color, sg.get('ghost'), sg.get('aspect', 0.5),
-                                                  sg.get('thickness', 0.13))
+                                                  sg.get('thickness', 0.13), sg.get('shadow'))
             return self._styles[key]
         key = (font, size, weight, color, tracking, sample, tuple(features or ()))
         if key not in self._styles:
@@ -499,10 +501,15 @@ class Resolver:
         if font == 'Segments':
             seg = dict(s.get('segments') or {})
             for k in seg:
-                if k not in ('ghost', 'aspect', 'thickness'):
-                    raise SpecError(['%s.segments.%s: unknown; segments take "ghost", "aspect", "thickness"' % (path, k)])
+                if k not in ('ghost', 'aspect', 'thickness', 'shadow'):
+                    raise SpecError(['%s.segments.%s: unknown; segments take "ghost", "aspect", "thickness", '
+                                     '"shadow"' % (path, k)])
             if seg.get('ghost') is not None:
                 seg['ghost'] = self.b.color(seg['ghost'], path + '.segments.ghost')
+            if seg.get('shadow'):
+                sh = seg['shadow']
+                seg['shadow'] = (self.b.color(sh.get('color', '#00000060'), path + '.segments.shadow.color'),
+                                 sh.get('dx', 2), sh.get('dy', 3), sh.get('blur', 1.0))
         return self.b.style(font, size, s.get('weight', 400), color, s.get('tracking', 0), sample, s.get('features'),
                             seg)
 
@@ -640,17 +647,26 @@ class Resolver:
             if colon.get('shape', 'round') not in ('round', 'square'):
                 raise SpecError(['%s.colon.shape: use "round" or "square"' % path])
 
-            def paint(img, cx=cx, ctop=ctop, cbot=cbot, r=r, ccol=ccol, spread=spread, square=square):
+            shadow = getattr(st, 'shadow', None)
+
+            def paint(img, cx=cx, ctop=ctop, cbot=cbot, r=r, ccol=ccol, spread=spread, square=square, shadow=shadow):
                 if not square:
                     draw.colon(img, cx, ctop, cbot, r, ccol, spread)
                     return
                 mid, off = (ctop + cbot) / 2.0, (cbot - ctop) * spread
-                g = ImageDraw.Draw(img)
-                for cy in (mid - off, mid + off):
-                    g.rectangle([int(round(cx - r)), int(round(cy - r)), int(round(cx + r)) - 1, int(round(cy + r)) - 1],
-                                fill=ccol)
+
+                def squares(g, color, dx=0, dy=0):
+                    for cy in (mid - off, mid + off):
+                        g.rectangle([int(round(cx - r)) + dx, int(round(cy - r)) + dy,
+                                     int(round(cx + r)) - 1 + dx, int(round(cy + r)) - 1 + dy], fill=color)
+                if shadow:
+                    col, dx, dy, blur = shadow
+                    sh = Image.new('RGBA', img.size, (0, 0, 0, 0))
+                    squares(ImageDraw.Draw(sh), col, int(round(dx)), int(round(dy)))
+                    img.alpha_composite(sh.filter(ImageFilter.GaussianBlur(blur)) if blur else sh)
+                squares(ImageDraw.Draw(img), ccol)
             off = (cbot - ctop) * spread
-            pieces.insert(2, Piece('paint', fn=paint, key=('colon', cx, ctop, cbot, r, ccol, spread, square), role='colon',
+            pieces.insert(2, Piece('paint', fn=paint, key=('colon', cx, ctop, cbot, r, ccol, spread, square, shadow), role='colon',
                                    bbox=(int(cx - r), int((ctop + cbot) / 2.0 - off - r),
                                          int(math.ceil(cx + r)), int(math.ceil((ctop + cbot) / 2.0 + off + r)))))
         if secs and not like:
@@ -688,7 +704,29 @@ class Resolver:
 
     def place_day(self, el, path, parent):
         sfx = self.b.locales[self.lang]['day_suffix'] if el.get('suffix', True) else ''
+        if el.get('centred'):
+            return self._day_pictures(el, path, parent, sfx)
         return self._number(el, path, parent, codes.DAY_OF_MONTH, el.get('digits', 2), sfx, False, 'day')
+
+    def _day_pictures(self, el, path, parent, sfx):
+        """The day as 31 ready pictures, each centred in one cell with its suffix, so
+        '9' sits as centred as '25.'. Not yet confirmed on a watch."""
+        self.b.note_warning('%s.centred: a day drawn as 31 pictures is not yet confirmed on a watch; if it shows '
+                            'nothing, drop "centred"' % path)
+        st = self.style(el, path, self.numeric_sample())
+        texts = [str(d) + sfx for d in range(1, 32)]
+        ims = [st.render(tx) for tx in texts]
+        cw = max(i.width for i in ims)
+        cells = []
+        for im in ims:
+            c = Image.new('RGBA', (cw, im.height), (0, 0, 0, 0))
+            c.alpha_composite(im, ((cw - im.width) // 2, 0))
+            cells.append(c)
+        x = self.place_x(el, path, parent, cw)
+        y = self.place_y(el['y'], path + '.y', parent, st.height, st)
+        piece = Piece('list', ims=[cells[0]] + cells, x=x, y=y, source=codes.DAY_OF_MONTH)
+        box = (x, y + st.digit_ink[0], x + cw, y + st.digit_ink[1])
+        return Placed('day', 'date', [piece], self.edges(box, st, y), box, path)
 
     def place_number(self, el, path, parent):
         src, md, _ = NUMBER_SOURCES[el['source']]
@@ -928,6 +966,14 @@ def paint_layer(b, img, layer, path):
             else:
                 raise SpecError(['%s: a shape is "line": [[x, y], ...], "ellipse": [l, t, r, b] or "rect": [l, t, r, b]' % p])
         img.alpha_composite(im.resize((W, H), Image.LANCZOS))
+    elif t == 'lcd':
+        o = layer.get('outline')
+        img.alpha_composite(draw.lcd_window(
+            (W, H), tuple(layer['box']), layer.get('radius', 20),
+            b.color(layer.get('centre', '#F8C470'), path + '.centre'), b.color(layer.get('edge', '#BE7024'), path + '.edge'),
+            tuple(layer.get('focus', (0.42, 0.38))), tuple(layer.get('reach', (0.62, 0.95))), layer.get('power', 1.6),
+            layer.get('rim', 7), layer.get('rim_alpha', 140),
+            (b.color(o.get('color', '#3A3A38'), path + '.outline.color'), o.get('width', 2)) if o else None))
     elif t == 'dial':
         def part(name):
             v = layer.get(name)
@@ -1123,7 +1169,7 @@ def build(spec, base_dir='.', langs=None):
             mark_area = m if mark_area is None else ImageChops.lighter(mark_area, m)
     # the background's own drawings and the second mark's path, against the bezel
     for i, layer in enumerate(spec.get('background', [])):
-        if layer.get('type') in ('card', 'ticks', 'shapes', 'dial'):
+        if layer.get('type') in ('card', 'ticks', 'shapes', 'dial', 'lcd'):
             alone = Image.new('RGBA', (W, H), (0, 0, 0, 0))
             paint_layer(b, alone, layer, 'background[%d]' % i)
             b.warnings.extend(check.bezel_messages('background[%d]' % i, 'the "%s" layer' % layer['type'],

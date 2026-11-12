@@ -13,10 +13,12 @@ The build writes one `.hwt` per language, one carrying all languages as choices 
 watch's face editor, and a PNG of the normal and the always-on screen for each. Look at
 the PNGs before calling a face finished.
 
-Three complete descriptions ship with the repository and are the best reference:
+Four complete descriptions ship with the repository and are the best reference:
 `faces/vibe/face.json` (cards, tiles, a mark running around the frame),
 `faces/plumb/face.json` (bare type, a mark sliding down a thread) and
-`faces/duo/face.json` (hands on a small dial, crystal digits, a hanging date). Both build into the
+`faces/duo/face.json` (hands on a small dial, crystal digits, a hanging date) and
+`faces/kide/face.json` (the same instruments with a lit amber crystal window, a date
+built outwards from the middle, readings at the corners). Both build into the
 exact pixels of the hand-written faces they replace, except where the checks below
 found a fault in the original (Vibe's always-on words are a size smaller, so the
 descenders of one line clear the next).
@@ -138,7 +140,9 @@ With `"font": "Segments"` the digits are drawn as on a crystal display; `size` i
 digit height and `segments` shapes them: `{"ghost": "#262626", "aspect": 0.5,
 "thickness": 0.13}` — `ghost` is the colour of unlit segments (`null` for none),
 `aspect` the width over the height, `thickness` the bar over the height. They draw
-`0`–`9` and `-` only.
+`0`–`9` and `-` only. `"shadow": {"color": "#6E34085F", "dx": 2, "dy": 3, "blur": 1.1}`
+casts each lit segment's shadow on the reflector behind it, as on a real positive
+display; a square colon casts the same shadow.
 
 ## Elements
 
@@ -167,7 +171,9 @@ Hours and minutes, 24-hour, optionally seconds.
 The day of the month, right-aligned in two digit cells so it never moves sideways, with
 the language's suffix after it. `x` with `align: left` is the left edge of the two cells.
 `right` includes the suffix, so words placed at `"day.right+12"` follow it in every
-language.
+language. `"centred": true` draws the day instead as 31 ready pictures, each centred in
+one cell with its suffix, so `9` sits as centred as `25.` — for a date line built
+outwards from the middle. Not yet confirmed on a watch.
 A day before the tenth leaves the left cell empty: a date line centred on the screen
 looks slightly off-centre on those days. The watch cannot centre a number together
 with a word, so left-align the date to a margin, or accept it.
@@ -280,6 +286,7 @@ Drawn in order onto black, once, into one picture.
 | `card` | `box`, `radius` 22, `fill_alpha` 14, `rim_alpha` 46: a glass card |
 | `ticks` | `color`, `major_color`: 60 ticks along the ring |
 | `shapes` | `ss` 4 and `items`: `{"line": [[x, y], ...], "width": 1.4, "color": ...}`, `{"ellipse": [l, t, r, b], ...}`, `{"rect": [l, t, r, b], "radius": 0, ...}`, drawn on one supersampled canvas |
+| `lcd` | `box`, `radius` 20, `centre` and `edge` colours of the backlight, `focus` [0.42, 0.38] where it is brightest, `reach`, `power`, `rim` 7 and `rim_alpha` 140 (shadow inside the rim), `outline` `{color, width}`: a lit crystal window for dark segment digits |
 | `dial` | `box`, `radius`, `inset` 5, `frame` `{color, width}`, `minute` and `hour` ticks `{color, length, width}`, `centre` (default: the middle of the box): a rounded-rectangle dial whose radial ticks follow its outline |
 | `picture` | `file`: an image next to the description, scaled to cover the screen. Photos cost size: about 780 KB each |
 

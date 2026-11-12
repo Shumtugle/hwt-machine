@@ -96,6 +96,23 @@ class Instruments(unittest.TestCase):
         self.assertGreater(bright(late), 200)
 
 
+class LitWindow(unittest.TestCase):
+    """Dark segments on a lit crystal window, a centred day."""
+
+    def test_window_and_digits(self):
+        import datetime
+        desc = spec.load(os.path.join(ROOT, 'faces', 'kide', 'face.json'))
+        result = spec.build(desc, os.path.join(ROOT, 'faces', 'kide'), ['ru'])
+        with tempfile.TemporaryDirectory() as out:
+            binary, _, _ = spec.package(result, os.path.join(out, 'kide.hwt'))
+        im = simulate.render(binary, data=simulate.sample_data(datetime.datetime(2026, 11, 9, 18, 18, 0)))
+        r, g, b, _ = im.getpixel((204, 260))                       # backlight above the digits
+        self.assertTrue(r > 200 and b < 150, (r, g, b))
+        dark = [p for p in im.crop((30, 270, 380, 370)).getdata() if sum(p[:3]) < 150]
+        self.assertGreater(len(dark), 3000)                         # lit segments are dark
+        self.assertTrue(any('31 pictures' in w for w in result.warnings))
+
+
 class Languages(unittest.TestCase):
     def test_every_choice_draws_its_single_face(self):
         with tempfile.TemporaryDirectory() as out:
