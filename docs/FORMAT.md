@@ -127,8 +127,12 @@ right edge; units such as `%` or `°` are best drawn as a fixed image just after
 ### System-font text (kinds 0 and 10)
 
 `1` box `{x, y, w, h}`, `2` colour `{r, g, b, a}`, `3` style code (seen: 129, 138, 149,
-150, 161, 166, 169, 176), `4` alignment, `5` data source; kind 10 adds a unit or format
-code in `6`. No font travels with the face; the watch uses its own.
+150, 157, 158, 161, 163, 166, 169, 176; 149 in faces for this screen), `4` alignment,
+`5` data source, `7` 0. No font travels with the face; the watch uses its own.
+
+Kind 10 reads differently: `5` is the format, `6` the source and `7` a second source
+(255 for none), `9` the mode flag. Seen formats: 5 with battery percent (`80%`), 7 with
+temperature (`24°`), 2 with temperature low and high as one value (`8/40`).
 
 ### Touch zone (group field 8)
 
@@ -195,6 +199,10 @@ been measured. Backgrounds may run to the edge and are cropped.
 | 20 / 21 | temperature high / low | number | observed |
 | 12 / 13 / 14 | hours / minutes / seconds | number | observed |
 | 121 / 122 | sunrise / sunset | text | observed |
+| 142 | sleep last night, formatted by the watch (`7h30m`) | text | observed, in a face for another watch |
+| 146 | distance walked, km | text | observed, in a face for this screen |
+| 26 | stress | text | observed, in a face for another watch |
+| 7 / 8 | air pressure / altitude (as drawn next to their icons) | number | observed, in a face for another watch |
 | 150 | hour hand | hand | verified |
 | 153 | minute hand | hand | verified |
 | 154 | second hand | hand | observed |
@@ -214,6 +222,13 @@ around the frame is still possible; see the running mark in the machine's effect
 | 21 | weather | verified |
 | 17 | battery: nothing on newer watches | verified |
 | 50 | settings | observed |
+| 18 | messages | observed |
+| 25 | sleep, judging by its place on a sleep value | observed, in a face for another watch |
+| 16 | stress, by its place on a stress value | observed, in a face for another watch |
+| 24 | distance, by its place on a distance value | observed |
+| 12 | calories, by its place on a calories value | observed, in a face for this screen |
+| 36 / 26 / 35 / 30 | music / workout / calls / timer, by labels printed beside them | observed, in a face for another watch |
+| 22 / 23 | altitude / air pressure, by their icons | observed, in a face for another watch |
+| 38 | on a phone icon | observed, in a face for this screen |
 
 In choice slots the same field names a *function*; see the table above.
-| 18 | messages | observed |

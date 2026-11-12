@@ -18,7 +18,7 @@ KIND_NAMES = {codes.TEXT: 'text', codes.IMAGE: 'image', codes.IMAGE_LIST: 'list'
               codes.HAND: 'hand', codes.PROGRESS: 'progress', codes.ARC: 'arc',
               codes.TEXT_FORMATTED: 'text+unit'}
 SOURCE_NAMES = {v: k.lower() for k, v in vars(codes).items()
-                if k.isupper() and isinstance(v, int) and not k.startswith(('OPEN_', 'ALIGN_'))
+                if k.isupper() and isinstance(v, int) and not k.startswith(('OPEN_', 'ALIGN_', 'FUNCTION_'))
                 and k not in ('IMAGE', 'IMAGE_LIST', 'NUMBER', 'HAND', 'PROGRESS', 'TEXT', 'TEXT_FORMATTED', 'ARC')}
 TARGET_NAMES = {v: k[5:].lower() for k, v in vars(codes).items() if k.startswith('OPEN_')}
 
