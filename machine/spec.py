@@ -110,7 +110,7 @@ FIELDS = {
     'weather_icon': PLACE_FIELDS | {'size', 'color', 'fill', 'weight', 'icons'},
     'battery_icon': PLACE_FIELDS | {'color', 'low_color', 'width', 'height'},
     'seconds_mark': {'id', 'path', 'layers', 'reach', 'cover_grow'},
-    'hands': {'id', 'centre', 'hour', 'minute', 'second', 'pin'},
+    'hands': {'id', 'centre', 'hour', 'minute', 'second', 'pin', 'behind'},
     'system_text': {'id', 'source', 'x', 'y', 'width', 'height', 'align', 'color', 'text_style', 'quiet'},
     'tap': {'id', 'box', 'open', 'card', 'elements'},
 }
@@ -240,6 +240,7 @@ class Placed:
         self.geometry = None
         self.mark = None
         self.quiet = False
+        self.behind = False
         self.ink_h = None
 
 
@@ -484,6 +485,7 @@ class Resolver:
         el, path, parent = self.entries[key]
         placed = getattr(self, 'place_' + el['type'])(el, path, parent)
         placed.quiet = bool(el.get('quiet'))
+        placed.behind = bool(el.get('behind'))
         e = placed.edges
         if el['type'] in ('time', 'day', 'number') and 'digits_top' in e:
             placed.ink_h = int(round(e['digits_bottom'] - e['digits_top'])) if el['type'] != 'time' else \
@@ -1345,7 +1347,8 @@ def _inspectable(b, placed):
                 items.append({'path': c.path, 'kind': c.kind, 'pieces': c.pieces, 'tap_box': p.box,
                               'quiet': c.quiet, 'ink_h': c.ink_h})
         else:
-            items.append({'path': p.path, 'kind': p.kind, 'pieces': p.pieces, 'quiet': p.quiet, 'ink_h': p.ink_h})
+            items.append({'path': p.path, 'kind': p.kind, 'pieces': p.pieces, 'quiet': p.quiet, 'ink_h': p.ink_h,
+                          'behind': p.behind})
     return items
 
 

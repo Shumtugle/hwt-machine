@@ -283,6 +283,7 @@ Hands turning about one centre, drawn pointing to 12 and turned by the watch.
 | `second` | optional, same fields; not yet confirmed on a watch |
 | `inner` | a darker slit along the hand: `{"color": "#000000", "inset": 2, "from": 0.3, "to": 0.86}` (fractions of the length from the centre) |
 | `pin` | discs on top of the centre, largest first: `[{"radius": 6.5, "color": "..."}, ...]` |
+| `behind` | `true` when the hands turn under other elements on purpose, such as digits set inside the dial; list the hands before those elements so they are drawn first |
 
 The checks treat a hand as the whole circle it sweeps.
 

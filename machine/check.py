@@ -11,6 +11,8 @@ from . import codes, simulate
 
 INK = 40                 # alpha above which a pixel counts as drawn
 OVERLAP_PIXELS = 4       # fewer shared pixels than this are antialiasing, not a collision
+NEAR = 3                 # side by side, closer than this two elements read as one
+WORD_SPACE = 0.25        # ... or closer than a word space: a quarter of the letters' height
 # The area confirmed visible on a wrist: a rounded rectangle 11 px in from every edge with
 # corners of radius 82. A frame drawn on exactly this line shows whole on the watch; one
 # drawn further out (inset 3, radius 64) loses its corners under the bezel.
@@ -198,11 +200,27 @@ def inspect(items, plain_bg, mark_area, size, label=''):
 
         # other elements
         for other, om in done:
+            if it.get('behind') or other.get('behind'):
+                continue        # drawn first on purpose; what follows covers it
             hit = ImageChops.multiply(m, om)
             n = _count(hit)
             if n >= OVERLAP_PIXELS:
                 errors.append('%s%s: %s overlaps %s by %d px around %s; move one of them' % (
                     it['path'], where, _describe(it), _describe(other), n, list(hit.getbbox())))
+                continue
+            # side by side, a gap narrower than a word space makes two things read as one
+            # the word space belongs to the smaller of two texts; beside an icon, a close fit is intended
+            hs = [it.get('ink_h'), other.get('ink_h')]
+            gap = max(NEAR, int(round(WORD_SPACE * min(hs)))) if all(hs) else NEAR
+            wide = om
+            for dx in range(1, gap + 1):
+                wide = ImageChops.lighter(wide, ImageChops.lighter(ImageChops.offset(om, dx, 0),
+                                                                   ImageChops.offset(om, -dx, 0)))
+            near = ImageChops.multiply(m, wide)
+            if _count(near) >= OVERLAP_PIXELS:
+                warnings.append('%s%s: %s comes within %d px of %s around %s, closer than a word space; '
+                                'they read as one, leave a gap' % (
+                                    it['path'], where, _describe(it), gap, _describe(other), list(near.getbbox())))
         done.append((it, m))
 
         # contrast against what is under it, part by part: a quiet part must not hide in a loud one
