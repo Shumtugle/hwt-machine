@@ -20,7 +20,6 @@ def render(lang, data, template):
     path = data['paths'][lang]
     base = '../' * path.count('/')
     here = lambda other: base + data['paths'][other]
-    others = ' · '.join('<a href="%s">%s</a>' % (here(o), data['labels'][o]) for o in data['languages'] if o != lang)
     chips = '\n'.join('            <a class="chip" href="%s" aria-pressed="%s" lang="%s">%s</a>'
                       % (here(o), 'true' if o == lang else 'false', o, o.upper()) for o in data['languages'])
     sky = ''.join('<option value="%d"%s>%s</option>' % (i, ' selected' if i == 4 else '', html.escape(w))
@@ -28,7 +27,7 @@ def render(lang, data, template):
     cards = '\n'.join('      <div class="card"><h3>%s</h3><p>%s</p></div>' % (h, p) for h, p in s['cards'])
     js = dict(s['js'], download=s['download'], names=data['names'],
               gallery=[[f, data['names'][f], s['gallery'][f]] for f in data['order']])
-    values = dict(s, lang=lang, base=base, lang_note=s['lang_note'].format(other=others), lang_chips=chips,
+    values = dict(s, lang=lang, base=base, lang_chips=chips,
                   sky_options='            ' + sky, cards=cards,
                   strings=json.dumps(js, ensure_ascii=False))
     out = template

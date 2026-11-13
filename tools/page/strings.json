@@ -26,11 +26,6 @@
   "ru",
   "fi"
  ],
- "labels": {
-  "en": "English",
-  "ru": "Русский",
-  "fi": "Suomi"
- },
  "paths": {
   "en": "",
   "ru": "ru/",
@@ -48,7 +43,6 @@
    "lede": "Fonts and a few lines of layout go in, an installable watch face comes out. Every bitmap is drawn by the build, every glyph sits on its visible ink, and the package is checked by drawing it back before it ever reaches a wrist.",
    "download": "Download",
    "all_faces": "All faces",
-   "lang_note": "Every face on this page is in English, on both of its screens. The same faces in other languages: {other}.",
    "aria_live": "Live watch face preview",
    "l_face": "Face",
    "l_language": "Language",
@@ -74,7 +68,7 @@
     "fog"
    ],
    "h_download": "Download a face",
-   "p_download": "One file per face, in English. Install it with any app that can send a watch face file to the watch.",
+   "p_download": "One file per face. Install it with any app that can send a watch face file to the watch.",
    "h_machine": "What the machine does",
    "p_machine": "The watch reads a compact container: a protobuf layout, a table of images and the images themselves. The machine writes all three, and reads any face back to show what is inside.",
    "cards": [
@@ -144,7 +138,6 @@
    "lede": "На входе шрифты и несколько строк разметки, на выходе готовый циферблат. Каждую картинку рисует сборка, каждый знак стоит по своим видимым пикселям, а пакет перед тем, как попасть на руку, проверяется: машина рисует его заново и смотрит.",
    "download": "Скачать",
    "all_faces": "Все циферблаты",
-   "lang_note": "Все циферблаты на этой странице на русском, на обоих экранах. Те же циферблаты на других языках: {other}.",
    "aria_live": "Живое превью циферблата",
    "l_face": "Циферблат",
    "l_language": "Язык",
@@ -170,7 +163,7 @@
     "туман"
    ],
    "h_download": "Скачать циферблат",
-   "p_download": "Один файл на циферблат, на русском. Установите его любым приложением, которое умеет отправлять файл циферблата на часы.",
+   "p_download": "Один файл на циферблат. Установите его любым приложением, которое умеет отправлять файл циферблата на часы.",
    "h_machine": "Что делает машина",
    "p_machine": "Часы читают компактный контейнер: разметку в protobuf, таблицу картинок и сами картинки. Машина пишет все три части и умеет прочитать любой циферблат обратно, чтобы показать, что внутри.",
    "cards": [
@@ -240,7 +233,6 @@
    "lede": "Sisään menee fontteja ja muutama rivi asettelua, ulos tulee asennettava kellotaulu. Jokaisen kuvan piirtää koneisto, jokainen merkki asettuu näkyvän musteensa mukaan, ja paketti tarkistetaan piirtämällä se uudelleen ennen kuin se päätyy ranteeseen.",
    "download": "Lataa",
    "all_faces": "Kaikki kellotaulut",
-   "lang_note": "Kaikki tämän sivun kellotaulut ovat suomeksi, molemmilla näytöillä. Samat kellotaulut muilla kielillä: {other}.",
    "aria_live": "Kellotaulun esikatselu",
    "l_face": "Kellotaulu",
    "l_language": "Kieli",
@@ -266,7 +258,7 @@
     "sumua"
    ],
    "h_download": "Lataa kellotaulu",
-   "p_download": "Yksi tiedosto kellotaulua kohden, suomeksi. Asenna se millä tahansa sovelluksella, joka osaa lähettää kellotaulutiedoston kelloon.",
+   "p_download": "Yksi tiedosto kellotaulua kohden. Asenna se millä tahansa sovelluksella, joka osaa lähettää kellotaulutiedoston kelloon.",
    "h_machine": "Mitä koneisto tekee",
    "p_machine": "Kello lukee tiivistä säiliötä: protobuf-asettelu, kuvataulukko ja itse kuvat. Koneisto kirjoittaa kaikki kolme ja osaa lukea minkä tahansa kellotaulun takaisin näyttääkseen, mitä sen sisällä on.",
    "cards": [
