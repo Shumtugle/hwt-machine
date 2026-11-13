@@ -237,8 +237,8 @@ air pressure or altitude.
 | `x`, `y`, `align` | the box; `y` is its top |
 | `width`, `height` | the box, default 120 × 31 |
 | `color` | any colour |
-| `suffix` | `percent` or `degrees`, added by the watch right after the value |
-| `text_style` | the watch's style code, default 149, the only one confirmed here: its digits are about 18 px tall, below the 21 px read in comfort, so other codes are being tried |
+| `suffix` | `percent` (confirmed) or `degrees`, added by the watch right after the value |
+| `text_style` | the watch's style code, default 149: its digits are about 18 px tall, below the 21 px read in comfort. 158 is confirmed and clearly larger; give it a box 41 px tall |
 
 The font, and so the look, is the watch's; previews draw a plain sans of the same size
 in its place.
@@ -291,10 +291,29 @@ Hands turning about one centre, drawn pointing to 12 and turned by the watch.
 | `second` | optional, same fields; not yet confirmed on a watch |
 | `inner` | a darker slit along the hand: `{"color": "#000000", "inset": 2, "from": 0.3, "to": 0.86}` (fractions of the length from the centre) |
 | `pin` | discs on top of the centre, largest first: `[{"radius": 6.5, "color": "..."}, ...]` |
-| `behind` | `true` when the hands turn under other elements on purpose. They are then put in a touch zone of no size, which the watch draws before everything else, so all text lies over them |
+| `behind` | `true` when the hands turn under other elements on purpose. They are then put in a touch zone of no size, which the watch draws before everything else, so all text lies over them (confirmed) |
 | `shape` | `bar` (default), `laser` (`width` of the hot core, `core` its colour, `color` the glow) or `cone` (a searchlight; `spread` is its half-angle in degrees). Light may run off the screen; it is cropped like a background |
 
 The checks treat a hand as the whole circle it sweeps.
+
+### `seconds_frame`
+
+A band along the visible edge with sixty ticks, where a marker steps once a second and
+goes round once a minute. The marker is a second hand from `centre`, long enough to cross
+the band; a copy of the finished background, open only along the band, covers the rest of
+it, so the marker follows the rounded edge. It lies under everything else, hands drawn
+`behind` included.
+
+| field | meaning |
+|---|---|
+| `inset`, `radius` | the band's outer edge: 11 and 82, the line confirmed visible |
+| `width` | the band, 12 px |
+| `centre` | `[x, y]`, the screen centre by default; ticks sit on the marker's rays from it |
+| `color`, `marker_width` | the marker, 6 px wide |
+| `ticks`, `major_ticks` | `{"color": "...", "width": 2, "length": 7}`; the major ones every five seconds, the whole band long by default. `null` leaves them out |
+
+Keep text out of the band: the marker runs under it there. The marker is not yet
+confirmed on a watch.
 
 ### `tap`
 
@@ -330,7 +349,7 @@ Cards and tick rings must not touch: a card that would is refused.
 
 ## Always-on screen
 
-`aod.elements` take the same elements except `tap` and `seconds_mark`; `time` takes no
+`aod.elements` take the same elements except `tap`, `seconds_mark` and `seconds_frame`; `time` takes no
 seconds. It is drawn in the first language only. The quickest always-on time is the
 normal one, thinner and dimmer:
 

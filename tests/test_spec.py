@@ -148,7 +148,19 @@ class Beams(unittest.TestCase):
         lines = [l.strip() for l in text.splitlines()]
         first_zone = next(i for i, l in enumerate(lines) if l.startswith('zone'))
         self.assertTrue(lines[first_zone].startswith('zone [0, 0, 0, 0]'), lines[first_zone])
-        self.assertTrue(lines[first_zone + 1].startswith('hand') and lines[first_zone + 2].startswith('hand'))
+        under = lines[first_zone + 1:first_zone + 5]
+        # the frame's marker, the background over all but the band, then the two beams
+        self.assertTrue(under[0].startswith('hand') and under[0].endswith('<hand_second>'), under[0])
+        self.assertTrue(under[1].startswith('image'), under[1])
+        self.assertTrue(under[2].startswith('hand') and under[3].startswith('hand'), under[2:])
+
+    def test_frame_marker_shows_only_in_the_band(self):
+        import datetime
+        # at a quarter past the marker points right, where neither beam goes at half past six
+        im = simulate.render(self.binary, data=simulate.sample_data(datetime.datetime(2026, 11, 9, 6, 30, 15)))
+        red = lambda box: [p for p in im.crop(box).getdata() if p[0] > 150 and p[1] < 110]
+        self.assertGreater(len(red((383, 232, 397, 248))), 20)      # in the band
+        self.assertEqual(red((250, 232, 380, 248)), [])              # covered on its way there
 
     def test_laser_shows_and_digits_stay_on_top(self):
         import datetime

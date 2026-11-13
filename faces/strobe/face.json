@@ -209,6 +209,22 @@
  ],
  "elements": [
   {
+   "type": "seconds_frame",
+   "width": 14,
+   "color": "scarlet",
+   "marker_width": 8,
+   "ticks": {
+    "color": "name",
+    "width": 1.6,
+    "length": 7
+   },
+   "major_ticks": {
+    "color": "name",
+    "width": 3,
+    "length": 14
+   }
+  },
+  {
    "type": "hands",
    "id": "beams",
    "behind": true,
@@ -334,7 +350,7 @@
      "size": 28,
      "color": "name",
      "name": "clear_night",
-     "x": 216,
+     "x": 213,
      "y": {
       "middle": 336
      }
@@ -346,7 +362,7 @@
      "color": "cream",
      "text_style": 158,
      "source": "sleep",
-     "x": 250,
+     "x": 246,
      "y": 316
     }
    ]
@@ -400,7 +416,7 @@
      "low_color": "scarlet",
      "width": 28,
      "height": 15,
-     "x": 216,
+     "x": 213,
      "y": {
       "middle": 380
      }
@@ -413,7 +429,7 @@
      "text_style": 158,
      "source": "battery",
      "suffix": "percent",
-     "x": 250,
+     "x": 246,
      "y": 360
     }
    ]
@@ -469,7 +485,7 @@
     {
      "type": "system_text",
      "height": 41,
-     "width": 66,
+     "width": 92,
      "color": "cream",
      "text_style": 158,
      "id": "alt",

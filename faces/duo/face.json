@@ -1,87 +1,387 @@
 {
-  "name": "Duo",
-  "notes": "Hands and crystal digits together. The dial is a small copy of the screen itself. The date in full words: weekday and month share one edge, the day number hangs to its left. Four readings in a row at the foot.",
-  "font": "Oswald",
-  "colors": {
-    "white": "#F4F4F2",
-    "grey": "#9A9A96",
-    "tick": "#6E6E6A",
-    "ghost": "#262626",
-    "ghost_small": "#1C1C1C",
-    "dim": "#8A8A86",
-    "dim_tick": "#4A4A48"
+ "name": "Duo",
+ "notes": "Hands and crystal digits together. The dial is a small copy of the screen itself. The date in full words: weekday and month share one edge, the day number hangs to its left. Four readings in a row at the foot.",
+ "font": "Oswald",
+ "colors": {
+  "white": "#F4F4F2",
+  "grey": "#9A9A96",
+  "tick": "#6E6E6A",
+  "ghost": "#262626",
+  "ghost_small": "#1C1C1C",
+  "dim": "#8A8A86",
+  "dim_tick": "#4A4A48"
+ },
+ "languages": {
+  "default": [
+   "ru",
+   "en",
+   "fi"
+  ],
+  "frame": {
+   "color": "white",
+   "radius": 10
+  }
+ },
+ "background": [
+  {
+   "type": "dial",
+   "box": [
+    26,
+    30,
+    158,
+    186
+   ],
+   "radius": 31,
+   "inset": 4,
+   "frame": {
+    "color": "white",
+    "width": 3
+   },
+   "minute": {
+    "color": "tick",
+    "length": 5,
+    "width": 1.2
+   },
+   "hour": {
+    "color": "white",
+    "length": 12,
+    "width": 3.2
+   }
+  }
+ ],
+ "elements": [
+  {
+   "type": "hands",
+   "id": "hands",
+   "centre": [
+    92,
+    108
+   ],
+   "hour": {
+    "length": 33,
+    "tail": 8,
+    "width": 7.5,
+    "color": "white",
+    "inner": {
+     "color": "#000000",
+     "inset": 2,
+     "from": 0.32,
+     "to": 0.86
+    }
+   },
+   "minute": {
+    "length": 53,
+    "tail": 8,
+    "width": 6,
+    "color": "white",
+    "inner": {
+     "color": "#000000",
+     "inset": 1.8,
+     "from": 0.24,
+     "to": 0.9
+    }
+   },
+   "second": {
+    "length": 56,
+    "tail": 13,
+    "width": 1.6,
+    "color": "white"
+   },
+   "pin": [
+    {
+     "radius": 6.5,
+     "color": "white"
+    },
+    {
+     "radius": 4.5,
+     "color": "#000000"
+    },
+    {
+     "radius": 2.4,
+     "color": "white"
+    }
+   ]
   },
-  "languages": {
-    "default": ["ru", "en", "fi"],
-    "frame": {"color": "white", "radius": 10}
+  {
+   "type": "weekday",
+   "id": "wd",
+   "case": "lower",
+   "size": 34,
+   "weight": 300,
+   "color": "white",
+   "x": 236,
+   "max_right": 392,
+   "y": {
+    "caps_bottom": 90
+   }
   },
+  {
+   "type": "month",
+   "case": "lower",
+   "size": 44,
+   "weight": 300,
+   "color": "white",
+   "x": "wd.left",
+   "max_right": 392,
+   "y": {
+    "caps_bottom": 150
+   }
+  },
+  {
+   "type": "day",
+   "size": 44,
+   "weight": 300,
+   "color": "white",
+   "x": "wd.left-10",
+   "align": "right",
+   "y": {
+    "digits_bottom": 150
+   }
+  },
+  {
+   "type": "time",
+   "id": "time",
+   "font": "Segments",
+   "size": 108,
+   "color": "white",
+   "pad": 7,
+   "segments": {
+    "ghost": "ghost"
+   },
+   "leading_zero": false,
+   "x": "screen.center",
+   "align": "center",
+   "y": {
+    "digits_middle": 298
+   },
+   "colon": {
+    "width": 24,
+    "radius": 5,
+    "shape": "square",
+    "spread": 0.25,
+    "color": "white"
+   },
+   "seconds": {
+    "size": 42,
+    "color": "grey",
+    "segments": {
+     "ghost": "ghost_small"
+    },
+    "pad": 2,
+    "gap": 10,
+    "quiet": true
+   }
+  },
+  {
+   "type": "tap",
+   "box": [
+    "bpm.left-6",
+    402,
+    "heart.right+6",
+    446
+   ],
+   "open": "heart_rate",
+   "elements": [
+    {
+     "type": "number",
+     "id": "bpm",
+     "source": "heart_rate",
+     "size": 26,
+     "weight": 300,
+     "color": "white",
+     "x": 30,
+     "y": {
+      "digits_middle": 424
+     }
+    },
+    {
+     "type": "symbol",
+     "id": "heart",
+     "name": "favorite",
+     "fill": 0,
+     "size": 22,
+     "color": "white",
+     "x": "bpm.right+5",
+     "y": {
+      "middle": 424
+     }
+    }
+   ]
+  },
+  {
+   "type": "tap",
+   "box": [
+    "charge.left-6",
+    402,
+    "cell.right+6",
+    446
+   ],
+   "open": "settings",
+   "elements": [
+    {
+     "type": "number",
+     "id": "charge",
+     "source": "battery",
+     "size": 26,
+     "weight": 300,
+     "color": "white",
+     "x": 111,
+     "y": {
+      "digits_middle": 424
+     }
+    },
+    {
+     "type": "battery_icon",
+     "id": "cell",
+     "color": "white",
+     "low_color": "#FF4040",
+     "width": 26,
+     "height": 14,
+     "x": "charge.right+6",
+     "y": {
+      "middle": 424
+     }
+    }
+   ]
+  },
+  {
+   "type": "tap",
+   "box": [
+    "temp.left-6",
+    402,
+    "sky.right+6",
+    446
+   ],
+   "open": "weather",
+   "elements": [
+    {
+     "type": "number",
+     "id": "temp",
+     "source": "temperature",
+     "size": 26,
+     "weight": 300,
+     "color": "white",
+     "unit": "°",
+     "gap": 1,
+     "x": 201,
+     "y": {
+      "digits_middle": 424
+     }
+    },
+    {
+     "type": "weather_icon",
+     "id": "sky",
+     "fill": 0,
+     "size": 26,
+     "color": "white",
+     "x": "temp.right+3",
+     "y": {
+      "middle": 424
+     }
+    }
+   ]
+  },
+  {
+   "type": "tap",
+   "box": [
+    "steps.left-6",
+    402,
+    "foot.right+6",
+    446
+   ],
+   "open": "steps",
+   "elements": [
+    {
+     "type": "number",
+     "id": "steps",
+     "source": "steps",
+     "size": 26,
+     "weight": 300,
+     "color": "white",
+     "x": 286,
+     "y": {
+      "digits_middle": 424
+     }
+    },
+    {
+     "type": "symbol",
+     "id": "foot",
+     "name": "footprint",
+     "fill": 0,
+     "size": 22,
+     "color": "white",
+     "x": "steps.right+4",
+     "y": {
+      "middle": 424
+     }
+    }
+   ]
+  }
+ ],
+ "aod": {
   "background": [
-    {"type": "dial", "box": [26, 30, 158, 186], "radius": 31, "inset": 4,
-     "frame": {"color": "white", "width": 3},
-     "minute": {"color": "tick", "length": 5, "width": 1.2},
-     "hour": {"color": "white", "length": 12, "width": 3.2}}
+   {
+    "type": "dial",
+    "box": [
+     26,
+     30,
+     158,
+     186
+    ],
+    "radius": 31,
+    "inset": 4,
+    "frame": {
+     "color": "dim_tick",
+     "width": 2
+    },
+    "hour": {
+     "color": "dim_tick",
+     "length": 11,
+     "width": 2.6
+    }
+   }
   ],
   "elements": [
-    {"type": "hands", "id": "hands", "centre": [92, 108],
-     "hour": {"length": 33, "tail": 8, "width": 7.5, "color": "white",
-              "inner": {"color": "#000000", "inset": 2, "from": 0.32, "to": 0.86}},
-     "minute": {"length": 53, "tail": 8, "width": 6, "color": "white",
-                "inner": {"color": "#000000", "inset": 1.8, "from": 0.24, "to": 0.9}},
-     "second": {"length": 56, "tail": 13, "width": 1.6, "color": "white"},
-     "pin": [{"radius": 6.5, "color": "white"}, {"radius": 4.5, "color": "#000000"}, {"radius": 2.4, "color": "white"}]},
-
-    {"type": "weekday", "id": "wd", "case": "lower", "size": 34, "weight": 300, "color": "white",
-     "x": 236, "max_right": 392, "y": {"caps_bottom": 90}},
-    {"type": "month", "case": "lower", "size": 44, "weight": 300, "color": "white",
-     "x": "wd.left", "max_right": 392, "y": {"caps_bottom": 150}},
-    {"type": "day", "size": 44, "weight": 300, "color": "white",
-     "x": "wd.left-10", "align": "right", "y": {"digits_bottom": 150}},
-
-    {"type": "time", "id": "time", "font": "Segments", "size": 108, "color": "white", "pad": 7,
-     "segments": {"ghost": "ghost"}, "leading_zero": false,
-     "x": "screen.center", "align": "center", "y": {"digits_middle": 310},
-     "colon": {"width": 24, "radius": 5, "shape": "square", "spread": 0.25, "color": "white"},
-     "seconds": {"size": 42, "color": "grey", "segments": {"ghost": "ghost_small"}, "pad": 2, "gap": 10,
-                 "quiet": true}},
-
-    {"type": "tap", "box": ["bpm.left-6", 402, "heart.right+6", 446], "open": "heart_rate", "elements": [
-      {"type": "number", "id": "bpm", "source": "heart_rate", "size": 26, "weight": 300, "color": "white",
-       "x": 30, "y": {"digits_middle": 424}},
-      {"type": "symbol", "id": "heart", "name": "favorite", "fill": 0, "size": 22, "color": "white",
-       "x": "bpm.right+5", "y": {"middle": 424}}
-    ]},
-    {"type": "tap", "box": ["charge.left-6", 402, "cell.right+6", 446], "open": "settings", "elements": [
-      {"type": "number", "id": "charge", "source": "battery", "size": 26, "weight": 300, "color": "white",
-       "x": 111, "y": {"digits_middle": 424}},
-      {"type": "battery_icon", "id": "cell", "color": "white", "low_color": "#FF4040", "width": 26, "height": 14,
-       "x": "charge.right+6", "y": {"middle": 424}}
-    ]},
-    {"type": "tap", "box": ["temp.left-6", 402, "sky.right+6", 446], "open": "weather", "elements": [
-      {"type": "number", "id": "temp", "source": "temperature", "size": 26, "weight": 300, "color": "white",
-       "unit": "°", "gap": 1, "x": 201, "y": {"digits_middle": 424}},
-      {"type": "weather_icon", "id": "sky", "fill": 0, "size": 26, "color": "white",
-       "x": "temp.right+3", "y": {"middle": 424}}
-    ]},
-    {"type": "tap", "box": ["steps.left-6", 402, "foot.right+6", 446], "open": "steps", "elements": [
-      {"type": "number", "id": "steps", "source": "steps", "size": 26, "weight": 300, "color": "white",
-       "x": 286, "y": {"digits_middle": 424}},
-      {"type": "symbol", "id": "foot", "name": "footprint", "fill": 0, "size": 22, "color": "white",
-       "x": "steps.right+4", "y": {"middle": 424}}
-    ]}
-  ],
-  "aod": {
-    "background": [
-      {"type": "dial", "box": [26, 30, 158, 186], "radius": 31, "inset": 4,
-       "frame": {"color": "dim_tick", "width": 2},
-       "hour": {"color": "dim_tick", "length": 11, "width": 2.6}}
+   {
+    "type": "hands",
+    "centre": [
+     92,
+     108
     ],
-    "elements": [
-      {"type": "hands", "centre": [92, 108],
-       "hour": {"length": 33, "tail": 8, "width": 6, "color": "dim"},
-       "minute": {"length": 53, "tail": 8, "width": 4.5, "color": "dim"},
-       "pin": [{"radius": 4, "color": "dim"}]},
-      {"type": "time", "like": "time", "color": "dim", "segments": {"ghost": null},
-       "colon": {"width": 24, "radius": 5, "shape": "square", "spread": 0.25, "color": "dim"}}
+    "hour": {
+     "length": 33,
+     "tail": 8,
+     "width": 6,
+     "color": "dim"
+    },
+    "minute": {
+     "length": 53,
+     "tail": 8,
+     "width": 4.5,
+     "color": "dim"
+    },
+    "pin": [
+     {
+      "radius": 4,
+      "color": "dim"
+     }
     ]
-  }
+   },
+   {
+    "type": "time",
+    "like": "time",
+    "color": "dim",
+    "segments": {
+     "ghost": null
+    },
+    "colon": {
+     "width": 24,
+     "radius": 5,
+     "shape": "square",
+     "spread": 0.25,
+     "color": "dim"
+    }
+   }
+  ]
+ }
 }

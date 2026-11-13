@@ -72,6 +72,20 @@ its crest, and battery, weather, pulse and steps on the dark water below it.
 [FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/lighthouse-fi.hwt) ·
 [all three](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/lighthouse.hwt)
 
+## Duo
+
+Hands and crystal digits together. The dial is a small copy of the screen itself,
+rounded the same way; beside it the weekday and the month in full words, the day number
+hanging to their left. The time below in segments over their unlit ghosts, and four
+readings along the foot: pulse, charge, weather, steps.
+
+![Duo in English, Russian, Finnish, and its always-on screen](docs/img/duo.png)
+
+[RU](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/duo-ru.hwt) ·
+[EN](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/duo-en.hwt) ·
+[FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/duo-fi.hwt) ·
+[all three](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/duo.hwt)
+
 ## Faces from a description
 
 A face can also be written as data instead of code: a JSON description of the
@@ -147,6 +161,8 @@ functions it borrows them from (*Date*, *Day of week*, *Sun*), not after the lan
 | `faces/night-tram/` | the Night Tram face and its locales |
 | `faces/plumb/` | the Plumb face and its locales |
 | `faces/lighthouse/` | the Lighthouse face, its painting and its locales |
+| `faces/duo/` | the Duo face |
+| `faces/strobe/` | the Strobe face, being tried on the wrist |
 | `tools/inspect.py` | look inside any face |
 | `tools/build.py` | build a face from a description |
 | `docs/` | the live page, its renderer, the [format notes](docs/FORMAT.md) and the [authoring guide](docs/AUTHORING.md) |

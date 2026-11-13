@@ -84,6 +84,7 @@ TEXT_SOURCES = {
     'battery': (codes.BATTERY_PERCENT, '100'),
 }
 TEXT_STYLE_VERIFIED = 149
+TEXT_STYLES_CONFIRMED = {149, 158}
 DEAD_TAP_TARGETS = {'battery': 'does nothing on this watch; open "settings" instead'}
 
 WEATHER_SYMBOLS = ['cloud_off', 'sunny', 'clear_night', 'cloud', 'partly_cloudy_day', 'rainy',
@@ -112,6 +113,7 @@ FIELDS = {
     'battery_icon': PLACE_FIELDS | {'color', 'low_color', 'width', 'height'},
     'seconds_mark': {'id', 'path', 'layers', 'reach', 'cover_grow'},
     'hands': {'id', 'centre', 'hour', 'minute', 'second', 'pin', 'behind'},
+    'seconds_frame': {'id', 'centre', 'inset', 'width', 'radius', 'color', 'marker_width', 'ticks', 'major_ticks'},
     'system_text': {'id', 'source', 'x', 'y', 'width', 'height', 'align', 'color', 'text_style', 'quiet', 'suffix'},
     'tap': {'id', 'box', 'open', 'card', 'elements'},
 }
@@ -120,7 +122,7 @@ REQUIRED = {
     'month': {'size', 'x', 'y'}, 'number': {'source', 'size', 'x', 'y'}, 'text': {'text', 'size', 'x', 'y'},
     'symbol': {'name', 'size', 'x', 'y'}, 'weather_icon': {'size', 'x', 'y'}, 'battery_icon': {'x', 'y'},
     'seconds_mark': {'layers'}, 'tap': {'box', 'open', 'elements'}, 'hands': {'centre', 'hour', 'minute'},
-    'system_text': {'source', 'x', 'y'},
+    'system_text': {'source', 'x', 'y'}, 'seconds_frame': set(),
 }
 TIME_GROUP = {'time', 'seconds_mark'}
 LAYER_FIELDS = {
@@ -362,7 +364,7 @@ class Builder:
             if 'style' in el and el['style'] not in (self.spec.get('styles') or {}):
                 self.errors.append('%s.style: no style "%s" under "styles"%s' % (p, el['style'], _near(el['style'], self.spec.get('styles') or {})))
             if aod:
-                if t in ('tap', 'seconds_mark'):
+                if t in ('tap', 'seconds_mark', 'seconds_frame'):
                     self.errors.append('%s: "%s" is not shown on the always-on screen; leave it out of "aod"' % (p, t))
                 if t == 'time' and 'seconds' in el:
                     self.errors.append('%s.seconds: the always-on screen changes once a minute; remove "seconds"' % p)
@@ -966,6 +968,54 @@ class Resolver:
         placed.light = light      # beams of light may run off the screen, like a background
         return placed
 
+    def place_seconds_frame(self, el, path, parent):
+        """A band along the visible edge with sixty ticks, where a marker runs once a minute.
+        The marker is a second hand from one centre, long enough to cross the band; a copy of
+        the finished background, open only along the band, covers the rest of it. So the
+        marker follows the rounded edge rather than a circle."""
+        W, H = self.b.width, self.b.height
+        inset = el.get('inset', check.SAFE_INSET)
+        width = el.get('width', 12)
+        radius = el.get('radius', check.SAFE_RADIUS)
+        if width < 4 or width > 40:
+            raise SpecError(['%s.width: give the band 4 to 40 px' % path])
+        c = el.get('centre', [W / 2.0, H / 2.0])
+        if not isinstance(c, list) or len(c) != 2:
+            raise SpecError(['%s.centre: give [x, y]' % path])
+        cx = self.value(c[0], path + '.centre[0]', parent)
+        cy = self.value(c[1], path + '.centre[1]', parent)
+        if not draw.inside_rounded(cx, cy, (inset + width, inset + width, W - inset - width, H - inset - width),
+                                   max(radius - width, 0)):
+            raise SpecError(['%s.centre: the centre must lie inside the band' % path])
+        outer = (inset, inset, W - inset, H - inset)
+        reach = max(math.hypot(x - cx, y - cy) for x, y, _, _ in
+                    (draw.edge_point((cx, cy), a, outer, radius) for a in range(0, 360, 2)))
+        ink = self.b.color(el.get('color', '#FFFFFF'), path + '.color')
+        im, px, py = draw.hand(reach + 4, 0, el.get('marker_width', 6), ink)
+        piece = Piece('hand', im=im, cx=cx, cy=cy, px=px, py=py, source=codes.HAND_SECOND, reach=reach + 4,
+                      role='second', ink=ink)
+
+        def tick(key, default):
+            t = el.get(key, default)
+            if t is None:
+                return None
+            for k in t:
+                if k not in ('color', 'width', 'length'):
+                    raise SpecError(['%s.%s.%s: ticks take color, width and length' % (path, key, k)])
+            return {'color': self.b.color(t.get('color', '#808080'), '%s.%s.color' % (path, key)),
+                    'width': t.get('width', 2), 'length': t.get('length', width * 0.55)}
+        minor = tick('ticks', {})
+        major = tick('major_ticks', {'width': 3, 'length': width})
+        self.b.note_warning('%s: the marker is a second hand, seen in other faces but not yet confirmed on a watch'
+                            % path)
+        box = (inset, inset, W - inset, H - inset)
+        placed = Placed('seconds_frame', 'time', [piece], self.edges(box), box, path)
+        placed.light = True       # drawn under everything, like a background
+        placed.behind = True
+        placed.frame = (draw.band((W, H), inset, width, radius),
+                        draw.band_ticks((W, H), (cx, cy), inset, width, radius, minor, major))
+        return placed
+
     def place_system_text(self, el, path, parent):
         """A value the watch writes in its own font into a box. Its size is the watch's to
         choose by the style code; only style 149 has been seen on this screen."""
@@ -976,17 +1026,18 @@ class Resolver:
         y = self.place_y(el['y'], path + '.y', parent, h)
         col = self.b.color(el.get('color', '#FFFFFF'), path + '.color')
         style = el.get('text_style', TEXT_STYLE_VERIFIED)
-        if style != TEXT_STYLE_VERIFIED:
-            self.b.note_warning('%s.text_style: %s is seen in other faces; only %d is confirmed on this screen' % (
-                path, style, TEXT_STYLE_VERIFIED))
+        if style not in TEXT_STYLES_CONFIRMED:
+            self.b.note_warning('%s.text_style: %s is seen in other faces; only %s are confirmed on this screen' % (
+                path, style, ' and '.join(str(s) for s in sorted(TEXT_STYLES_CONFIRMED))))
         fmt = {None: None, 'percent': 5, 'degrees': 7}.get(el.get('suffix'), 'bad')
         if fmt == 'bad':
             raise SpecError(['%s.suffix: the watch adds "percent" or "degrees"; anything else, set as text' % path])
         if fmt:
             sample += {5: '%', 7: '\u00b0'}[fmt]
+        if fmt == 7:
             self.b.note_warning('%s.suffix: a suffix added by the watch is seen in other faces for this screen, '
                                 'not yet on this watch' % path)
-        if align != 'left':
+        if align == 'center':
             self.b.note_warning('%s.align: system text aligned "%s" is seen in other faces, not yet on this watch' % (
                 path, align))
         piece = Piece('systext', rect=(x, y, w, h), color=col, style=style, source=src, sample=sample, fmt=fmt,
@@ -1263,6 +1314,9 @@ def build(spec, base_dir='.', langs=None):
     bg = Image.new('RGBA', (W, H), (0, 0, 0, 255))
     for i, layer in enumerate(spec.get('background', [])):
         paint_layer(b, bg, layer, 'background[%d]' % i)
+    frames = [pl for pl, _ in shared if pl.kind == 'seconds_frame']
+    for pl in frames:
+        bg.alpha_composite(pl.frame[1])
     for pl, keep in shared:
         if pl.kind == 'tap':
             for q in pl.pieces:
@@ -1287,6 +1341,8 @@ def build(spec, base_dir='.', langs=None):
     plain = Image.new('RGBA', (W, H), (0, 0, 0, 255))
     for i, layer in enumerate(spec.get('background', [])):
         paint_layer(b, plain, layer, 'background[%d]' % i)
+    for pl in frames:
+        plain.alpha_composite(pl.frame[1])
     for pl, _ in shared:
         for q in pl.pieces if pl.kind == 'tap' else ():
             _paint_static(plain, q)
@@ -1308,9 +1364,13 @@ def build(spec, base_dir='.', langs=None):
             track, paint, grow = pl.mark
             b.warnings.extend(check.bezel_messages(pl.path, 'the second mark\'s path',
                                                    check.mask(paint(range(60))), (W, H)))
+    band_area = None
+    for pl in frames:
+        b.warnings.extend(check.bezel_messages(pl.path, 'the frame\'s ticks', check.mask(pl.frame[1]), (W, H)))
+        band_area = pl.frame[0] if band_area is None else ImageChops.lighter(band_area, pl.frame[0])
     found = {}
     for l in b.langs:
-        errs, warns = check.inspect(_inspectable(b, runs[l][1]), plain, mark_area, (W, H))
+        errs, warns = check.inspect(_inspectable(b, runs[l][1]), plain, mark_area, (W, H), band_area=band_area)
         for kind, msgs in (('e', errs), ('w', warns)):
             for msg in msgs:
                 found.setdefault((kind, msg), []).append(l)
@@ -1331,7 +1391,7 @@ def build(spec, base_dir='.', langs=None):
 
     # --- groups
     zones, date_items, time_items = [], [], []
-    marks, beneath = [], []
+    marks, beneath, under = [], [], []
     for pl, keep in shared:
         if pl.kind == 'tap':
             items = []
@@ -1341,6 +1401,11 @@ def build(spec, base_dir='.', langs=None):
         elif pl.kind == 'seconds_mark':
             marks.append((len(time_items), pl))
             time_items.append(None)
+        elif pl.kind == 'seconds_frame':
+            # the marker, then the finished background over all of it but the band
+            band_mask, _ = pl.frame
+            under.extend(_layout_items([q for q in keep if q is not None and q.kind in DYNAMIC], face, 0))
+            under.append(pl)
         elif pl.kind == 'hands' and pl.behind:
             # zones are drawn first, so a zone of no size holds what lies under everything
             beneath.extend(_layout_items([q for q in keep if q is not None and q.kind in DYNAMIC], face, 0))
@@ -1348,6 +1413,12 @@ def build(spec, base_dir='.', langs=None):
             items = _layout_items([q for q in keep if q is not None and q.kind in DYNAMIC], face, 0)
             (time_items if pl.group == 'time' else date_items).extend(items)
 
+    for at, pl in enumerate(under):
+        if isinstance(pl, Placed):
+            cover = bg.copy()
+            cover.putalpha(ImageChops.invert(pl.frame[0]))
+            under[at] = layout.image(face.add(cover), 0, 0, 0)
+    beneath = under + beneath
     if beneath:
         zones.insert(0, (codes.OPEN_BATTERY, (0, 0, 0, 0), beneath))
 

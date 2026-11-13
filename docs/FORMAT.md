@@ -83,6 +83,12 @@ Groups are drawn in the order written. Faces almost always use this order:
 | 2 | date |
 | 1 | time |
 
+A touch zone of no size, `[0, 0, 0, 0]`, opens nothing and is drawn before the date and
+the time, so whatever it holds lies under all text: **verified** with hands turning
+behind the time. A second hand in such a zone, under a copy of the background that is
+open only along a band at the edge, shows only where it crosses the band: a marker that
+runs along the rounded edge instead of a circle (seen in other faces for this screen).
+
 An element: `1` index in the group, `2` kind, then the body in a field that depends on
 the kind.
 
@@ -128,11 +134,12 @@ right edge; units such as `%` or `°` are best drawn as a fixed image just after
 
 `1` box `{x, y, w, h}`, `2` colour `{r, g, b, a}`, `3` style code (seen: 129, 136, 137, 138,
 149, 150, 157, 158, 161, 163, 166, 169, 176; on this screen 136–138 and 149 with boxes
-about 32–37 px tall and 158 with 41 px, so the code likely sets the size), `4` alignment,
-`5` data source, `7` 0. No font travels with the face; the watch uses its own.
+about 32–37 px tall and 158 with 41 px, so the code likely sets the size; 158 **verified**,
+clearly larger than 149), `4` alignment (2, right, **verified**: the value keeps its right
+edge, so a unit can follow it), `5` data source, `7` 0. No font travels with the face; the watch uses its own.
 
 Kind 10 reads differently: `5` is the format, `6` the source and `7` a second source
-(255 for none), `9` the mode flag. Seen formats: 5 with battery percent (`80%`), 7 with
+(255 for none), `9` the mode flag. Seen formats: 5 with battery percent (`80%`, **verified**), 7 with
 temperature (`24°`), 2 with temperature low and high as one value (`8/40`).
 
 ### Touch zone (group field 8)

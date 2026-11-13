@@ -470,6 +470,44 @@ def edge_point(centre, angle, box, radius):
     return cx + sn * lo, cy + cs * lo, sn, cs
 
 
+def band(size, inset, width, radius, ss=4):
+    """A rounded band along the edges: 255 inside it, 0 elsewhere."""
+    W, H = size
+    m = Image.new('L', (W * ss, H * ss), 0)
+    d = ImageDraw.Draw(m)
+    d.rounded_rectangle([inset * ss, inset * ss, (W - inset) * ss - 1, (H - inset) * ss - 1],
+                        radius=radius * ss, fill=255)
+    i2 = inset + width
+    d.rounded_rectangle([i2 * ss, i2 * ss, (W - i2) * ss - 1, (H - i2) * ss - 1],
+                        radius=max(radius - width, 0) * ss, fill=0)
+    return m.resize((W, H), Image.LANCZOS)
+
+
+def band_ticks(size, centre, inset, width, radius, minor, major, every=5, ss=4):
+    """Sixty ticks across a rounded band, each on the ray from centre at 6 degrees a step,
+    so a second hand from the same centre lands on them. minor/major: dicts with
+    color, width and length (along the ray, from the outer edge)."""
+    W, H = size
+    outer = (inset, inset, W - inset, H - inset)
+    i2 = inset + width
+    inner = (i2, i2, W - i2, H - i2)
+    im = Image.new('RGBA', (W * ss, H * ss), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    for i in range(60):
+        t = major if i % every == 0 else minor
+        if not t:
+            continue
+        ox, oy, sn, cs = edge_point(centre, 6 * i, outer, radius)
+        ix, iy, _, _ = edge_point(centre, 6 * i, inner, max(radius - width, 0))
+        span = math.hypot(ox - ix, oy - iy)
+        # stop short of the outer edge by half the tick's width, so its corners stay inside
+        ox, oy = ox - sn * t['width'] / 2.0, oy - cs * t['width'] / 2.0
+        ln = min(t.get('length', span), span) - t['width'] / 2.0
+        x0, y0 = ox - sn * ln, oy - cs * ln
+        d.line([x0 * ss, y0 * ss, ox * ss, oy * ss], fill=t['color'], width=max(1, int(round(t['width'] * ss))))
+    return im.resize((W, H), Image.LANCZOS)
+
+
 def dial(size, box, radius, frame=None, minute=None, hour=None, inset=6, centre=None, ss=4):
     """A rounded-rectangle dial: an outline and radial ticks that follow it.
     frame/minute/hour: dicts with color, width (and length for ticks), or None."""

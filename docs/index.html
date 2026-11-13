@@ -141,6 +141,7 @@
             <button class="chip" data-face="night-tram" aria-pressed="false">Night Tram</button>
             <button class="chip" data-face="plumb" aria-pressed="false">Plumb</button>
             <button class="chip" data-face="lighthouse" aria-pressed="false">Lighthouse</button>
+            <button class="chip" data-face="duo" aria-pressed="false">Duo</button>
           </div></div>
         <div class="row"><label>Language</label>
           <div class="chips" id="langs">
@@ -248,7 +249,7 @@ python3 -m unittest discover tests</pre>
     state.face = faces[name];
     const dl = document.getElementById('download');
     dl.href = 'faces/' + name + '-' + state.lang + '.hwt';
-    dl.textContent = 'Download ' + ({ 'vibe': 'Vibe', 'vibe-dial': 'Vibe with dial', 'night-tram': 'Night Tram', 'plumb': 'Plumb', 'lighthouse': 'Lighthouse' })[name] +
+    dl.textContent = 'Download ' + ({ 'vibe': 'Vibe', 'vibe-dial': 'Vibe with dial', 'night-tram': 'Night Tram', 'plumb': 'Plumb', 'lighthouse': 'Lighthouse', 'duo': 'Duo' })[name] +
       ' · ' + state.lang.toUpperCase();
     for (const l of ['ru', 'en', 'fi']) {
       const a = document.getElementById('single-' + l);
@@ -313,6 +314,7 @@ python3 -m unittest discover tests</pre>
     ['vibe-dial', 'Vibe · dial', 'Vibe with the dial of the glass phone widget it grew from: a fine ring, quarter bars and two bar hands.'],
     ['night-tram', 'Night Tram', 'Ink, cream and amber: a lamp on the copper frame counts the seconds, a small lamp by the date wakes for unread messages.'],
     ['lighthouse', 'Lighthouse', 'A painted night sea and a lighthouse on a cliff; the time in a warm serif across the stars, everything else along the water.'],
+    ['duo', 'Duo', 'A small dial shaped like the screen itself, crystal digits below it, the date in full words; pulse, charge, weather and steps along the foot.'],
   ];
   const list = document.getElementById('face-list');
   const gallery = [];

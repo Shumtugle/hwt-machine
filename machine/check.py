@@ -154,9 +154,10 @@ def _describe(item):
     return '"%s" at %s' % (item['kind'], item['path'])
 
 
-def inspect(items, plain_bg, mark_area, size, label=''):
+def inspect(items, plain_bg, mark_area, size, label='', band_area=None):
     """items: [{'path', 'kind', 'pieces', 'tap_box'}]; plain_bg: the background without
-    any element; mark_area: mask the second mark repaints, or None.
+    any element; mark_area: mask the second mark repaints, or None; band_area: mask of
+    the band a seconds frame runs along, or None.
     Returns (errors, warnings)."""
     errors, warnings = [], []
     where = (' (%s)' % label) if label else ''
@@ -187,6 +188,14 @@ def inspect(items, plain_bg, mark_area, size, label=''):
                 errors.append('%s%s: "%s" sits on the path of the second mark around %s; the layer that hides the '
                               'other ten-second strips paints over it. Keep it clear of the path' % (
                                   it['path'], where, it['kind'], list(hit.getbbox())))
+
+        # the band of a seconds frame
+        if band_area is not None:
+            hit = ImageChops.multiply(m, band_area)
+            if _count(hit) >= OVERLAP_PIXELS:
+                warnings.append('%s%s: "%s" lies on the band of the seconds frame around %s; the marker runs '
+                                'under it there. Move it in from the band' % (
+                                    it['path'], where, it['kind'], list(hit.getbbox())))
 
         # leaving the tap zone it belongs to
         tb = it.get('tap_box')
