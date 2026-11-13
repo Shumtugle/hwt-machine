@@ -1,0 +1,329 @@
+{
+ "order": [
+  "vibe",
+  "night-tram",
+  "plumb",
+  "plumb-amber",
+  "lighthouse",
+  "duo",
+  "strobe",
+  "rubis",
+  "triptych"
+ ],
+ "names": {
+  "vibe": "Vibe",
+  "night-tram": "Night Tram",
+  "plumb": "Plumb",
+  "plumb-amber": "Plumb Amber",
+  "lighthouse": "Lighthouse",
+  "duo": "Duo",
+  "strobe": "Strobe",
+  "rubis": "Rubis",
+  "triptych": "Triptych"
+ },
+ "languages": [
+  "en",
+  "ru",
+  "fi"
+ ],
+ "labels": {
+  "en": "English",
+  "ru": "Русский",
+  "fi": "Suomi"
+ },
+ "paths": {
+  "en": "",
+  "ru": "ru/",
+  "fi": "fi/"
+ },
+ "strings": {
+  "en": {
+   "title": "hwt-machine — watch faces from code",
+   "description": "Watch faces for compact wearables, built from fonts and code and previewed live in the browser.",
+   "nav_download": "Download",
+   "nav_inspect": "Inspect a face",
+   "nav_format": "Format",
+   "nav_source": "Source",
+   "h1": "Watch faces<br>from <em>code</em>",
+   "lede": "Fonts and a few lines of layout go in, an installable watch face comes out. Every bitmap is drawn by the build, every glyph sits on its visible ink, and the package is checked by drawing it back before it ever reaches a wrist.",
+   "download": "Download",
+   "all_faces": "All faces",
+   "lang_note": "Every face on this page is in English, on both of its screens. The same faces in other languages: {other}.",
+   "aria_live": "Live watch face preview",
+   "l_face": "Face",
+   "l_language": "Language",
+   "l_screen": "Screen",
+   "normal": "Normal",
+   "always_on": "Always on",
+   "l_battery": "Battery",
+   "l_steps": "Steps",
+   "l_pulse": "Pulse",
+   "l_weather": "Weather",
+   "l_sky": "Sky",
+   "sky": [
+    "unknown",
+    "sunny",
+    "clear night",
+    "cloudy",
+    "partly cloudy",
+    "rain",
+    "thunderstorm",
+    "snow",
+    "wind",
+    "haze",
+    "fog"
+   ],
+   "h_download": "Download a face",
+   "p_download": "One file per face, in English. Install it with any app that can send a watch face file to the watch.",
+   "h_machine": "What the machine does",
+   "p_machine": "The watch reads a compact container: a protobuf layout, a table of images and the images themselves. The machine writes all three, and reads any face back to show what is inside.",
+   "cards": [
+    [
+     "Byte-exact container",
+     "Writer and reader rebuild existing faces <b>byte for byte</b>: header, layout, image table, run-length images."
+    ],
+    [
+     "Ink alignment",
+     "Digits, capitals and symbols are placed by their <b>visible pixels</b>, not by font metrics, so lines meet where the eye expects."
+    ],
+    [
+     "Moving with the time",
+     "Marks round the frame, hands of light, levels pouring down the screen: pictures chosen by the <b>hour, minute and second</b>."
+    ],
+    [
+     "Any language",
+     "Weekdays and months come from a word table; long words shrink to fit their card on their own."
+    ],
+    [
+     "Self-checking build",
+     "Previews are drawn by a simulator reading the finished package, and cards that would touch the frame stop the build."
+    ],
+    [
+     "Open notes",
+     "Element kinds, data sources and tap targets are written down in the <a href=\"https://github.com/Shumtugle/hwt-machine/blob/main/docs/FORMAT.md\">format notes</a>, verified or not."
+    ]
+   ],
+   "h_inside": "Look inside a face",
+   "p_inside": "Drop any watch face package here. It is read and drawn in this page; nothing is uploaded anywhere.",
+   "no_face": "No face yet",
+   "drop_here": "Drop a package file here, or",
+   "choose": "choose one",
+   "h_build": "Build it yourself",
+   "p_build": "Python 3 with Pillow. Fonts and their licences are in the repository.",
+   "c_build": "a face from its description, one file per language, into dist/",
+   "c_inspect": "read any face: layout, images, a rendered screen",
+   "c_tests": "tests",
+   "footer": "MIT licence. Text faces under the SIL Open Font License, symbols under the Apache License 2.0; both licences ship next to the fonts. <a href=\"https://github.com/Shumtugle/hwt-machine\">Source on GitHub</a>, new faces <a href=\"https://t.me/HW_watch_faces\">on Telegram</a>.",
+   "js": {
+    "images": "images.",
+    "skipped": "Some elements use kinds this page does not draw yet",
+    "all_drawn": "Every element is drawn.",
+    "approx": "System-font text is approximated. The time here is live.",
+    "unreadable": "Could not read that file"
+   },
+   "gallery": {
+    "vibe": "Black and scarlet glass cards: the date in words, time with seconds, battery, weather, pulse, steps, a cream mark running round the frame.",
+    "night-tram": "Ink, cream and amber: a lamp on the copper frame counts the seconds, a small lamp by the date wakes for unread messages.",
+    "plumb": "The hour over the minute and a plumb scale: hour, minute and second hang on it as levels, each pouring light down the screen in indigo, teal and ice.",
+    "plumb-amber": "The same plumb scale in amber, gold and cream.",
+    "lighthouse": "A painted night sea and a lighthouse on a cliff; the time in a warm serif across the stars, everything else along the water.",
+    "duo": "A small dial shaped like the screen itself, crystal digits below it, the date in full words; pulse, charge, weather and steps along the foot.",
+    "strobe": "Huge cream time on black, a scarlet searchlight for the hour and a laser for the minute turning from the colon, a scarlet mark running a band of ticks round the edge; six readings below.",
+    "rubis": "Garnet and gold: the date above, the time with seconds, two stacks of readings and a small dial below; a gold sweep turns from the dial to the edge of the screen once a minute.",
+    "triptych": "Three windows in a black case: hands over a dial cut in small pyramids, red lamps behind smoked glass, a crystal calendar below."
+   }
+  },
+  "ru": {
+   "title": "hwt-machine — циферблаты из кода",
+   "description": "Циферблаты для компактных часов, собранные из шрифтов и кода, с живым превью в браузере.",
+   "nav_download": "Скачать",
+   "nav_inspect": "Заглянуть внутрь",
+   "nav_format": "Формат",
+   "nav_source": "Исходники",
+   "h1": "Циферблаты<br>из <em>кода</em>",
+   "lede": "На входе шрифты и несколько строк разметки, на выходе готовый циферблат. Каждую картинку рисует сборка, каждый знак стоит по своим видимым пикселям, а пакет перед тем, как попасть на руку, проверяется: машина рисует его заново и смотрит.",
+   "download": "Скачать",
+   "all_faces": "Все циферблаты",
+   "lang_note": "Все циферблаты на этой странице на русском, на обоих экранах. Те же циферблаты на других языках: {other}.",
+   "aria_live": "Живое превью циферблата",
+   "l_face": "Циферблат",
+   "l_language": "Язык",
+   "l_screen": "Экран",
+   "normal": "Обычный",
+   "always_on": "Всегда включён",
+   "l_battery": "Заряд",
+   "l_steps": "Шаги",
+   "l_pulse": "Пульс",
+   "l_weather": "Погода",
+   "l_sky": "Небо",
+   "sky": [
+    "нет данных",
+    "солнечно",
+    "ясная ночь",
+    "облачно",
+    "переменная облачность",
+    "дождь",
+    "гроза",
+    "снег",
+    "ветер",
+    "дымка",
+    "туман"
+   ],
+   "h_download": "Скачать циферблат",
+   "p_download": "Один файл на циферблат, на русском. Установите его любым приложением, которое умеет отправлять файл циферблата на часы.",
+   "h_machine": "Что делает машина",
+   "p_machine": "Часы читают компактный контейнер: разметку в protobuf, таблицу картинок и сами картинки. Машина пишет все три части и умеет прочитать любой циферблат обратно, чтобы показать, что внутри.",
+   "cards": [
+    [
+     "Контейнер байт в байт",
+     "Запись и чтение пересобирают существующие циферблаты <b>байт в байт</b>: заголовок, разметку, таблицу картинок, картинки со сжатием повторов."
+    ],
+    [
+     "По видимым чернилам",
+     "Цифры, прописные и значки ставятся по своим <b>видимым пикселям</b>, а не по метрикам шрифта, поэтому строки сходятся там, где ждёт глаз."
+    ],
+    [
+     "Вместе со временем",
+     "Метки по рамке, стрелки из света, уровни, льющиеся по экрану: это картинки, которые выбирают <b>час, минута и секунда</b>."
+    ],
+    [
+     "Любой язык",
+     "Дни недели и месяцы берутся из словаря; длинные слова сами ужимаются до своей карточки."
+    ],
+    [
+     "Сборка проверяет себя",
+     "Превью рисует симулятор, читающий готовый пакет, а карточка, задевшая рамку, останавливает сборку."
+    ],
+    [
+     "Открытые заметки",
+     "Виды элементов, источники данных и цели касаний записаны в <a href=\"https://github.com/Shumtugle/hwt-machine/blob/main/docs/FORMAT.md\">заметках о формате</a>, проверенные и нет."
+    ]
+   ],
+   "h_inside": "Заглянуть в циферблат",
+   "p_inside": "Перетащите сюда любой пакет циферблата. Он читается и рисуется прямо на этой странице, никуда не загружается.",
+   "no_face": "Пока пусто",
+   "drop_here": "Перетащите сюда файл пакета или",
+   "choose": "выберите его",
+   "h_build": "Собрать самому",
+   "p_build": "Нужны Python 3 и Pillow. Шрифты и их лицензии лежат в репозитории.",
+   "c_build": "циферблат из описания, по файлу на язык, в dist/",
+   "c_inspect": "прочитать любой циферблат: разметка, картинки, отрисованный экран",
+   "c_tests": "тесты",
+   "footer": "Лицензия MIT. Шрифты текста под SIL Open Font License, значки под Apache License 2.0; обе лицензии лежат рядом со шрифтами. <a href=\"https://github.com/Shumtugle/hwt-machine\">Исходники на GitHub</a>, новые циферблаты <a href=\"https://t.me/HW_watch_faces\">в Telegram</a>.",
+   "js": {
+    "images": "картинок.",
+    "skipped": "Некоторые элементы этой страницей пока не рисуются",
+    "all_drawn": "Нарисованы все элементы.",
+    "approx": "Системный шрифт показан приблизительно. Время здесь живое.",
+    "unreadable": "Не удалось прочитать файл"
+   },
+   "gallery": {
+    "vibe": "Чёрное и алое, стеклянные карточки: дата словами, время с секундами, заряд, погода, пульс, шаги, кремовая метка бежит по рамке.",
+    "night-tram": "Чернила, сливки и янтарь: лампа на медной рамке отсчитывает секунды, маленький огонёк у даты зажигается, когда ждут непрочитанные сообщения.",
+    "plumb": "Час над минутой и шкала-отвес: на ней висят уровни часа, минуты и секунды, и каждый льёт свет вниз по экрану, индиго, бирюзой и льдом.",
+    "plumb-amber": "Та же шкала-отвес в янтаре, золоте и сливках.",
+    "lighthouse": "Нарисованное ночное море и маяк на скале; время тёплой антиквой среди звёзд, всё остальное вдоль воды.",
+    "duo": "Маленький циферблат в форме самого экрана, под ним кристаллические цифры, дата полными словами; пульс, заряд, погода и шаги внизу.",
+    "strobe": "Огромное кремовое время на чёрном, алый прожектор часа и лазер минуты вращаются от двоеточия, алая метка бежит по полосе рисок вдоль края; внизу шесть показаний.",
+    "rubis": "Гранат и золото: дата сверху, время с секундами, внизу два столбика показаний и маленький циферблат; золотой луч раз в минуту обходит экран от циферблата до края.",
+    "triptych": "Три окна в чёрном корпусе: стрелки над циферблатом с пирамидальной насечкой, красные диоды за дымчатым стеклом, кристаллический календарь внизу."
+   }
+  },
+  "fi": {
+   "title": "hwt-machine — kellotauluja koodista",
+   "description": "Kellotauluja pienille rannekelloille, rakennettu fonteista ja koodista, esikatselu suoraan selaimessa.",
+   "nav_download": "Lataa",
+   "nav_inspect": "Katso sisään",
+   "nav_format": "Formaatti",
+   "nav_source": "Lähdekoodi",
+   "h1": "Kellotaulut<br><em>koodista</em>",
+   "lede": "Sisään menee fontteja ja muutama rivi asettelua, ulos tulee asennettava kellotaulu. Jokaisen kuvan piirtää koneisto, jokainen merkki asettuu näkyvän musteensa mukaan, ja paketti tarkistetaan piirtämällä se uudelleen ennen kuin se päätyy ranteeseen.",
+   "download": "Lataa",
+   "all_faces": "Kaikki kellotaulut",
+   "lang_note": "Kaikki tämän sivun kellotaulut ovat suomeksi, molemmilla näytöillä. Samat kellotaulut muilla kielillä: {other}.",
+   "aria_live": "Kellotaulun esikatselu",
+   "l_face": "Kellotaulu",
+   "l_language": "Kieli",
+   "l_screen": "Näyttö",
+   "normal": "Tavallinen",
+   "always_on": "Aina päällä",
+   "l_battery": "Akku",
+   "l_steps": "Askeleet",
+   "l_pulse": "Syke",
+   "l_weather": "Sää",
+   "l_sky": "Taivas",
+   "sky": [
+    "ei tietoa",
+    "aurinkoista",
+    "selkeä yö",
+    "pilvistä",
+    "puolipilvistä",
+    "sadetta",
+    "ukkosta",
+    "lunta",
+    "tuulista",
+    "utua",
+    "sumua"
+   ],
+   "h_download": "Lataa kellotaulu",
+   "p_download": "Yksi tiedosto kellotaulua kohden, suomeksi. Asenna se millä tahansa sovelluksella, joka osaa lähettää kellotaulutiedoston kelloon.",
+   "h_machine": "Mitä koneisto tekee",
+   "p_machine": "Kello lukee tiivistä säiliötä: protobuf-asettelu, kuvataulukko ja itse kuvat. Koneisto kirjoittaa kaikki kolme ja osaa lukea minkä tahansa kellotaulun takaisin näyttääkseen, mitä sen sisällä on.",
+   "cards": [
+    [
+     "Tavu tavulta",
+     "Kirjoittaja ja lukija rakentavat olemassa olevat kellotaulut <b>tavu tavulta</b>: otsake, asettelu, kuvataulukko, toistopakatut kuvat."
+    ],
+    [
+     "Näkyvän musteen mukaan",
+     "Numerot, versaalit ja symbolit asetellaan <b>näkyvien pikseliensä</b> mukaan, eivät fontin mittojen, joten rivit kohtaavat siellä, missä silmä niitä odottaa."
+    ],
+    [
+     "Ajan mukana",
+     "Merkit kehyksellä, valosta tehdyt osoittimet, näytöllä valuvat tasot: kuvia, jotka valitsevat <b>tunti, minuutti ja sekunti</b>."
+    ],
+    [
+     "Mikä tahansa kieli",
+     "Viikonpäivät ja kuukaudet tulevat sanataulukosta; pitkät sanat kutistuvat itse korttiinsa."
+    ],
+    [
+     "Itseään tarkistava",
+     "Esikatselut piirtää simulaattori valmiista paketista, ja kehykseen osuva kortti pysäyttää koko rakennuksen."
+    ],
+    [
+     "Avoimet muistiinpanot",
+     "Elementtien lajit, tietolähteet ja kosketuskohteet on kirjattu <a href=\"https://github.com/Shumtugle/hwt-machine/blob/main/docs/FORMAT.md\">formaatin muistiinpanoihin</a>, varmistetut ja varmistamattomat."
+    ]
+   ],
+   "h_inside": "Katso kellotaulun sisään",
+   "p_inside": "Pudota tähän mikä tahansa kellotaulupaketti. Se luetaan ja piirretään tällä sivulla; mitään ei lähetetä minnekään.",
+   "no_face": "Ei vielä mitään",
+   "drop_here": "Pudota pakettitiedosto tähän tai",
+   "choose": "valitse se",
+   "h_build": "Rakenna itse",
+   "p_build": "Tarvitset Python 3:n ja Pillow’n. Fontit lisensseineen ovat repositoriossa.",
+   "c_build": "kellotaulu kuvauksesta, tiedosto kielellä, hakemistoon dist/",
+   "c_inspect": "lue mikä tahansa kellotaulu: asettelu, kuvat, piirretty näyttö",
+   "c_tests": "testit",
+   "footer": "MIT-lisenssi. Tekstifontit SIL Open Font Licensen, symbolit Apache License 2.0:n alaisina; molemmat lisenssit ovat fonttien vieressä. <a href=\"https://github.com/Shumtugle/hwt-machine\">Lähdekoodi GitHubissa</a>, uudet kellotaulut <a href=\"https://t.me/HW_watch_faces\">Telegramissa</a>.",
+   "js": {
+    "images": "kuvaa.",
+    "skipped": "Osa elementeistä on lajia, jota tämä sivu ei vielä piirrä",
+    "all_drawn": "Kaikki elementit on piirretty.",
+    "approx": "Järjestelmäfontin teksti on likimääräinen. Aika on tässä elävä.",
+    "unreadable": "Tiedostoa ei voitu lukea"
+   },
+   "gallery": {
+    "vibe": "Mustaa ja helakanpunaista, lasikortit: päivämäärä sanoin, aika sekunteineen, akku, sää, syke, askeleet ja kermanvärinen merkki, joka kiertää kehystä.",
+    "night-tram": "Mustetta, kermaa ja meripihkaa: lamppu kuparikehyksellä laskee sekunnit, pieni valo päivämäärän vieressä syttyy lukemattomista viesteistä.",
+    "plumb": "Tunti minuutin yllä ja luotiasteikko: tunti, minuutti ja sekunti roikkuvat siinä tasoina, ja kukin valuttaa valoa alas näytölle indigona, turkoosina ja jäänä.",
+    "plumb-amber": "Sama luotiasteikko meripihkana, kultana ja kermana.",
+    "lighthouse": "Maalattu yömeri ja majakka kalliolla; aika lämpimällä antiikvalla tähtien yllä, kaikki muu veden äärellä.",
+    "duo": "Pieni kellotaulu näytön muotoisena, sen alla kidenumerot, päivämäärä kokonaisin sanoin; syke, akku, sää ja askeleet alareunassa.",
+    "strobe": "Valtava kermanvärinen aika mustalla, tunnin helakanpunainen valonheitin ja minuutin laser kääntyvät kaksoispisteestä, punainen merkki kiertää reunan asteikkoa; alla kuusi lukemaa.",
+    "rubis": "Granaattia ja kultaa: päivämäärä ylhäällä, aika sekunteineen, alhaalla kaksi lukemapinoa ja pieni kellotaulu; kultainen säde kiertää kerran minuutissa kellotaulusta näytön reunaan.",
+    "triptych": "Kolme ikkunaa mustassa kotelossa: osoittimet pyramidikuvioidun kellotaulun yllä, punaiset ledit savulasin takana, kidekalenteri alhaalla."
+   }
+  }
+ }
+}

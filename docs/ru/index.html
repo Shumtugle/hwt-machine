@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>hwt-machine — циферблаты из кода</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect x=%224%22 y=%222%22 width=%2224%22 height=%2228%22 rx=%227%22 fill=%22%23120406%22/%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%224%22 fill=%22%23FF283C%22/%3E%3C/svg%3E">
+<meta name="description" content="Циферблаты для компактных часов, собранные из шрифтов и кода, с живым превью в браузере.">
+<style>
+  @font-face { font-family: 'Machine'; src: url('../fonts/Oswald.ttf') format('truetype'); font-weight: 200 700; }
+  :root {
+    --ink: #F2E3C6; --ink-dim: #a99c86; --scarlet: #FF283C; --scarlet-soft: #FF6870;
+    --bg: #070304; --card: rgba(255,255,255,0.045); --rim: rgba(255,255,255,0.12);
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--bg); }
+  body {
+    margin: 0; color: var(--ink); font: 16px/1.55 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    background:
+      radial-gradient(ellipse 70% 50% at 70% 18%, rgba(168,8,28,0.38), transparent 70%),
+      radial-gradient(ellipse 60% 40% at 10% 90%, rgba(120,6,20,0.22), transparent 70%),
+      var(--bg);
+    min-height: 100vh;
+  }
+  a { color: var(--scarlet-soft); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 22px; }
+  header { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; }
+  .mark { font-family: 'Machine', sans-serif; font-weight: 600; letter-spacing: 0.06em; font-size: 20px; }
+  .mark span { color: var(--scarlet); }
+  nav a { margin-left: 18px; color: var(--ink-dim); font-size: 15px; }
+
+  .hero { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 40px; align-items: center; padding: 34px 0 20px; }
+  h1 { font-family: 'Machine', sans-serif; font-weight: 600; font-size: clamp(40px, 6.4vw, 72px); line-height: 1.02;
+       margin: 0 0 18px; letter-spacing: 0.01em; text-transform: uppercase; }
+  h1 em { font-style: normal; color: var(--scarlet); }
+  .lede { color: var(--ink-dim); font-size: 18px; max-width: 34em; margin: 0 0 26px; }
+  .buttons { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 18px; border-radius: 14px;
+         border: 1px solid var(--rim); background: var(--card); color: var(--ink); font-weight: 600; font-size: 15px; cursor: pointer; }
+  .btn.primary { background: var(--scarlet); border-color: var(--scarlet); color: #1a0306; }
+  .btn:hover { text-decoration: none; filter: brightness(1.08); }
+
+  .stage { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .watch { position: relative; padding: 16px; border-radius: 74px; width: min(100%, 360px);
+           background: linear-gradient(160deg, #2a2a2e, #0e0e10 55%, #1d1d21);
+           box-shadow: 0 30px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.12), 0 0 0 1px #000; }
+  .watch::after { content: ''; position: absolute; right: -7px; top: 34%; width: 8px; height: 46px; border-radius: 4px;
+                  background: linear-gradient(90deg, #3a3a3e, #19191c); }
+  .screen { display: block; width: 100%; aspect-ratio: 408 / 480; border-radius: 58px; background: #000; }
+  .controls { width: min(100%, 380px); display: grid; gap: 10px; }
+  .row { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--ink-dim); }
+  .row label { width: 92px; flex: none; }
+  .row input[type=range] { flex: 1; accent-color: var(--scarlet); }
+  .row output { width: 52px; text-align: right; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--rim); background: transparent; color: var(--ink-dim);
+          font: 600 13px system-ui, sans-serif; cursor: pointer; letter-spacing: 0.04em; }
+  .chip[aria-pressed=true] { background: var(--ink); color: #160506; border-color: var(--ink); }
+  select { flex: 1; background: #120709; color: var(--ink); border: 1px solid var(--rim); border-radius: 10px; padding: 6px 8px; }
+
+  section { padding: 54px 0 10px; }
+  h2 { font-family: 'Machine', sans-serif; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;
+       font-size: 28px; margin: 0 0 8px; }
+  h2 + p { color: var(--ink-dim); margin: 0 0 24px; max-width: 46em; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .card { background: var(--card); border: 1px solid var(--rim); border-radius: 20px; padding: 20px; }
+  .card h3 { margin: 0 0 6px; font-size: 16px; }
+  .card p { margin: 0; color: var(--ink-dim); font-size: 15px; }
+  .card b { color: var(--scarlet-soft); font-weight: 600; }
+
+  .drop { display: grid; grid-template-columns: 220px 1fr; gap: 24px; align-items: center;
+          border: 1.5px dashed rgba(242,227,198,0.25); border-radius: 22px; padding: 22px; background: rgba(0,0,0,0.25); }
+  .drop.over { border-color: var(--scarlet); background: rgba(255,40,60,0.06); }
+  .drop canvas { width: 100%; aspect-ratio: 408/480; border-radius: 30px; background: #000; display: block; }
+  .drop .info { color: var(--ink-dim); font-size: 15px; }
+  .drop .info strong { color: var(--ink); font-size: 18px; display: block; margin-bottom: 4px; }
+  pre { background: rgba(0,0,0,0.45); border: 1px solid var(--rim); border-radius: 16px; padding: 16px 18px; overflow-x: auto;
+        font: 14px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--ink); margin: 0; }
+  pre .c { color: #8a7f6c; }
+  footer { padding: 50px 0 40px; color: #7d7262; font-size: 14px; }
+  footer a { color: var(--ink-dim); }
+
+  .faces { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .face { background: var(--card); border: 1px solid var(--rim); border-radius: 22px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+  .face canvas { width: 100%; aspect-ratio: 408/480; border-radius: 28px; background: #000; display: block; }
+  .face h3 { margin: 2px 2px 0; font-family: 'Machine', sans-serif; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; font-size: 20px; }
+  .face p { margin: 0 2px; color: var(--ink-dim); font-size: 14px; line-height: 1.45; flex: 1; }
+  .dl { display: flex; flex-wrap: wrap; gap: 6px; }
+  .dl a { padding: 6px 11px; border-radius: 999px; border: 1px solid var(--rim); color: var(--ink); font: 600 13px system-ui, sans-serif; }
+  .dl a.all { background: var(--ink); color: #160506; border-color: var(--ink); }
+  .dl a:hover { text-decoration: none; filter: brightness(1.15); }
+  @media (max-width: 1000px) { .faces { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 820px) {
+    .hero { grid-template-columns: 1fr; gap: 26px; padding-top: 10px; }
+    .stage { order: -1; }
+    .grid { grid-template-columns: 1fr; }
+    .drop { grid-template-columns: 1fr; }
+    .drop canvas { max-width: 240px; margin: 0 auto; }
+    nav { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="mark">HWT<span>·</span>MACHINE</div>
+    <nav>
+      <a href="#get">Скачать</a>
+      <a href="#inside">Заглянуть внутрь</a>
+      <a href="https://github.com/Shumtugle/hwt-machine/blob/main/docs/FORMAT.md">Формат</a>
+      <a href="https://github.com/Shumtugle/hwt-machine">Исходники</a>
+      <a href="https://t.me/HW_watch_faces">Telegram</a>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <div>
+      <h1>Циферблаты<br>из <em>кода</em></h1>
+      <p class="lede">На входе шрифты и несколько строк разметки, на выходе готовый циферблат. Каждую картинку рисует сборка, каждый знак стоит по своим видимым пикселям, а пакет перед тем, как попасть на руку, проверяется: машина рисует его заново и смотрит.</p>
+      <div class="buttons">
+        <a class="btn primary" id="download" href="../faces/vibe-ru.hwt" download>Скачать Vibe</a>
+        <a class="btn" href="#get">Все циферблаты</a>
+        <a class="btn" href="https://t.me/HW_watch_faces">Telegram</a>
+      </div>
+      <p class="lede" style="font-size:15px;margin-top:16px">Все циферблаты на этой странице на русском, на обоих экранах. Те же циферблаты на других языках: <a href="../">English</a> · <a href="../fi/">Suomi</a>.</p>
+    </div>
+    <div class="stage">
+      <div class="watch"><canvas class="screen" id="live" width="408" height="480" aria-label="Живое превью циферблата"></canvas></div>
+      <div class="controls">
+        <div class="row"><label>Циферблат</label>
+          <div class="chips" id="faces">
+            <button class="chip" data-face="vibe" aria-pressed="true">Vibe</button>
+            <button class="chip" data-face="night-tram" aria-pressed="false">Night Tram</button>
+            <button class="chip" data-face="plumb" aria-pressed="false">Plumb</button>
+            <button class="chip" data-face="plumb-amber" aria-pressed="false">Plumb Amber</button>
+            <button class="chip" data-face="lighthouse" aria-pressed="false">Lighthouse</button>
+            <button class="chip" data-face="duo" aria-pressed="false">Duo</button>
+            <button class="chip" data-face="strobe" aria-pressed="false">Strobe</button>
+            <button class="chip" data-face="rubis" aria-pressed="false">Rubis</button>
+            <button class="chip" data-face="triptych" aria-pressed="false">Triptych</button>
+          </div></div>
+        <div class="row"><label>Язык</label>
+          <div class="chips" id="langs">
+            <a class="chip" href="../" aria-pressed="false" lang="en">EN</a>
+            <a class="chip" href="../ru/" aria-pressed="true" lang="ru">RU</a>
+            <a class="chip" href="../fi/" aria-pressed="false" lang="fi">FI</a>
+          </div></div>
+        <div class="row"><label>Экран</label>
+          <div class="chips" id="modes">
+            <button class="chip" data-aod="0" aria-pressed="true">Обычный</button>
+            <button class="chip" data-aod="1" aria-pressed="false">Всегда включён</button>
+          </div></div>
+        <div class="row"><label for="battery">Заряд</label><input id="battery" type="range" min="0" max="100" value="80"><output id="battery-o">80%</output></div>
+        <div class="row"><label for="steps">Шаги</label><input id="steps" type="range" min="0" max="25000" step="5" value="7645"><output id="steps-o">7645</output></div>
+        <div class="row"><label for="heart">Пульс</label><input id="heart" type="range" min="40" max="190" value="72"><output id="heart-o">72</output></div>
+        <div class="row"><label for="temp">Погода</label><input id="temp" type="range" min="-30" max="35" value="3"><output id="temp-o">3°</output></div>
+        <div class="row"><label for="weather">Небо</label>
+          <select id="weather">
+            <option value="0">нет данных</option><option value="1">солнечно</option><option value="2">ясная ночь</option><option value="3">облачно</option><option value="4" selected>переменная облачность</option><option value="5">дождь</option><option value="6">гроза</option><option value="7">снег</option><option value="8">ветер</option><option value="9">дымка</option><option value="10">туман</option>
+          </select></div>
+      </div>
+    </div>
+  </div>
+
+  <section id="get">
+    <h2>Скачать циферблат</h2>
+    <p>Один файл на циферблат, на русском. Установите его любым приложением, которое умеет отправлять файл циферблата на часы.</p>
+    <div class="faces" id="face-list"></div>
+  </section>
+
+  <section>
+    <h2>Что делает машина</h2>
+    <p>Часы читают компактный контейнер: разметку в protobuf, таблицу картинок и сами картинки. Машина пишет все три части и умеет прочитать любой циферблат обратно, чтобы показать, что внутри.</p>
+    <div class="grid">
+      <div class="card"><h3>Контейнер байт в байт</h3><p>Запись и чтение пересобирают существующие циферблаты <b>байт в байт</b>: заголовок, разметку, таблицу картинок, картинки со сжатием повторов.</p></div>
+      <div class="card"><h3>По видимым чернилам</h3><p>Цифры, прописные и значки ставятся по своим <b>видимым пикселям</b>, а не по метрикам шрифта, поэтому строки сходятся там, где ждёт глаз.</p></div>
+      <div class="card"><h3>Вместе со временем</h3><p>Метки по рамке, стрелки из света, уровни, льющиеся по экрану: это картинки, которые выбирают <b>час, минута и секунда</b>.</p></div>
+      <div class="card"><h3>Любой язык</h3><p>Дни недели и месяцы берутся из словаря; длинные слова сами ужимаются до своей карточки.</p></div>
+      <div class="card"><h3>Сборка проверяет себя</h3><p>Превью рисует симулятор, читающий готовый пакет, а карточка, задевшая рамку, останавливает сборку.</p></div>
+      <div class="card"><h3>Открытые заметки</h3><p>Виды элементов, источники данных и цели касаний записаны в <a href="https://github.com/Shumtugle/hwt-machine/blob/main/docs/FORMAT.md">заметках о формате</a>, проверенные и нет.</p></div>
+    </div>
+  </section>
+
+  <section id="inside">
+    <h2>Заглянуть в циферблат</h2>
+    <p>Перетащите сюда любой пакет циферблата. Он читается и рисуется прямо на этой странице, никуда не загружается.</p>
+    <div class="drop" id="drop">
+      <canvas id="peek" width="408" height="480"></canvas>
+      <div class="info" id="peek-info"><strong>Пока пусто</strong>Перетащите сюда файл пакета или
+        <label class="btn" style="padding:6px 12px;margin-top:10px;display:inline-flex">выберите его<input type="file" id="pick" accept=".hwt,application/zip" hidden></label></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Собрать самому</h2>
+    <p>Нужны Python 3 и Pillow. Шрифты и их лицензии лежат в репозитории.</p>
+<pre><span class="c"># циферблат из описания, по файлу на язык, в dist/</span>
+python3 tools/build.py faces/duo/face.json
+
+<span class="c"># прочитать любой циферблат: разметка, картинки, отрисованный экран</span>
+python3 tools/inspect.py some-face.hwt --images out/ --render screen.png
+
+<span class="c"># тесты</span>
+python3 -m unittest discover tests</pre>
+  </section>
+
+  <footer>
+    Лицензия MIT. Шрифты текста под SIL Open Font License, значки под Apache License 2.0; обе лицензии лежат рядом со шрифтами. <a href="https://github.com/Shumtugle/hwt-machine">Исходники на GitHub</a>, новые циферблаты <a href="https://t.me/HW_watch_faces">в Telegram</a>.
+  </footer>
+</div>
+
+<script src="../hwt.js"></script>
+<script>
+(() => {
+  const live = document.getElementById('live').getContext('2d');
+  const state = { lang: 'en', aod: false, face: null };
+  const faces = {};
+  const val = (id) => +document.getElementById(id).value;
+  const sensors = () => ({
+    battery: val('battery'), steps: val('steps'), heart: val('heart'), temp: val('temp'), weather: val('weather'),
+  });
+  const fmt = { battery: (v) => v + '%', steps: (v) => v, heart: (v) => v, temp: (v) => v + '°' };
+  for (const id of Object.keys(fmt)) {
+    const el = document.getElementById(id), out = document.getElementById(id + '-o');
+    el.addEventListener('input', () => { out.textContent = fmt[id](el.value); tick(); });
+  }
+  document.getElementById('weather').addEventListener('change', () => tick());
+
+  // every package on this page is in the page's own language
+  const T = {"images": "картинок.", "skipped": "Некоторые элементы этой страницей пока не рисуются", "all_drawn": "Нарисованы все элементы.", "approx": "Системный шрифт показан приблизительно. Время здесь живое.", "unreadable": "Не удалось прочитать файл", "download": "Скачать", "names": {"vibe": "Vibe", "night-tram": "Night Tram", "plumb": "Plumb", "plumb-amber": "Plumb Amber", "lighthouse": "Lighthouse", "duo": "Duo", "strobe": "Strobe", "rubis": "Rubis", "triptych": "Triptych"}, "gallery": [["vibe", "Vibe", "Чёрное и алое, стеклянные карточки: дата словами, время с секундами, заряд, погода, пульс, шаги, кремовая метка бежит по рамке."], ["night-tram", "Night Tram", "Чернила, сливки и янтарь: лампа на медной рамке отсчитывает секунды, маленький огонёк у даты зажигается, когда ждут непрочитанные сообщения."], ["plumb", "Plumb", "Час над минутой и шкала-отвес: на ней висят уровни часа, минуты и секунды, и каждый льёт свет вниз по экрану, индиго, бирюзой и льдом."], ["plumb-amber", "Plumb Amber", "Та же шкала-отвес в янтаре, золоте и сливках."], ["lighthouse", "Lighthouse", "Нарисованное ночное море и маяк на скале; время тёплой антиквой среди звёзд, всё остальное вдоль воды."], ["duo", "Duo", "Маленький циферблат в форме самого экрана, под ним кристаллические цифры, дата полными словами; пульс, заряд, погода и шаги внизу."], ["strobe", "Strobe", "Огромное кремовое время на чёрном, алый прожектор часа и лазер минуты вращаются от двоеточия, алая метка бежит по полосе рисок вдоль края; внизу шесть показаний."], ["rubis", "Rubis", "Гранат и золото: дата сверху, время с секундами, внизу два столбика показаний и маленький циферблат; золотой луч раз в минуту обходит экран от циферблата до края."], ["triptych", "Triptych", "Три окна в чёрном корпусе: стрелки над циферблатом с пирамидальной насечкой, красные диоды за дымчатым стеклом, кристаллический календарь внизу."]]};
+  const BASE = '../';
+  state.lang = 'ru';
+  state.name = 'vibe';
+  async function loadFace(name) {
+    if (!faces[name]) {
+      const r = await fetch(BASE + 'faces/' + name + '-' + state.lang + '.hwt');
+      faces[name] = await HWT.load(await r.arrayBuffer());
+    }
+    state.name = name;
+    state.face = faces[name];
+    const dl = document.getElementById('download');
+    dl.href = BASE + 'faces/' + name + '-' + state.lang + '.hwt';
+    dl.textContent = T.download + ' ' + T.names[name];
+    tick();
+  }
+  chips('faces', (b) => loadFace(b.dataset.face));
+
+  function tick() {
+    if (!state.face) return;
+    HWT.render(live, state.face, HWT.sampleData(new Date(), sensors()), state.aod);
+    if (peekFace) HWT.render(peek, peekFace, HWT.sampleData(new Date(), sensors()), false);
+  }
+
+  function chips(id, onPick) {
+    const box = document.getElementById(id);
+    box.addEventListener('click', (e) => {
+      const b = e.target.closest('.chip');
+      if (!b) return;
+      for (const c of box.children) c.setAttribute('aria-pressed', c === b ? 'true' : 'false');
+      onPick(b);
+    });
+  }
+  chips('modes', (b) => { state.aod = b.dataset.aod === '1'; tick(); });
+
+  const peek = document.getElementById('peek').getContext('2d');
+  let peekFace = null;
+  const info = document.getElementById('peek-info');
+  async function open(file) {
+    try {
+      peekFace = await HWT.load(await file.arrayBuffer());
+      const skipped = HWT.render(peek, peekFace, HWT.sampleData(new Date(), sensors()), false);
+      info.innerHTML = '';
+      const t = document.createElement('strong');
+      t.textContent = peekFace.title || file.name;
+      info.append(t, document.createTextNode(peekFace.images + ' ' + T.images + ' ' +
+        (skipped.length ? T.skipped + ' (' + skipped.join(', ') + ').' : T.all_drawn) + ' ' + T.approx));
+    } catch (err) {
+      peekFace = null;
+      info.innerHTML = '<strong>' + T.unreadable + '</strong>';
+      info.append(document.createTextNode(String(err.message || err)));
+    }
+  }
+  const drop = document.getElementById('drop');
+  drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('over'); });
+  drop.addEventListener('dragleave', () => drop.classList.remove('over'));
+  drop.addEventListener('drop', (e) => { e.preventDefault(); drop.classList.remove('over'); if (e.dataTransfer.files[0]) open(e.dataTransfer.files[0]); });
+  document.getElementById('pick').addEventListener('change', (e) => { if (e.target.files[0]) open(e.target.files[0]); });
+
+
+  // the gallery: every face drawn live from its own package
+  const GALLERY = T.gallery;
+  const list = document.getElementById('face-list');
+  const gallery = [];
+  for (const [file, title, text] of GALLERY) {
+    const card = document.createElement('div');
+    card.className = 'face';
+    const cv = document.createElement('canvas');
+    cv.width = 408; cv.height = 480;
+    const h = document.createElement('h3'); h.textContent = title;
+    const p = document.createElement('p'); p.textContent = text;
+    const dl = document.createElement('div'); dl.className = 'dl';
+    const a = document.createElement('a');
+    a.href = BASE + 'faces/' + file + '-' + state.lang + '.hwt';
+    a.download = file + '-' + state.lang + '.hwt';
+    a.textContent = T.download;
+    a.className = 'all';
+    dl.append(a);
+    card.append(cv, h, p, dl);
+    list.append(card);
+    const entry = { ctx: cv.getContext('2d'), face: null };
+    gallery.push(entry);
+    fetch(BASE + 'faces/' + file + '-' + state.lang + '.hwt').then((r) => r.arrayBuffer()).then(HWT.load).then((f) => { entry.face = f; });
+  }
+  const drawGallery = () => {
+    const data = HWT.sampleData(new Date(), sensors());
+    for (const g of gallery) if (g.face) HWT.render(g.ctx, g.face, data, false);
+  };
+  loadFace('vibe');
+  const loop = () => { tick(); drawGallery(); setTimeout(loop, 1000 - (Date.now() % 1000) + 5); };
+  loop();
+})();
+</script>
+</body>
+</html>

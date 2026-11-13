@@ -25,6 +25,7 @@ def main():
     ap.add_argument('--out', default=os.path.join(ROOT, 'dist'))
     ap.add_argument('--name', default='', help='file stem; default: the description\'s file or folder name')
     ap.add_argument('--check', action='store_true', help='report problems without writing anything')
+    ap.add_argument('--together', action='store_true', help='also one file with every language, switched in the editor')
     a = ap.parse_args()
 
     path = os.path.abspath(a.description)
@@ -35,7 +36,9 @@ def main():
         desc = spec.load(path)
         langs = [l for l in a.langs.split(',') if l] or list((desc.get('languages') or {}).get('default', ['en']))
         jobs = [([l], '%s-%s' % (stem, l)) for l in langs]
-        if len(langs) > 1:
+        # one file per language; a single file carrying several languages switches only the
+        # normal screen, its always-on screen stays in the first, so it is made only on request
+        if a.together and len(langs) > 1:
             jobs.append((langs, stem))
         results = [(spec.build(desc, base, ls), name, ls) for ls, name in jobs]
     except spec.SpecError as e:

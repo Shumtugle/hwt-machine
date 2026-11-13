@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>hwt-machine — watch faces from code</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect x=%224%22 y=%222%22 width=%2224%22 height=%2228%22 rx=%227%22 fill=%22%23120406%22/%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%224%22 fill=%22%23FF283C%22/%3E%3C/svg%3E">
-<meta name="description" content="Build watch faces for compact wearables from fonts and code, preview them live in the browser.">
+<meta name="description" content="Watch faces for compact wearables, built from fonts and code and previewed live in the browser.">
 <style>
   @font-face { font-family: 'Machine'; src: url('fonts/Oswald.ttf') format('truetype'); font-weight: 200 700; }
   :root {
@@ -117,21 +117,13 @@
   <div class="hero">
     <div>
       <h1>Watch faces<br>from <em>code</em></h1>
-      <p class="lede">Fonts and a few lines of layout go in, an installable watch face comes out.
-        Every bitmap is drawn by the build, every glyph sits on its visible ink, and the package
-        is checked by drawing it back before it ever reaches a wrist.</p>
+      <p class="lede">Fonts and a few lines of layout go in, an installable watch face comes out. Every bitmap is drawn by the build, every glyph sits on its visible ink, and the package is checked by drawing it back before it ever reaches a wrist.</p>
       <div class="buttons">
         <a class="btn primary" id="download" href="faces/vibe-en.hwt" download>Download Vibe</a>
         <a class="btn" href="#get">All faces</a>
         <a class="btn" href="https://t.me/HW_watch_faces">Telegram</a>
       </div>
-      <p class="lede" style="font-size:15px;margin-top:16px">Each face in Russian, English and Finnish:
-        <a id="single-ru" href="faces/vibe-ru.hwt" download>RU</a> ·
-        <a id="single-en" href="faces/vibe-en.hwt" download>EN</a> · <a id="single-fi" href="faces/vibe-fi.hwt" download>FI</a>.
-        The button downloads the language picked below. The files without a language suffix carry all
-        three, switched in the watch's face editor.</p>
-      <div>
-      </div>
+      <p class="lede" style="font-size:15px;margin-top:16px">Every face on this page is in English, on both of its screens. The same faces in other languages: <a href="ru/">Русский</a> · <a href="fi/">Suomi</a>.</p>
     </div>
     <div class="stage">
       <div class="watch"><canvas class="screen" id="live" width="408" height="480" aria-label="Live watch face preview"></canvas></div>
@@ -150,9 +142,9 @@
           </div></div>
         <div class="row"><label>Language</label>
           <div class="chips" id="langs">
-            <button class="chip" data-lang="en" aria-pressed="true">EN</button>
-            <button class="chip" data-lang="ru" aria-pressed="false">RU</button>
-            <button class="chip" data-lang="fi" aria-pressed="false">FI</button>
+            <a class="chip" href="" aria-pressed="true" lang="en">EN</a>
+            <a class="chip" href="ru/" aria-pressed="false" lang="ru">RU</a>
+            <a class="chip" href="fi/" aria-pressed="false" lang="fi">FI</a>
           </div></div>
         <div class="row"><label>Screen</label>
           <div class="chips" id="modes">
@@ -165,10 +157,7 @@
         <div class="row"><label for="temp">Weather</label><input id="temp" type="range" min="-30" max="35" value="3"><output id="temp-o">3°</output></div>
         <div class="row"><label for="weather">Sky</label>
           <select id="weather">
-            <option value="0">unknown</option><option value="1">sunny</option><option value="2">clear night</option>
-            <option value="3">cloudy</option><option value="4" selected>partly cloudy</option><option value="5">rain</option>
-            <option value="6">thunderstorm</option><option value="7">snow</option><option value="8">wind</option>
-            <option value="9">haze</option><option value="10">fog</option>
+            <option value="0">unknown</option><option value="1">sunny</option><option value="2">clear night</option><option value="3">cloudy</option><option value="4" selected>partly cloudy</option><option value="5">rain</option><option value="6">thunderstorm</option><option value="7">snow</option><option value="8">wind</option><option value="9">haze</option><option value="10">fog</option>
           </select></div>
       </div>
     </div>
@@ -176,21 +165,18 @@
 
   <section id="get">
     <h2>Download a face</h2>
-    <p>Every face comes in Russian, English and Finnish. <b style="color:var(--ink)">All three</b> carries the three languages in one
-      file: switch them in the watch's face editor, where they are listed as <i>Date</i> (Russian), <i>Day of week</i>
-      (English) and <i>Sun</i> (Finnish). Install with any app that can send a watch face file to the watch.</p>
+    <p>One file per face, in English. Install it with any app that can send a watch face file to the watch.</p>
     <div class="faces" id="face-list"></div>
   </section>
 
   <section>
     <h2>What the machine does</h2>
-    <p>The watch reads a compact container: a protobuf layout, a table of images and the images themselves.
-      The machine writes all three, and reads any face back to show what is inside.</p>
+    <p>The watch reads a compact container: a protobuf layout, a table of images and the images themselves. The machine writes all three, and reads any face back to show what is inside.</p>
     <div class="grid">
       <div class="card"><h3>Byte-exact container</h3><p>Writer and reader rebuild existing faces <b>byte for byte</b>: header, layout, image table, run-length images.</p></div>
       <div class="card"><h3>Ink alignment</h3><p>Digits, capitals and symbols are placed by their <b>visible pixels</b>, not by font metrics, so lines meet where the eye expects.</p></div>
-      <div class="card"><h3>Running second</h3><p>The watch only offers the tens and units of a second. Two layers of pictures still move <b>one mark around the frame</b>.</p></div>
-      <div class="card"><h3>Any language</h3><p>Weekdays and months come from a locale file; long words shrink to fit their card on their own.</p></div>
+      <div class="card"><h3>Moving with the time</h3><p>Marks round the frame, hands of light, levels pouring down the screen: pictures chosen by the <b>hour, minute and second</b>.</p></div>
+      <div class="card"><h3>Any language</h3><p>Weekdays and months come from a word table; long words shrink to fit their card on their own.</p></div>
       <div class="card"><h3>Self-checking build</h3><p>Previews are drawn by a simulator reading the finished package, and cards that would touch the frame stop the build.</p></div>
       <div class="card"><h3>Open notes</h3><p>Element kinds, data sources and tap targets are written down in the <a href="https://github.com/Shumtugle/hwt-machine/blob/main/docs/FORMAT.md">format notes</a>, verified or not.</p></div>
     </div>
@@ -209,8 +195,8 @@
   <section>
     <h2>Build it yourself</h2>
     <p>Python 3 with Pillow. Fonts and their licences are in the repository.</p>
-<pre><span class="c"># every locale of Vibe into dist/</span>
-python3 faces/vibe/build.py all
+<pre><span class="c"># a face from its description, one file per language, into dist/</span>
+python3 tools/build.py faces/duo/face.json
 
 <span class="c"># read any face: layout, images, a rendered screen</span>
 python3 tools/inspect.py some-face.hwt --images out/ --render screen.png
@@ -220,9 +206,7 @@ python3 -m unittest discover tests</pre>
   </section>
 
   <footer>
-    MIT licence. Text faces under the SIL Open Font License, symbols under the Apache License 2.0;
-    both licences ship next to the fonts. <a href="https://github.com/Shumtugle/hwt-machine">Source on GitHub</a>,
-    new faces <a href="https://t.me/HW_watch_faces">on Telegram</a>.
+    MIT licence. Text faces under the SIL Open Font License, symbols under the Apache License 2.0; both licences ship next to the fonts. <a href="https://github.com/Shumtugle/hwt-machine">Source on GitHub</a>, new faces <a href="https://t.me/HW_watch_faces">on Telegram</a>.
   </footer>
 </div>
 
@@ -243,35 +227,28 @@ python3 -m unittest discover tests</pre>
   }
   document.getElementById('weather').addEventListener('change', () => tick());
 
-  // the preview package carries all three languages as choices; downloads are single-language files
-  const ORDER = ['ru', 'en', 'fi'];
+  // every package on this page is in the page's own language
+  const T = {"images": "images.", "skipped": "Some elements use kinds this page does not draw yet", "all_drawn": "Every element is drawn.", "approx": "System-font text is approximated. The time here is live.", "unreadable": "Could not read that file", "download": "Download", "names": {"vibe": "Vibe", "night-tram": "Night Tram", "plumb": "Plumb", "plumb-amber": "Plumb Amber", "lighthouse": "Lighthouse", "duo": "Duo", "strobe": "Strobe", "rubis": "Rubis", "triptych": "Triptych"}, "gallery": [["vibe", "Vibe", "Black and scarlet glass cards: the date in words, time with seconds, battery, weather, pulse, steps, a cream mark running round the frame."], ["night-tram", "Night Tram", "Ink, cream and amber: a lamp on the copper frame counts the seconds, a small lamp by the date wakes for unread messages."], ["plumb", "Plumb", "The hour over the minute and a plumb scale: hour, minute and second hang on it as levels, each pouring light down the screen in indigo, teal and ice."], ["plumb-amber", "Plumb Amber", "The same plumb scale in amber, gold and cream."], ["lighthouse", "Lighthouse", "A painted night sea and a lighthouse on a cliff; the time in a warm serif across the stars, everything else along the water."], ["duo", "Duo", "A small dial shaped like the screen itself, crystal digits below it, the date in full words; pulse, charge, weather and steps along the foot."], ["strobe", "Strobe", "Huge cream time on black, a scarlet searchlight for the hour and a laser for the minute turning from the colon, a scarlet mark running a band of ticks round the edge; six readings below."], ["rubis", "Rubis", "Garnet and gold: the date above, the time with seconds, two stacks of readings and a small dial below; a gold sweep turns from the dial to the edge of the screen once a minute."], ["triptych", "Triptych", "Three windows in a black case: hands over a dial cut in small pyramids, red lamps behind smoked glass, a crystal calendar below."]]};
+  const BASE = '';
+  state.lang = 'en';
   state.name = 'vibe';
   async function loadFace(name) {
     if (!faces[name]) {
-      const r = await fetch('faces/' + name + '.hwt');
+      const r = await fetch(BASE + 'faces/' + name + '-' + state.lang + '.hwt');
       faces[name] = await HWT.load(await r.arrayBuffer());
     }
     state.name = name;
     state.face = faces[name];
     const dl = document.getElementById('download');
-    dl.href = 'faces/' + name + '-' + state.lang + '.hwt';
-    dl.textContent = 'Download ' + ({ 'vibe': 'Vibe', 'night-tram': 'Night Tram', 'plumb': 'Plumb', 'plumb-amber': 'Plumb Amber', 'lighthouse': 'Lighthouse', 'duo': 'Duo', 'strobe': 'Strobe', 'rubis': 'Rubis', 'triptych': 'Triptych' })[name] +
-      ' · ' + state.lang.toUpperCase();
-    for (const l of ['ru', 'en', 'fi']) {
-      const a = document.getElementById('single-' + l);
-      if (a) a.href = 'faces/' + name + '-' + l + '.hwt';
-    }
+    dl.href = BASE + 'faces/' + name + '-' + state.lang + '.hwt';
+    dl.textContent = T.download + ' ' + T.names[name];
     tick();
-  }
-  async function loadLang(lang) {
-    state.lang = lang;
-    await loadFace(state.name);
   }
   chips('faces', (b) => loadFace(b.dataset.face));
 
   function tick() {
     if (!state.face) return;
-    HWT.render(live, state.face, HWT.sampleData(new Date(), sensors()), state.aod, ORDER.indexOf(state.lang));
+    HWT.render(live, state.face, HWT.sampleData(new Date(), sensors()), state.aod);
     if (peekFace) HWT.render(peek, peekFace, HWT.sampleData(new Date(), sensors()), false);
   }
 
@@ -284,7 +261,6 @@ python3 -m unittest discover tests</pre>
       onPick(b);
     });
   }
-  chips('langs', (b) => loadLang(b.dataset.lang));
   chips('modes', (b) => { state.aod = b.dataset.aod === '1'; tick(); });
 
   const peek = document.getElementById('peek').getContext('2d');
@@ -297,12 +273,11 @@ python3 -m unittest discover tests</pre>
       info.innerHTML = '';
       const t = document.createElement('strong');
       t.textContent = peekFace.title || file.name;
-      info.append(t, document.createTextNode(peekFace.images + ' images. ' +
-        (skipped.length ? 'Some elements use kinds this page does not draw yet (' + skipped.join(', ') + ').' :
-         'Every element is drawn.') + ' System-font text is approximated. The time here is live.'));
+      info.append(t, document.createTextNode(peekFace.images + ' ' + T.images + ' ' +
+        (skipped.length ? T.skipped + ' (' + skipped.join(', ') + ').' : T.all_drawn) + ' ' + T.approx));
     } catch (err) {
       peekFace = null;
-      info.innerHTML = '<strong>Could not read that file</strong>';
+      info.innerHTML = '<strong>' + T.unreadable + '</strong>';
       info.append(document.createTextNode(String(err.message || err)));
     }
   }
@@ -314,17 +289,7 @@ python3 -m unittest discover tests</pre>
 
 
   // the gallery: every face drawn live from its own package
-  const GALLERY = [
-    ['plumb', 'Plumb', 'The hour over the minute and a plumb scale: hour, minute and second hang on it as levels, each pouring light down the screen in indigo, teal and ice.'],
-    ['plumb-amber', 'Plumb Amber', 'The same plumb scale in amber, gold and cream.'],
-    ['vibe', 'Vibe', 'Black and scarlet glass cards: the date in words, time with seconds, battery, weather, pulse, steps, a cream mark running round the frame.'],
-    ['night-tram', 'Night Tram', 'Ink, cream and amber: a lamp on the copper frame counts the seconds, a small lamp by the date wakes for unread messages.'],
-    ['lighthouse', 'Lighthouse', 'A painted night sea and a lighthouse on a cliff; the time in a warm serif across the stars, everything else along the water.'],
-    ['duo', 'Duo', 'A small dial shaped like the screen itself, crystal digits below it, the date in full words; pulse, charge, weather and steps along the foot.'],
-    ['strobe', 'Strobe', 'Huge cream time on black, a scarlet searchlight for the hour and a laser for the minute turning from the colon, a scarlet mark running a band of ticks round the edge; six readings below.'],
-    ['rubis', 'Rubis', 'Garnet and gold: the date above, the time with seconds, two stacks of readings and a small dial below; a gold sweep turns from the dial to the edge of the screen once a minute.'],
-    ['triptych', 'Triptych', 'Three windows in a black case: hands over a dial cut in small pyramids, red lamps behind smoked glass, a crystal calendar below.'],
-  ];
+  const GALLERY = T.gallery;
   const list = document.getElementById('face-list');
   const gallery = [];
   for (const [file, title, text] of GALLERY) {
@@ -335,27 +300,23 @@ python3 -m unittest discover tests</pre>
     const h = document.createElement('h3'); h.textContent = title;
     const p = document.createElement('p'); p.textContent = text;
     const dl = document.createElement('div'); dl.className = 'dl';
-    for (const [suffix, label] of [['', 'All three'], ['-ru', 'RU'], ['-en', 'EN'], ['-fi', 'FI']]) {
-      const a = document.createElement('a');
-      a.href = 'faces/' + file + suffix + '.hwt';
-      a.download = file + suffix + '.hwt';
-      a.textContent = label;
-      if (!suffix) a.className = 'all';
-      dl.append(a);
-    }
+    const a = document.createElement('a');
+    a.href = BASE + 'faces/' + file + '-' + state.lang + '.hwt';
+    a.download = file + '-' + state.lang + '.hwt';
+    a.textContent = T.download;
+    a.className = 'all';
+    dl.append(a);
     card.append(cv, h, p, dl);
     list.append(card);
     const entry = { ctx: cv.getContext('2d'), face: null };
     gallery.push(entry);
-    fetch('faces/' + file + '.hwt').then((r) => r.arrayBuffer()).then(HWT.load).then((f) => { entry.face = f; });
+    fetch(BASE + 'faces/' + file + '-' + state.lang + '.hwt').then((r) => r.arrayBuffer()).then(HWT.load).then((f) => { entry.face = f; });
   }
   const drawGallery = () => {
     const data = HWT.sampleData(new Date(), sensors());
     for (const g of gallery) if (g.face) HWT.render(g.ctx, g.face, data, false);
   };
-  const pref = (navigator.language || 'en').slice(0, 2);
-  const start = ['ru', 'fi'].includes(pref) ? pref : 'en';
-  document.querySelector('#langs [data-lang="' + start + '"]').click();
+  loadFace('vibe');
   const loop = () => { tick(); drawGallery(); setTimeout(loop, 1000 - (Date.now() % 1000) + 5); };
   loop();
 })();

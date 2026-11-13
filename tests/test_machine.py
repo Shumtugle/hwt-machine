@@ -138,5 +138,21 @@ class Lighthouse(unittest.TestCase):
         self.assertEqual(simulate.render.skipped, [])
 
 
+class Pages(unittest.TestCase):
+    def test_three_editions_are_up_to_date(self):
+        import subprocess
+        r = subprocess.run([sys.executable, os.path.join(ROOT, 'tools', 'pages.py'), '--check'],
+                           capture_output=True, text=True)
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+
+    def test_every_offered_file_exists(self):
+        import json
+        data = json.load(open(os.path.join(ROOT, 'tools', 'page', 'strings.json'), encoding='utf-8'))
+        for lang in data['languages']:
+            for name in data['order']:
+                self.assertTrue(os.path.exists(os.path.join(ROOT, 'docs', 'faces', '%s-%s.hwt' % (name, lang))),
+                                '%s-%s' % (name, lang))
+
+
 if __name__ == '__main__':
     unittest.main()

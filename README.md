@@ -20,11 +20,12 @@ screen on the watch.
 Download it in
 [English](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/vibe-en.hwt),
 [Russian](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/vibe-ru.hwt) or
-[Finnish](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/vibe-fi.hwt),
-or [all three in one](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/vibe.hwt)
-(switch in the face editor: *Date* is Russian, *Day of week* English, *Sun* Finnish)
-(also attached to [Releases](https://github.com/Shumtugle/hwt-machine/releases)) and
-install it with any app that can send a watch face file to the watch.
+[Finnish](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/vibe-fi.hwt)
+and install it with any app that can send a watch face file to the watch. Every face
+comes as one file per language, and each file is in its language on both screens: the
+live page has [an English](https://shumtugle.github.io/hwt-machine/),
+[a Russian](https://shumtugle.github.io/hwt-machine/ru/) and
+[a Finnish](https://shumtugle.github.io/hwt-machine/fi/) edition.
 
 Built for 408 × 480 screens (screen code `HWHD13`). Runs on the HUAWEI WATCH FIT 4;
 faces for this screen are reported to work on the FIT 3 as well, memory permitting.
@@ -41,8 +42,7 @@ messages wait unread. Battery, weather and steps share one row; the pulse sits b
 Download it in
 [English](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/night-tram-en.hwt),
 [Russian](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/night-tram-ru.hwt) or
-[Finnish](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/night-tram-fi.hwt),
-or [all three in one](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/night-tram.hwt).
+[Finnish](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/night-tram-fi.hwt).
 The message lamp uses a source seen in other faces, not yet confirmed with this one.
 
 ## Plumb
@@ -58,15 +58,13 @@ breathes, the minute steps, the hour barely moves all day. Two colourings: ice
 
 [RU](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/plumb-ru.hwt) ·
 [EN](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/plumb-en.hwt) ·
-[FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/plumb-fi.hwt) ·
-[all three](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/plumb.hwt)
+[FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/plumb-fi.hwt)
 
 ![Plumb Amber in English, Russian, Finnish, and its always-on screen](docs/img/plumb-amber.png)
 
 [RU](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/plumb-amber-ru.hwt) ·
 [EN](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/plumb-amber-en.hwt) ·
-[FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/plumb-amber-fi.hwt) ·
-[all three](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/plumb-amber.hwt)
+[FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/plumb-amber-fi.hwt)
 
 ## Lighthouse
 
@@ -79,8 +77,7 @@ boat on its crest, and battery, weather, pulse and steps on the dark water below
 
 [RU](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/lighthouse-ru.hwt) ·
 [EN](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/lighthouse-en.hwt) ·
-[FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/lighthouse-fi.hwt) ·
-[all three](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/lighthouse.hwt)
+[FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/lighthouse-fi.hwt)
 
 ## Duo
 
@@ -93,8 +90,7 @@ readings along the foot: pulse, charge, weather, steps.
 
 [RU](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/duo-ru.hwt) ·
 [EN](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/duo-en.hwt) ·
-[FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/duo-fi.hwt) ·
-[all three](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/duo.hwt)
+[FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/duo-fi.hwt)
 
 ## Strobe
 
@@ -108,8 +104,7 @@ along a band of sixty ticks that follows the visible edge of the glass, corners 
 
 [RU](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/strobe-ru.hwt) ·
 [EN](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/strobe-en.hwt) ·
-[FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/strobe-fi.hwt) ·
-[all three](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/strobe.hwt)
+[FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/strobe-fi.hwt)
 
 ## Rubis
 
@@ -124,8 +119,7 @@ radius 44, 33 px in from the edges.
 
 [RU](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/rubis-ru.hwt) ·
 [EN](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/rubis-en.hwt) ·
-[FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/rubis-fi.hwt) ·
-[all three](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/rubis.hwt)
+[FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/rubis-fi.hwt)
 
 ## Triptych
 
@@ -140,8 +134,7 @@ the dial to the lamps.
 
 [RU](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/triptych-ru.hwt) ·
 [EN](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/triptych-en.hwt) ·
-[FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/triptych-fi.hwt) ·
-[all three](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/triptych.hwt)
+[FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/triptych-fi.hwt)
 
 ## Faces from a description
 
@@ -191,14 +184,18 @@ python3 tools/inspect.py dist/vibe-ru.hwt --images out/ --render screen.png
 python3 tools/build.py faces/vibe/face.json  # the same face from its description
 python3 -m unittest discover tests
 cp dist/*.hwt docs/faces/                # refresh the faces on the live page
+python3 tools/pages.py                   # rewrite its English, Russian and Finnish editions
 ```
 
 A new language is one JSON file in `faces/vibe/locale/` with seven weekdays, twelve
 months and an optional suffix after the day number.
 
-`--switchable ru,en,fi` also builds one face carrying all three languages, switched in
-the watch's face editor. It works; the editor names the three choices after the
-functions it borrows them from (*Date*, *Day of week*, *Sun*), not after the languages.
+`--switchable ru,en,fi` (and `--together` for faces built from a description) also
+builds one face carrying all three languages, switched in the watch's face editor. Only
+the normal screen switches: the always-on screen stays in the first language, so the
+faces are published one file per language. The editor names the three choices after
+the functions it borrows them from (*Date*, *Day of week*, *Sun*), not after the
+languages.
 
 ## Layout of the repository
 
@@ -220,6 +217,7 @@ functions it borrows them from (*Date*, *Day of week*, *Sun*), not after the lan
 | `faces/strobe/` | the Strobe face, being tried on the wrist |
 | `tools/inspect.py` | look inside any face |
 | `tools/build.py` | build a face from a description |
+| `tools/pages.py` | write the live page's three editions from `tools/page/` |
 | `docs/` | the live page, its renderer, the [format notes](docs/FORMAT.md) and the [authoring guide](docs/AUTHORING.md) |
 
 ## Format
