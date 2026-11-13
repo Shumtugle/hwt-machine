@@ -137,6 +137,22 @@ them stand the tens of seconds already passed.
 [EN](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/triptych-en.hwt) ·
 [FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/triptych-fi.hwt)
 
+## Flip
+
+Two dark flip cards for the hours and the minutes, after a phone clock many loved: each
+split at its middle with a hinge at each side, the lower half a shade deeper than the
+upper, the split running through the figures as it would on real cards. The weather is a
+glossy picture of its own, a sun, clouds, rain, snow, a storm or a moon, set in the
+middle over the foot of the cards. Under them a bar with the weekday, the day and the
+month in full words and the temperature, and a quiet line of heart, steps, the night's
+sleep and the charge. The same face lives among the clocks of a home screen.
+
+![Flip in English, Russian, Finnish, and its always-on screen](docs/img/flip.png)
+
+[RU](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/flip-ru.hwt) ·
+[EN](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/flip-en.hwt) ·
+[FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/flip-fi.hwt)
+
 ## Faces from a description
 
 A face can also be written as data instead of code: a JSON description of the

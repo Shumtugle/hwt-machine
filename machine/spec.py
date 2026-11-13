@@ -102,7 +102,7 @@ STYLE_FIELDS = {'style', 'font', 'size', 'weight', 'color', 'tracking', 'feature
 PLACE_FIELDS = {'id', 'x', 'align', 'y', 'quiet'}
 FIELDS = {
     'time': STYLE_FIELDS | PLACE_FIELDS | {'pad', 'layout', 'line_gap', 'colon', 'space', 'seconds',
-                                           'like', 'max_width', 'leading_zero'},
+                                           'like', 'max_width', 'leading_zero', 'split'},
     'day': STYLE_FIELDS | PLACE_FIELDS | {'pad', 'suffix', 'gap', 'digits', 'centred'},
     'weekday': STYLE_FIELDS | PLACE_FIELDS | {'form', 'case', 'max_right'},
     'month': STYLE_FIELDS | PLACE_FIELDS | {'form', 'case', 'max_right'},
@@ -132,6 +132,7 @@ FRAME_SOURCES = {
     'minute_tens': (codes.MINUTE_TENS, 6), 'minute_units': (codes.MINUTE_UNITS, 10),
     'second_tens': (codes.SECOND_TENS, 6), 'second_units': (codes.SECOND_UNITS, 10),
     'unread_messages': (codes.UNREAD_MESSAGES, 2),
+    'weather': (codes.WEATHER_ICON, len(codes.WEATHER_STATES)),
 }
 FRAME_SOURCES_UNCONFIRMED = {'unread_messages'}
 TIME_GROUP = {'time', 'seconds_mark'}
@@ -704,6 +705,25 @@ class Resolver:
         if el.get('leading_zero', True) is False:
             blank = st.blank(pad) if hasattr(st, 'blank') else Image.new('RGBA', digits[0].size, (0, 0, 0, 0))
             pieces[0].ims = [blank] + digits[1:3]
+        if el.get('split'):
+            # a clear band cut through every digit at the given heights of the screen, so the
+            # split of a flip card drawn in the background shows through the figures
+            sp = el['split']
+            ats = sp.get('at')
+            ats = ats if isinstance(ats, list) else [ats]
+            gap = sp.get('gap', 3)
+            for q in pieces:
+                cut = []
+                for im in q.ims:
+                    im = im.copy()
+                    a = im.getchannel('A')
+                    for at in ats:
+                        y0 = int(round(self.value(at, path + '.split.at', parent) - gap / 2.0 - q.y))
+                        if y0 + gap > 0 and y0 < im.height:
+                            ImageDraw.Draw(a).rectangle([0, max(0, y0), im.width, min(im.height, y0 + gap) - 1], fill=0)
+                    im.putalpha(a)
+                    cut.append(clear_transparent(im))
+                q.ims = cut
         last_y = ys[3]
         if colon and not stacked:
             ccol = self.b.color(colon.get('color', el.get('color', '#FFFFFF')), path + '.colon.color')

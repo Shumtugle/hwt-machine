@@ -180,6 +180,7 @@ Hours and minutes, 24-hour, optionally seconds.
 | `seconds` | none | `{"size": 38, "weight": 500, "color": "...", "gap": 10, "pad": 1, "quiet": false}` (or `"scale": 0.32` instead of size): after the minutes, bottoms aligned |
 | `max_width` | none | shrink the size until the whole time fits this width |
 | `leading_zero` | true | `false` shows a blank (or, with segments, an unlit) first digit before ten o'clock |
+| `split` | none | `{"at": 152, "gap": 3}`: a clear band `gap` px tall cut through every digit at the screen height `at` (or a list of heights), so the split of a flip card drawn in the background runs through the figures |
 | `like` | | id of another time; takes its geometry and changes only what is given (see always-on) |
 
 `x` with `align` places the whole row, seconds included. A stacked time is placed by
@@ -355,7 +356,7 @@ a script beside the description, as a background picture is.
 
 | field | meaning |
 |---|---|
-| `source` | `second_units` (10 pictures), `second_tens` (6), `minute_units` (10), `minute_tens` (6), `hour_units` (10), `hour_tens` (3), all confirmed as sources; `unread_messages` (2: none, some) seen in other faces, not yet confirmed |
+| `source` | `second_units` (10 pictures), `second_tens` (6), `minute_units` (10), `minute_tens` (6), `hour_units` (10), `hour_tens` (3), all confirmed as sources; `weather` (11, in the order of `weather_icon`), confirmed as a source; `unread_messages` (2: none, some) seen in other faces, not yet confirmed |
 | `files` | a name with `{}` for the value: `"lamps-{}.png"` reads `lamps-0.png`, `lamps-1.png` and on |
 | `x`, `y` | the top left corner of the pictures, which are all as large as the first |
 | `behind` | `true` puts them under everything else, so their light may run under readings |

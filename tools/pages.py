@@ -27,7 +27,9 @@ def render(lang, data, template):
     cards = '\n'.join('      <div class="card"><h3>%s</h3><p>%s</p></div>' % (h, p) for h, p in s['cards'])
     js = dict(s['js'], download=s['download'], names=data['names'],
               gallery=[[f, data['names'][f], s['gallery'][f]] for f in data['order']])
-    values = dict(s, lang=lang, base=base, lang_chips=chips,
+    faces = '\n'.join('            <button class="chip" data-face="%s" aria-pressed="%s">%s</button>'
+                       % (f, 'true' if i == 0 else 'false', html.escape(data['names'][f])) for i, f in enumerate(data['order']))
+    values = dict(s, lang=lang, base=base, lang_chips=chips, face_chips=faces,
                   sky_options='            ' + sky, cards=cards,
                   strings=json.dumps(js, ensure_ascii=False))
     out = template

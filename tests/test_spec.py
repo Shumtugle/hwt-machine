@@ -288,6 +288,19 @@ class Frames(unittest.TestCase):
         self.assertLess(lit(30), lit(33))
         self.assertLess(lit(33), lit(39))
 
+    def test_split_runs_through_the_figures(self):
+        folder = os.path.join(ROOT, 'faces', 'flip')
+        desc = spec.load(os.path.join(folder, 'face.json'))
+        at = [e for e in desc['elements'] if e['type'] == 'time'][0]['split']['at']
+        with tempfile.TemporaryDirectory() as out:
+            binary, _, _ = spec.package(spec.build(desc, folder, ['en']), os.path.join(out, 'f.hwt'))
+        data = simulate.sample_data()
+        data[codes.HOUR_TENS], data[codes.HOUR_UNITS] = 0, 8          # an eight is ink all down its middle
+        im = simulate.render(binary, data=data).convert('RGB')
+        row = lambda y: max(sum(im.getpixel((x, y))) for x in range(110, 188))   # clear of the hinge
+        self.assertGreater(row(at - 12), 600)                          # the figure, light, above the split
+        self.assertLess(row(at), 120)                                  # the split, dark, through it
+
     def test_missing_picture(self):
         folder = os.path.join(ROOT, 'faces', 'triptych')
         desc = spec.load(os.path.join(folder, 'face.json'))

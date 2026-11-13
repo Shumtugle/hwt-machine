@@ -1,0 +1,226 @@
+{
+ "name": "Flip",
+ "notes": "Two dark flip cards for the hours and the minutes, split at their middle with a hinge at each side, after the clock a well-loved phone once wore; the weather as a picture in the middle over the foot of the cards, a bar with the date in full words and the temperature, and below it the heart, the steps, the night's sleep and the charge. The same face lives among the clocks of a home screen. case.png and the weather pictures are drawn by make_case.py.",
+ "font": "Oswald",
+ "colors": {
+  "ink": "#F2EEE6",
+  "faint": "#A8A29A",
+  "dim": "#77736C"
+ },
+ "languages": {
+  "default": [
+   "ru",
+   "en",
+   "fi"
+  ]
+ },
+ "background": [
+  {
+   "type": "picture",
+   "file": "case.png"
+  }
+ ],
+ "elements": [
+  {
+   "type": "frames",
+   "id": "sky",
+   "source": "weather",
+   "files": "sky-{}.png",
+   "x": 138,
+   "y": 182,
+   "behind": true
+  },
+  {
+   "type": "time",
+   "id": "time",
+   "size": 140,
+   "weight": 700,
+   "color": "ink",
+   "pad": 2,
+   "space": 28,
+   "x": 30,
+   "y": {
+    "digits_middle": 140
+   },
+   "split": {
+    "at": 140,
+    "gap": 3
+   }
+  },
+  {
+   "type": "day",
+   "id": "day",
+   "size": 32,
+   "weight": 400,
+   "color": "ink",
+   "x": 34,
+   "y": {
+    "digits_middle": 324
+   }
+  },
+  {
+   "type": "weekday",
+   "form": "full",
+   "case": "title",
+   "size": 32,
+   "weight": 400,
+   "color": "ink",
+   "x": 36,
+   "max_right": 160,
+   "y": {
+    "caps_middle": 288
+   }
+  },
+  {
+   "type": "month",
+   "form": "full",
+   "case": "lower",
+   "size": 32,
+   "weight": 400,
+   "color": "faint",
+   "x": "day.right+8",
+   "max_right": 164,
+   "y": {
+    "caps_bottom": "day.digits_bottom"
+   }
+  },
+  {
+   "type": "tap",
+   "box": [
+    244,
+    262,
+    386,
+    352
+   ],
+   "open": "weather",
+   "elements": [
+    {
+     "type": "number",
+     "source": "temperature",
+     "size": 64,
+     "weight": 300,
+     "color": "ink",
+     "unit": "°",
+     "gap": 1,
+     "x": 372,
+     "align": "right",
+     "y": {
+      "digits_middle": 307
+     }
+    }
+   ]
+  },
+  {
+   "type": "tap",
+   "box": [
+    22,
+    386,
+    82,
+    422
+   ],
+   "open": "heart_rate",
+   "elements": [
+    {
+     "type": "number",
+     "id": "hr",
+     "source": "heart_rate",
+     "x": 54,
+     "align": "right",
+     "y": {
+      "digits_middle": 404
+     },
+     "size": 24,
+     "weight": 400,
+     "color": "faint"
+    },
+    {
+     "type": "symbol",
+     "name": "favorite",
+     "size": 18,
+     "color": "faint",
+     "x": "hr.right+5",
+     "y": {
+      "middle": 404
+     }
+    }
+   ]
+  },
+  {
+   "type": "tap",
+   "box": [
+    86,
+    386,
+    164,
+    422
+   ],
+   "open": "steps",
+   "elements": [
+    {
+     "type": "number",
+     "id": "st",
+     "source": "steps",
+     "x": 136,
+     "align": "right",
+     "y": {
+      "digits_middle": 404
+     },
+     "size": 24,
+     "weight": 400,
+     "color": "faint"
+    },
+    {
+     "type": "symbol",
+     "name": "footprint",
+     "size": 18,
+     "color": "faint",
+     "x": "st.right+5",
+     "y": {
+      "middle": 404
+     }
+    }
+   ]
+  },
+  {
+   "type": "tap",
+   "box": [
+    168,
+    386,
+    298,
+    422
+   ],
+   "open": "sleep",
+   "elements": [
+    {
+     "type": "system_text",
+     "source": "sleep",
+     "x": 192,
+     "y": 389,
+     "width": 100,
+     "height": 31,
+     "color": "faint"
+    }
+   ]
+  },
+  {
+   "type": "number",
+   "source": "battery",
+   "unit": "%",
+   "x": 322,
+   "y": {
+    "digits_middle": 404
+   },
+   "size": 24,
+   "weight": 400,
+   "color": "faint"
+  }
+ ],
+ "aod": {
+  "elements": [
+   {
+    "type": "time",
+    "like": "time",
+    "color": "dim"
+   }
+  ]
+ }
+}
