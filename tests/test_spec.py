@@ -11,6 +11,8 @@ sys.path.insert(0, ROOT)
 
 from machine import codes, container, simulate, spec  # noqa: E402
 
+FIXTURES = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures')
+
 
 def legacy(name):
     s = importlib.util.spec_from_file_location('legacy_' + name.replace('-', '_'),
@@ -125,10 +127,10 @@ class LitWindow(unittest.TestCase):
 
     def test_window_and_digits(self):
         import datetime
-        desc = spec.load(os.path.join(ROOT, 'faces', 'kide', 'face.json'))
-        result = spec.build(desc, os.path.join(ROOT, 'faces', 'kide'), ['ru'])
+        desc = spec.load(os.path.join(FIXTURES, 'lit-window.json'))
+        result = spec.build(desc, FIXTURES, ['ru'])
         with tempfile.TemporaryDirectory() as out:
-            binary, _, _ = spec.package(result, os.path.join(out, 'kide.hwt'))
+            binary, _, _ = spec.package(result, os.path.join(out, 'lit-window.hwt'))
         im = simulate.render(binary, data=simulate.sample_data(datetime.datetime(2026, 11, 9, 18, 18, 0)))
         r, g, b, _ = im.getpixel((204, 260))                       # backlight above the digits
         self.assertTrue(r > 200 and b < 150, (r, g, b))
@@ -139,14 +141,14 @@ class LitWindow(unittest.TestCase):
         self.assertTrue(any('elements[4]' in w and 'read at a glance' in w for w in result.warnings))
 
 
-class Etalon(unittest.TestCase):
-    """The reference face passes every check in every language; the only notes allowed
+class Reference(unittest.TestCase):
+    """The reference description passes every check in every language; the only notes allowed
     are about features still to be confirmed on a wrist."""
 
     def test_clean(self):
-        desc = spec.load(os.path.join(ROOT, 'faces', 'etalon', 'face.json'))
+        desc = spec.load(os.path.join(FIXTURES, 'reference.json'))
         for langs in (['ru'], ['en'], ['fi'], ['ru', 'en', 'fi']):
-            result = spec.build(desc, os.path.join(ROOT, 'faces', 'etalon'), langs)
+            result = spec.build(desc, FIXTURES, langs)
             # only notes about features still to be confirmed on a wrist are allowed
             self.assertEqual([w for w in result.warnings if 'not yet on this watch' not in w], [], langs)
 

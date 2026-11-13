@@ -15,18 +15,17 @@ the PNGs before calling a face finished.
 
 Five complete descriptions ship with the repository and are the best reference:
 `faces/vibe/face.json` (cards, tiles, a mark running around the frame),
-`faces/plumb/face.json` (bare type, a mark sliding down a thread) and
-`faces/duo/face.json` (hands on a small dial, crystal digits, a hanging date) and
-`faces/kide/face.json` (the same instruments with a lit amber crystal window, a date
-built outwards from the middle, readings at the corners) and `faces/etalon/face.json`,
-the reference: built on what was measured on a wrist, it passes every check; the only
-notes it draws are about features still to be confirmed on a wrist. `faces/strobe/face.json`
-shows hands of light: a searchlight and a laser turning from the colon, under
-everything that is read. `faces/rubis/face.json` keeps one rule for every card (radius
-44, 33 px in from the edges: the smallest inset at which such a corner clears the ticks
-in the screen's rounded corners) and turns a radar sweep from the rim of a small dial
-out to the edge of the screen. Plumb builds into the exact pixels of the hand-written
-face it replaces; Vibe matched its script too, until its ring moved onto the visible line.
+`faces/plumb/face.json` (bare type, a mark sliding down a thread),
+`faces/duo/face.json` (hands on a small dial, crystal digits, a hanging date),
+`faces/strobe/face.json` (hands of light: a searchlight and a laser turning from the
+colon, under everything that is read) and `faces/rubis/face.json`, which keeps one rule
+for every card (radius 44, 33 px in from the edges: the smallest inset at which such a
+corner clears the ticks in the screen's rounded corners) and turns a radar sweep from
+the rim of a small dial out to the edge of the screen. Two more live with the tests:
+`tests/fixtures/lit-window.json` (a lit crystal window with dark segments) and
+`tests/fixtures/reference.json`, built on what was measured on a wrist, which passes
+every check. Plumb builds into the exact pixels of the hand-written face it replaces;
+Vibe matched its script too, until its ring moved onto the visible line.
 
 ## What the machine does for you
 

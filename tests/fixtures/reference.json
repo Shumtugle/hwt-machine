@@ -1,5 +1,5 @@
 {
- "name": "Etalon",
+ "name": "Reference",
  "notes": "Built on measurements made on a wrist. The time and the full date are caught at a glance: capitals and digits of at least 26 px, the light weight, nothing in the corners. Below them, read on purpose: weather, charge, pulse and last night's sleep. A small dial, a copy of the screen, keeps the hands as ornament.",
  "font": "Oswald",
  "colors": {

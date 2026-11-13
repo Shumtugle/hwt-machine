@@ -24,11 +24,6 @@ or [all three in one](https://github.com/Shumtugle/hwt-machine/raw/main/docs/fac
 (also attached to [Releases](https://github.com/Shumtugle/hwt-machine/releases)) and
 install it with any app that can send a watch face file to the watch.
 
-`--dial` builds the same face with the dial of the glass phone widget it grew from in the
-date card: a fine ring, bars at the quarters, dots between, two bar hands
-([`vibe-dial-ru.hwt`](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/vibe-dial-ru.hwt) and the
-other languages next to it).
-
 Built for 408 × 480 screens (screen code `HWHD13`). Runs on the HUAWEI WATCH FIT 4;
 faces for this screen are reported to work on the FIT 3 as well, memory permitting.
 
@@ -100,6 +95,22 @@ along a band of sixty ticks that follows the visible edge of the glass, corners 
 [EN](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/strobe-en.hwt) ·
 [FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/strobe-fi.hwt) ·
 [all three](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/strobe.hwt)
+
+## Rubis
+
+Garnet and gold, like the jewels of a movement. The weekday and the month in words
+above, the time with gold seconds in the middle; below, two stacks of three readings
+(pulse, steps and sleep; weather, air pressure and charge) beside a small dial with
+short hands. A gold sweep turns once a minute from the rim of that dial out to the
+edge of the screen, under everything that is read. Every card follows one rule:
+radius 44, 33 px in from the edges.
+
+![Rubis in English, Russian, Finnish, and its always-on screen](docs/img/rubis.png)
+
+[RU](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/rubis-ru.hwt) ·
+[EN](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/rubis-en.hwt) ·
+[FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/rubis-fi.hwt) ·
+[all three](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/rubis.hwt)
 
 ## Faces from a description
 

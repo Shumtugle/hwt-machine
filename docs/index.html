@@ -137,12 +137,12 @@
         <div class="row"><label>Face</label>
           <div class="chips" id="faces">
             <button class="chip" data-face="vibe" aria-pressed="true">Vibe</button>
-            <button class="chip" data-face="vibe-dial" aria-pressed="false">Vibe · dial</button>
             <button class="chip" data-face="night-tram" aria-pressed="false">Night Tram</button>
             <button class="chip" data-face="plumb" aria-pressed="false">Plumb</button>
             <button class="chip" data-face="lighthouse" aria-pressed="false">Lighthouse</button>
             <button class="chip" data-face="duo" aria-pressed="false">Duo</button>
             <button class="chip" data-face="strobe" aria-pressed="false">Strobe</button>
+            <button class="chip" data-face="rubis" aria-pressed="false">Rubis</button>
           </div></div>
         <div class="row"><label>Language</label>
           <div class="chips" id="langs">
@@ -250,7 +250,7 @@ python3 -m unittest discover tests</pre>
     state.face = faces[name];
     const dl = document.getElementById('download');
     dl.href = 'faces/' + name + '-' + state.lang + '.hwt';
-    dl.textContent = 'Download ' + ({ 'vibe': 'Vibe', 'vibe-dial': 'Vibe with dial', 'night-tram': 'Night Tram', 'plumb': 'Plumb', 'lighthouse': 'Lighthouse', 'duo': 'Duo', 'strobe': 'Strobe' })[name] +
+    dl.textContent = 'Download ' + ({ 'vibe': 'Vibe', 'night-tram': 'Night Tram', 'plumb': 'Plumb', 'lighthouse': 'Lighthouse', 'duo': 'Duo', 'strobe': 'Strobe', 'rubis': 'Rubis' })[name] +
       ' · ' + state.lang.toUpperCase();
     for (const l of ['ru', 'en', 'fi']) {
       const a = document.getElementById('single-' + l);
@@ -312,11 +312,11 @@ python3 -m unittest discover tests</pre>
   const GALLERY = [
     ['plumb', 'Plumb', 'Two lines of type and a red weight sliding down a thread once a minute. Date above, the sky below. Nothing else.'],
     ['vibe', 'Vibe', 'Black and scarlet glass cards: the date in words, time with seconds, battery, weather, pulse, steps, a cream mark running round the frame.'],
-    ['vibe-dial', 'Vibe · dial', 'Vibe with the dial of the glass phone widget it grew from: a fine ring, quarter bars and two bar hands.'],
     ['night-tram', 'Night Tram', 'Ink, cream and amber: a lamp on the copper frame counts the seconds, a small lamp by the date wakes for unread messages.'],
     ['lighthouse', 'Lighthouse', 'A painted night sea and a lighthouse on a cliff; the time in a warm serif across the stars, everything else along the water.'],
     ['duo', 'Duo', 'A small dial shaped like the screen itself, crystal digits below it, the date in full words; pulse, charge, weather and steps along the foot.'],
     ['strobe', 'Strobe', 'Huge cream time on black, a scarlet searchlight for the hour and a laser for the minute turning from the colon, a scarlet mark running a band of ticks round the edge; six readings below.'],
+    ['rubis', 'Rubis', 'Garnet and gold: the date above, the time with seconds, two stacks of readings and a small dial below; a gold sweep turns from the dial to the edge of the screen once a minute.'],
   ];
   const list = document.getElementById('face-list');
   const gallery = [];
