@@ -104,17 +104,17 @@ class NightTram(unittest.TestCase):
         some = simulate.sample_data(); some[codes.UNREAD_MESSAGES] = 1
         self.assertNotEqual(simulate.render(binary, data=none).tobytes(), simulate.render(binary, data=some).tobytes())
 
-class Plumb(unittest.TestCase):
+class Thread(unittest.TestCase):
     def test_weight_whole_at_every_second(self):
         import importlib.util
-        spec = importlib.util.spec_from_file_location('plumb', os.path.join(ROOT, 'faces', 'plumb', 'build.py'))
-        plumb = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(plumb)
+        spec = importlib.util.spec_from_file_location('thread', os.path.join(ROOT, 'tests', 'fixtures', 'thread', 'build.py'))
+        thread = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(thread)
         with tempfile.TemporaryDirectory() as out:
-            path, _, _ = plumb.package(['en'], out, 'plumb-en')
+            path, _, _ = thread.package(['en'], out, 'thread-en')
             _, binary, _ = container.read_package(path)
-        track = plumb.draw.Track.line(408, 480, (plumb.THREAD_X, plumb.THREAD_TOP), (plumb.THREAD_X, plumb.THREAD_BOTTOM),
-                                      decade_gap=plumb.DECADE_GAP)
+        track = thread.draw.Track.line(408, 480, (thread.THREAD_X, thread.THREAD_TOP), (thread.THREAD_X, thread.THREAD_BOTTOM),
+                                      decade_gap=thread.DECADE_GAP)
         for second in range(60):
             data = simulate.sample_data()
             data[codes.SECOND_TENS], data[codes.SECOND_UNITS] = divmod(second, 10)

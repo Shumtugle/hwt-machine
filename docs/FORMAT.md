@@ -217,7 +217,7 @@ a glance and want the comfortable size; readings looked at on purpose do at size
 | 9 | battery percent | number, text | verified |
 | 1 | calories | number, text | observed |
 | 20 / 21 | temperature high / low | number | observed |
-| 12 / 13 / 14 | hours / minutes / seconds | number | observed |
+| 12 / 13 / 14 | hours / minutes / seconds, whole | number; image list indexed by the value | **verified** as image lists: the levels of Plumb follow them on a wrist |
 | 121 / 122 | sunrise / sunset | text | observed |
 | 142 | sleep last night, formatted by the watch (`7h23m`) | text, style 149 | **verified** |
 | 146 | distance walked today, km (`1.94`) | text, style 149 | **verified** |

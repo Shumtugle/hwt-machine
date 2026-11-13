@@ -107,12 +107,13 @@ FIELDS = {
     'weekday': STYLE_FIELDS | PLACE_FIELDS | {'form', 'case', 'max_right'},
     'month': STYLE_FIELDS | PLACE_FIELDS | {'form', 'case', 'max_right'},
     'number': STYLE_FIELDS | PLACE_FIELDS | {'source', 'pad', 'unit', 'gap', 'digits'},
-    'text': STYLE_FIELDS | PLACE_FIELDS | {'text'},
+    'text': STYLE_FIELDS | PLACE_FIELDS | {'text', 'case'},
     'symbol': PLACE_FIELDS | {'name', 'size', 'color', 'fill', 'weight'},
     'weather_icon': PLACE_FIELDS | {'size', 'color', 'fill', 'weight', 'icons'},
     'battery_icon': PLACE_FIELDS | {'color', 'low_color', 'width', 'height'},
     'seconds_mark': {'id', 'path', 'layers', 'reach', 'cover_grow'},
     'hands': {'id', 'centre', 'hour', 'minute', 'second', 'pin', 'behind'},
+    'level': {'id', 'source', 'x', 'from', 'to', 'span', 'band', 'dot', 'label'},
     'seconds_frame': {'id', 'centre', 'inset', 'width', 'radius', 'color', 'marker_width', 'ticks', 'major_ticks'},
     'system_text': {'id', 'source', 'x', 'y', 'width', 'height', 'align', 'color', 'text_style', 'quiet', 'suffix'},
     'tap': {'id', 'box', 'open', 'card', 'elements'},
@@ -121,7 +122,7 @@ REQUIRED = {
     'time': {'size', 'x', 'y'}, 'day': {'size', 'x', 'y'}, 'weekday': {'size', 'x', 'y'},
     'month': {'size', 'x', 'y'}, 'number': {'source', 'size', 'x', 'y'}, 'text': {'text', 'size', 'x', 'y'},
     'symbol': {'name', 'size', 'x', 'y'}, 'weather_icon': {'size', 'x', 'y'}, 'battery_icon': {'x', 'y'},
-    'seconds_mark': {'layers'}, 'tap': {'box', 'open', 'elements'}, 'hands': {'centre', 'hour', 'minute'},
+    'seconds_mark': {'layers'}, 'tap': {'box', 'open', 'elements'}, 'hands': {'centre', 'hour', 'minute'}, 'level': {'source', 'x', 'from', 'to'},
     'system_text': {'source', 'x', 'y'}, 'seconds_frame': set(),
 }
 TIME_GROUP = {'time', 'seconds_mark'}
@@ -843,6 +844,11 @@ class Resolver:
             if self.lang not in text and 'default' not in text:
                 raise SpecError(['%s.text: no words for "%s"; give them or a "default"' % (path, self.lang)])
             text = text.get(self.lang, text.get('default'))
+        case = el.get('case')
+        if case == 'upper':
+            text = text.upper()
+        elif case == 'lower':
+            text = text.lower()
         st = self.style(el, path, text)
         im = st.render(text)
         x, y, _ = self._image(el, path, parent, im, 'text', st)
@@ -912,6 +918,75 @@ class Resolver:
                int(math.ceil(max(x for x, _ in pts) + reach)), int(math.ceil(max(y for _, y in pts) + reach)))
         placed = Placed('seconds_mark', 'time', [], self.edges(box), box, path)
         placed.mark = (track, paint, el.get('cover_grow', 1.5))
+        return placed
+
+    LEVEL_SOURCES = {'hours': (codes.HOURS, 24), 'minutes': (codes.MINUTES, 60), 'seconds': (codes.SECONDS, 60)}
+
+    def place_level(self, el, path, parent):
+        """A level on a vertical scale: for every value of the hour, minute or second, a frame
+        with a band of light across the whole screen at that height, a dot on the scale and
+        the value beside it. The frames lie under everything that is read."""
+        src = el.get('source')
+        if src not in self.LEVEL_SOURCES:
+            raise SpecError(['%s.source: use "hours", "minutes" or "seconds"' % path])
+        code, count = self.LEVEL_SOURCES[src]
+        W, H = self.b.width, self.b.height
+        x = self.value(el['x'], path + '.x', parent)
+        y_from = self.value(el['from'], path + '.from', parent)
+        y_to = self.value(el['to'], path + '.to', parent)
+        span = el.get('span', 60)
+        band = el.get('band') or {}
+        reach = band.get('reach', 48)
+        power = band.get('power', 2.0)
+        # "down": a sheet from the level to the bottom of the screen, fading towards the
+        # bottom to "floor" of its strength, with a soft edge of "reach" above the level
+        down = band.get('fill') == 'down'
+        floor = band.get('floor', 0.0)
+        bc = self.b.color(band.get('color', '#FFFFFF40'), path + '.band.color')
+        dot = el.get('dot') or {}
+        dr = dot.get('radius', 6)
+        dc = self.b.color(dot.get('color', '#FFFFFF'), path + '.dot.color')
+        lab = el.get('label')
+        st = None
+        if lab is not None:
+            st = self.style(lab, path + '.label', '0123456789')
+        top = int(math.floor(min(y_from, y_to) - max(reach, dr + 2, st.height if st else 0)))
+        bottom = int(math.ceil(max(y_from, y_to) + max(reach, dr + 2, st.height if st else 0)))
+        if down:
+            bottom = H
+        frames = []
+        for v in range(count):
+            yc = y_from + (y_to - y_from) * min(v, span) / float(span)
+            im = Image.new('RGBA', (W, bottom - top), (0, 0, 0, 0))
+            d = ImageDraw.Draw(im)
+            for row in range(bottom - top):
+                y = top + row + 0.5
+                if down:
+                    if y < yc:
+                        k = max(0.0, 1 - (yc - y) / float(reach)) ** 2 if reach else 0
+                    else:
+                        t = (y - yc) / float(max(1, H - yc))
+                        k = floor + (1 - floor) * (1 - t) ** power
+                else:
+                    k = max(0.0, 1 - abs(y - yc) / float(reach)) ** power if reach else 0
+                if k > 0:
+                    d.line([(0, row), (W, row)], fill=bc[:3] + (int(round(bc[3] * k)),))
+            ss = 4
+            disc = Image.new('RGBA', ((2 * dr + 4) * ss, (2 * dr + 4) * ss), (0, 0, 0, 0))
+            ImageDraw.Draw(disc).ellipse([2 * ss, 2 * ss, (2 * dr + 2) * ss, (2 * dr + 2) * ss], fill=dc)
+            disc = disc.resize((2 * dr + 4, 2 * dr + 4), Image.LANCZOS)
+            im.alpha_composite(disc, (int(round(x - dr - 2)), int(round(yc - top - dr - 2))))
+            if st:
+                t = st.render(str(v))
+                ink = st.digit_ink
+                ty = int(round(yc - top - (ink[0] + ink[1]) / 2.0))
+                im.alpha_composite(t, (int(round(x + dr + lab.get('gap', 8))), max(0, ty)))
+            frames.append(im)
+        piece = Piece('list', ims=frames, x=0, y=top, source=code)
+        box = (0, top, W, bottom)
+        placed = Placed('level', 'time', [piece], self.edges(box), box, path)
+        placed.light = True       # a band across the screen, drawn under everything
+        placed.behind = True
         return placed
 
     def place_hands(self, el, path, parent):
@@ -1421,7 +1496,7 @@ def build(spec, base_dir='.', langs=None):
             band_mask, _ = pl.frame
             under.extend(_layout_items([q for q in keep if q is not None and q.kind in DYNAMIC], face, 0))
             under.append(pl)
-        elif pl.kind == 'hands' and pl.behind:
+        elif pl.kind in ('hands', 'level') and pl.behind:
             # zones are drawn first, so a zone of no size holds what lies under everything
             beneath.extend(_layout_items([q for q in keep if q is not None and q.kind in DYNAMIC], face, 0))
         else:

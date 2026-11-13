@@ -14,17 +14,23 @@ from machine import codes, container, simulate, spec  # noqa: E402
 FIXTURES = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures')
 
 
+def home(name):
+    """A face's folder: under faces/, or under tests/fixtures/ once it has left the page."""
+    kept = os.path.join(FIXTURES, name)
+    return kept if os.path.isdir(kept) else os.path.join(ROOT, 'faces', name)
+
+
 def legacy(name):
     s = importlib.util.spec_from_file_location('legacy_' + name.replace('-', '_'),
-                                               os.path.join(ROOT, 'faces', name, 'build.py'))
+                                               os.path.join(home(name), 'build.py'))
     m = importlib.util.module_from_spec(s)
     s.loader.exec_module(m)
     return m
 
 
 def described(name, langs, out):
-    desc = spec.load(os.path.join(ROOT, 'faces', name, 'face.json'))
-    binary, _, _ = spec.package(spec.build(desc, os.path.join(ROOT, 'faces', name), langs),
+    desc = spec.load(os.path.join(home(name), 'face.json'))
+    binary, _, _ = spec.package(spec.build(desc, home(name), langs),
                                 os.path.join(out, '%s-%s.hwt' % (name, '-'.join(langs))))
     return binary
 
@@ -45,12 +51,12 @@ class SameAsHandmade(unittest.TestCase):
                              '%s %s aod=%s' % (name, lang, aod))
         self.assertEqual(simulate.render.skipped, [])
 
-    def test_plumb_with_day_suffix(self):
-        self.check('plumb', 'fi')
+    def test_thread_with_day_suffix(self):
+        self.check('thread', 'fi')
 
     def test_running_mark_on_the_thread(self):
         with tempfile.TemporaryDirectory() as out:
-            binary = described('plumb', ['en'], out)
+            binary = described('thread', ['en'], out)
         from machine import draw
         track = draw.Track.line(408, 480, (304, 112), (304, 392), decade_gap=26)
         for second in (0, 9, 10, 31, 59):
@@ -73,6 +79,27 @@ class InsideTheGlass(unittest.TestCase):
         desc = spec.load(os.path.join(ROOT, 'faces', 'rubis', 'face.json'))
         result = spec.build(desc, os.path.join(ROOT, 'faces', 'rubis'), ['fi'])
         self.assertEqual([w for w in result.warnings if 'bezel' in w or 'glass' in w], [])
+
+
+class Levels(unittest.TestCase):
+    """A level pours its sheet from its own height down: what lies just below the
+    second's level is lit, what lies just above it is not lit by that sheet."""
+
+    def test_sheet_follows_the_second(self):
+        desc = spec.load(os.path.join(ROOT, 'faces', 'plumb', 'face.json'))
+        lv = [e for e in desc['elements'] if e['type'] == 'level' and e['source'] == 'seconds'][0]
+        with tempfile.TemporaryDirectory() as out:
+            binary, _, _ = spec.package(spec.build(desc, os.path.join(ROOT, 'faces', 'plumb'), ['en']),
+                                        os.path.join(out, 'p.hwt'))
+        y = lv['from'] + (lv['to'] - lv['from']) * 30 / 60.0
+        probe = (390, int(y))                    # right of the scale, clear of all text
+
+        def at(second):
+            data = simulate.sample_data()
+            data[codes.SECONDS] = second
+            data[codes.MINUTES] = data[codes.HOURS] = 59    # their sheets start below the probe
+            return sum(simulate.render(binary, data=data).getpixel(probe)[:3])
+        self.assertGreater(at(20), at(40))       # level above the probe: the probe is under the sheet
 
 
 class DigitWords(unittest.TestCase):
@@ -232,8 +259,8 @@ class Languages(unittest.TestCase):
         self.assertEqual(functions, [codes.FUNCTION_DATE, codes.FUNCTION_WEEKDAY])
 
     def test_transparent_pixels_carry_no_colour(self):
-        desc = spec.load(os.path.join(ROOT, 'faces', 'plumb', 'face.json'))
-        result = spec.build(desc, os.path.join(ROOT, 'faces', 'plumb'), ['en'])
+        desc = spec.load(os.path.join(FIXTURES, 'thread', 'face.json'))
+        result = spec.build(desc, os.path.join(FIXTURES, 'thread'), ['en'])
         for im in result.face.images[3:]:
             px = im.tobytes()
             for i in range(0, len(px), 4):
@@ -245,10 +272,10 @@ class Problems(unittest.TestCase):
     """A description with mistakes is refused with messages that say what to change."""
 
     def problems(self, change, langs=('en',)):
-        desc = spec.load(os.path.join(ROOT, 'faces', 'plumb', 'face.json'))
+        desc = spec.load(os.path.join(FIXTURES, 'thread', 'face.json'))
         change(desc)
         with self.assertRaises(spec.SpecError) as e:
-            spec.build(desc, os.path.join(ROOT, 'faces', 'plumb'), list(langs))
+            spec.build(desc, os.path.join(FIXTURES, 'thread'), list(langs))
         return '\n'.join(e.exception.problems)
 
     def test_misspelt_field(self):
@@ -291,9 +318,9 @@ class Problems(unittest.TestCase):
         self.assertIn('cannot be seen', self.problems(lambda d: d['elements'][4].update(color='#0A0A0A')))
 
     def warnings(self, change):
-        desc = spec.load(os.path.join(ROOT, 'faces', 'plumb', 'face.json'))
+        desc = spec.load(os.path.join(FIXTURES, 'thread', 'face.json'))
         change(desc)
-        return '\n'.join(spec.build(desc, os.path.join(ROOT, 'faces', 'plumb'), ['en']).warnings)
+        return '\n'.join(spec.build(desc, os.path.join(FIXTURES, 'thread'), ['en']).warnings)
 
     def test_faint_but_allowed_when_quiet(self):
         self.assertIn('hard to read', self.warnings(lambda d: d['elements'][4].update(color='#3A3A3A')))

@@ -45,15 +45,26 @@ The message lamp uses a source seen in other faces, not yet confirmed with this 
 
 ## Plumb
 
-Black, and two lines of type: the hour above the minute. A red weight slides down a
-cream thread once a minute, in six lengths of ten seconds. The date hangs from the same
-left margin at the top, the weather at the foot. No cards, no rings, no goals, no
-charge: the watch says so itself when it runs low.
+Black, the date and the weekday above, the hour over the minute in tall type, and a
+plumb scale on the right. The hour, the minute and the second hang on it as levels, a
+dot and a number each, and every level pours a sheet of light from its height down to
+the bottom of the screen, fading as it goes. The sheets overlap into strata: the second
+breathes, the minute steps, the hour barely moves all day. Two colourings: ice
+(indigo, teal, ice) and amber (amber, gold, cream).
+
+![Plumb in English, Russian, Finnish, and its always-on screen](docs/img/plumb.png)
 
 [RU](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/plumb-ru.hwt) ·
 [EN](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/plumb-en.hwt) ·
 [FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/plumb-fi.hwt) ·
 [all three](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/plumb.hwt)
+
+![Plumb Amber in English, Russian, Finnish, and its always-on screen](docs/img/plumb-amber.png)
+
+[RU](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/plumb-amber-ru.hwt) ·
+[EN](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/plumb-amber-en.hwt) ·
+[FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/plumb-amber-fi.hwt) ·
+[all three](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/plumb-amber.hwt)
 
 ## Lighthouse
 
@@ -141,15 +152,13 @@ elements, anything under the second mark's path, text lost against its backgroun
 ink in the rounded corners.
 
 ```sh
-python3 tools/build.py faces/plumb/face.json --check
-python3 tools/build.py faces/plumb/face.json --langs ru,en,fi
+python3 tools/build.py faces/duo/face.json --check
+python3 tools/build.py faces/duo/face.json --langs ru,en,fi
 ```
 
-Vibe and Plumb are described this way in `faces/vibe/face.json` and
-`faces/plumb/face.json`, and build into exactly the pixels of their hand-written
-scripts, but for one fault the checks found in Vibe: on its always-on screen the
-Cyrillic descenders of the weekday touched the month, so those words are now a size
-smaller. [docs/AUTHORING.md](docs/AUTHORING.md) is the full vocabulary.
+Most faces here are described this way, each in `faces/<name>/face.json`. Vibe was
+first written as a script and its description built into exactly the same pixels,
+until its ring moved onto the visible line of the glass. [docs/AUTHORING.md](docs/AUTHORING.md) is the full vocabulary.
 
 ## What the machine does
 
@@ -203,7 +212,7 @@ functions it borrows them from (*Date*, *Day of week*, *Sun*), not after the lan
 | `machine/locales/` | weekday and month names for the descriptions |
 | `faces/vibe/` | the Vibe face and its locales |
 | `faces/night-tram/` | the Night Tram face and its locales |
-| `faces/plumb/` | the Plumb face and its locales |
+| `faces/plumb/` | Plumb, in ice (`face.json`) and in amber (`amber.json`) |
 | `faces/lighthouse/` | the Lighthouse face, its painting and its locales |
 | `faces/duo/` | the Duo face |
 | `faces/strobe/` | the Strobe face, being tried on the wrist |

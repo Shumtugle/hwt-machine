@@ -68,6 +68,9 @@
   "sleep": "sleep",
   "charge": "charge",
   "pressure": "pressure",
-  "altitude": "altitude"
+  "altitude": "altitude",
+  "hours": "hrs",
+  "minutes": "min",
+  "seconds": "sec"
  }
 }

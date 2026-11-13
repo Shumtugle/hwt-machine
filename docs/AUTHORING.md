@@ -13,19 +13,24 @@ The build writes one `.hwt` per language, one carrying all languages as choices 
 watch's face editor, and a PNG of the normal and the always-on screen for each. Look at
 the PNGs before calling a face finished.
 
-Five complete descriptions ship with the repository and are the best reference:
+Six complete descriptions ship with the repository and are the best reference:
 `faces/vibe/face.json` (cards, tiles, a mark running around the frame),
-`faces/plumb/face.json` (bare type, a mark sliding down a thread),
+`faces/plumb/face.json` (bare type and a plumb scale whose levels pour light down the
+screen; `amber.json` beside it is the same face in warm colours),
 `faces/duo/face.json` (hands on a small dial, crystal digits, a hanging date),
 `faces/strobe/face.json` (hands of light: a searchlight and a laser turning from the
-colon, under everything that is read) and `faces/rubis/face.json`, which keeps one rule
+colon, under everything that is read), `faces/rubis/face.json`, which keeps one rule
 for every card (radius 44, 33 px in from the edges: the smallest inset at which such a
 corner clears the ticks in the screen's rounded corners) and turns a radar sweep from
-the rim of a small dial out to the edge of the screen. `faces/triptych/face.json` lays three windows on a background picture drawn by its own script, `make_case.py`: a dial, red lamps (segments glowing through smoked glass) and a crystal calendar with months as numbers. Two more live with the tests:
-`tests/fixtures/lit-window.json` (a lit crystal window with dark segments) and
+the rim of a small dial out to the edge of the screen, and `faces/triptych/face.json`,
+which lays three windows on a background picture drawn by its own script,
+`make_case.py`: a dial, red lamps (segments glowing through smoked glass) and a crystal
+calendar with months as numbers. Three more live with the tests:
+`tests/fixtures/lit-window.json` (a lit crystal window with dark segments),
 `tests/fixtures/reference.json`, built on what was measured on a wrist, which passes
-every check. Plumb builds into the exact pixels of the hand-written face it replaces;
-Vibe matched its script too, until its ring moved onto the visible line.
+every check, and `tests/fixtures/thread/` (a red weight sliding down a thread), whose
+description builds into the exact pixels of the hand-written script beside it. Vibe
+matched its script too, until its ring moved onto the visible line.
 
 ## What the machine does for you
 
@@ -227,6 +232,8 @@ where they read as spacing.
 ### `text`
 
 Static words in a style: `{"type": "text", "text": "STEPS", "size": 18, ...}`.
+`"text": {"word": "pulse"}` takes the word from the language's word table, and
+`case` (`upper` or `lower`) sets its case.
 
 ### `system_text`
 
@@ -316,6 +323,26 @@ it, so the marker follows the rounded edge. It lies under everything else, hands
 
 Keep text out of the band: the marker runs under it there. Confirmed on a watch: the
 marker shows all the way round, corners included.
+
+### `level`
+
+A level on a vertical scale for the hour, the minute or the second: for every value a
+frame with a dot on the scale, the value beside it and light across the whole screen at
+that height. The frames lie under everything that is read; the scale itself is drawn
+in the background.
+
+| field | meaning |
+|---|---|
+| `source` | `hours`, `minutes` or `seconds` |
+| `x` | the scale; the dot sits on it |
+| `from`, `to` | the heights of 0 and of `span` |
+| `span` | the value at `to`, 60 by default; hours on a 60 scale stay in the top two fifths |
+| `band` | `{"color": "#RRGGBBAA", "reach": 48, "power": 2}`: a band across the screen, fading over `reach` above and below the level. With `"fill": "down"` it is a sheet instead, from the level to the bottom of the screen, fading to `floor` (0 to 1) of its strength there, with a soft edge of `reach` above |
+| `dot` | `{"radius": 6, "color": "..."}` |
+| `label` | a text style for the value beside the dot, and `gap` before it; leave it out for no value |
+
+Sheets of the three levels overlap: give them colours of one family so the overlap
+deepens instead of turning grey.
 
 ### `tap`
 

@@ -1,59 +1,810 @@
 {
-  "name": "Plumb",
-  "notes": "Black; the hour set above the minute like two lines of type; a red weight slides down a cream thread once a minute; the date at the top and the weather at the foot hang from one left margin.",
-  "font": "Oswald",
-  "colors": {
-    "cream": "#ECE2CE",
-    "cream_dim": "#968E80",
-    "thread": "#ECE2CE46",
-    "notch": "#ECE2CE6E",
-    "red": "#E22834",
-    "red_glow": "#E228345A",
-    "dim": "#787064"
+ "name": "Plumb",
+ "notes": "A plumb scale on the right. The hour, the minute and the second hang on it as levels, and each pours a sheet of light from its level down to the bottom of the screen, fading as it goes; the sheets lie under everything that is read. Colours cold: indigo for the hour, teal for the minute, ice for the second.",
+ "font": "Oswald",
+ "colors": {
+  "cream": "#ECE2CE",
+  "cream_dim": "#968E80",
+  "scale": "#8A8478",
+  "scale_dim": "#4C4840"
+ },
+ "languages": {
+  "default": [
+   "ru",
+   "en",
+   "fi"
+  ]
+ },
+ "background": [
+  {
+   "type": "fill",
+   "color": "#000000"
   },
-  "languages": {
-    "default": ["ru", "en", "fi"],
-    "zone": [32, 10, 270, 96],
-    "frame": {"color": "red", "radius": 10}
-  },
-  "background": [
-    {"type": "shapes", "ss": 4, "items": [
-      {"line": [[304, 94], [304, 392]], "width": 1.4, "color": "thread"},
-      {"line": [[297, 112.0], [311, 112.0]], "width": 1.2, "color": "notch"},
-      {"line": [[300, 149.15254237288133], [308, 149.15254237288133]], "width": 1.2, "color": "notch"},
-      {"line": [[300, 200.5762711864407], [308, 200.5762711864407]], "width": 1.2, "color": "notch"},
-      {"line": [[297, 252.0], [311, 252.0]], "width": 1.2, "color": "notch"},
-      {"line": [[300, 303.42372881355936], [308, 303.42372881355936]], "width": 1.2, "color": "notch"},
-      {"line": [[300, 354.8474576271186], [308, 354.8474576271186]], "width": 1.2, "color": "notch"},
-      {"line": [[297, 392.0], [311, 392.0]], "width": 1.2, "color": "notch"},
-      {"ellipse": [301, 91, 307, 97], "color": "thread"}
-    ]}
-  ],
-  "elements": [
-    {"type": "seconds_mark", "path": {"line": {"from": [304, 112], "to": [304, 392], "decade_gap": 26}},
-     "layers": [{"radius": 7.5, "color": "red_glow", "blur": 2.5}, {"radius": 5.2, "color": "red"}],
-     "reach": 10.5},
-
-    {"type": "time", "id": "time", "layout": "stacked", "size": 152, "weight": 500, "color": "cream", "pad": 2,
-     "line_gap": 26, "x": 38, "y": {"digits_top": 112}},
-
-    {"type": "day", "id": "day", "size": 30, "weight": 500, "tracking": 1, "color": "cream",
-     "x": 40, "y": {"caps_bottom": 46}},
-    {"type": "month", "size": 30, "weight": 500, "tracking": 1, "color": "cream",
-     "x": "day.right+8", "max_right": 284, "y": {"caps_bottom": 46}},
-    {"type": "weekday", "size": 21, "weight": 400, "tracking": 2, "color": "cream_dim",
-     "x": 40, "y": {"caps_top": 58}},
-
-    {"type": "tap", "box": [32, 414, "temp.right+12", 458], "open": "weather", "elements": [
-      {"type": "weather_icon", "id": "sky", "size": 26, "color": "cream_dim", "fill": 0,
-       "x": 40, "y": {"middle": 436}},
-      {"type": "number", "id": "temp", "source": "temperature", "size": 26, "weight": 400, "color": "cream_dim",
-       "unit": "°", "x": "sky.right+8", "y": {"digits_middle": 436}}
-    ]}
-  ],
-  "aod": {
-    "elements": [
-      {"type": "time", "like": "time", "weight": 300, "color": "dim"}
-    ]
+  {
+   "type": "shapes",
+   "ss": 4,
+   "items": [
+    {
+     "rect": [
+      296,
+      60,
+      297,
+      426
+     ],
+     "color": "scale"
+    },
+    {
+     "rect": [
+      287,
+      62,
+      306,
+      63
+     ],
+     "color": "scale"
+    },
+    {
+     "rect": [
+      292,
+      68,
+      301,
+      69
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      74,
+      301,
+      75
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      80,
+      301,
+      81
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      86,
+      301,
+      87
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      287,
+      92,
+      306,
+      93
+     ],
+     "color": "scale"
+    },
+    {
+     "rect": [
+      292,
+      98,
+      301,
+      99
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      104,
+      301,
+      105
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      110,
+      301,
+      111
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      116,
+      301,
+      117
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      287,
+      122,
+      306,
+      123
+     ],
+     "color": "scale"
+    },
+    {
+     "rect": [
+      292,
+      128,
+      301,
+      129
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      134,
+      301,
+      135
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      140,
+      301,
+      141
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      146,
+      301,
+      147
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      287,
+      152,
+      306,
+      153
+     ],
+     "color": "scale"
+    },
+    {
+     "rect": [
+      292,
+      159,
+      301,
+      160
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      165,
+      301,
+      166
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      171,
+      301,
+      172
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      177,
+      301,
+      178
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      287,
+      183,
+      306,
+      184
+     ],
+     "color": "scale"
+    },
+    {
+     "rect": [
+      292,
+      189,
+      301,
+      190
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      195,
+      301,
+      196
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      201,
+      301,
+      202
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      207,
+      301,
+      208
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      287,
+      213,
+      306,
+      214
+     ],
+     "color": "scale"
+    },
+    {
+     "rect": [
+      292,
+      219,
+      301,
+      220
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      225,
+      301,
+      226
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      231,
+      301,
+      232
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      237,
+      301,
+      238
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      287,
+      243,
+      306,
+      244
+     ],
+     "color": "scale"
+    },
+    {
+     "rect": [
+      292,
+      249,
+      301,
+      250
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      255,
+      301,
+      256
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      261,
+      301,
+      262
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      267,
+      301,
+      268
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      287,
+      273,
+      306,
+      274
+     ],
+     "color": "scale"
+    },
+    {
+     "rect": [
+      292,
+      279,
+      301,
+      280
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      285,
+      301,
+      286
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      291,
+      301,
+      292
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      297,
+      301,
+      298
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      287,
+      303,
+      306,
+      304
+     ],
+     "color": "scale"
+    },
+    {
+     "rect": [
+      292,
+      309,
+      301,
+      310
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      315,
+      301,
+      316
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      321,
+      301,
+      322
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      327,
+      301,
+      328
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      287,
+      334,
+      306,
+      335
+     ],
+     "color": "scale"
+    },
+    {
+     "rect": [
+      292,
+      340,
+      301,
+      341
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      346,
+      301,
+      347
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      352,
+      301,
+      353
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      358,
+      301,
+      359
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      287,
+      364,
+      306,
+      365
+     ],
+     "color": "scale"
+    },
+    {
+     "rect": [
+      292,
+      370,
+      301,
+      371
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      376,
+      301,
+      377
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      382,
+      301,
+      383
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      388,
+      301,
+      389
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      287,
+      394,
+      306,
+      395
+     ],
+     "color": "scale"
+    },
+    {
+     "rect": [
+      292,
+      400,
+      301,
+      401
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      406,
+      301,
+      407
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      412,
+      301,
+      413
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      292,
+      418,
+      301,
+      419
+     ],
+     "color": "scale_dim"
+    },
+    {
+     "rect": [
+      287,
+      424,
+      306,
+      425
+     ],
+     "color": "scale"
+    }
+   ]
   }
+ ],
+ "elements": [
+  {
+   "type": "level",
+   "source": "hours",
+   "x": 296,
+   "from": 62,
+   "to": 424,
+   "span": 60,
+   "band": {
+    "color": "#3446C060",
+    "fill": "down",
+    "reach": 10,
+    "power": 1.3,
+    "floor": 0.12
+   },
+   "dot": {
+    "radius": 6,
+    "color": "#6A7CF0"
+   },
+   "label": {
+    "size": 26,
+    "weight": 500,
+    "color": "#9AA8F4",
+    "gap": 9
+   }
+  },
+  {
+   "type": "level",
+   "source": "minutes",
+   "x": 296,
+   "from": 62,
+   "to": 424,
+   "span": 60,
+   "band": {
+    "color": "#1C9AA450",
+    "fill": "down",
+    "reach": 10,
+    "power": 1.3,
+    "floor": 0.12
+   },
+   "dot": {
+    "radius": 6,
+    "color": "#3CC8D0"
+   },
+   "label": {
+    "size": 26,
+    "weight": 500,
+    "color": "#86DCE0",
+    "gap": 9
+   }
+  },
+  {
+   "type": "level",
+   "source": "seconds",
+   "x": 296,
+   "from": 62,
+   "to": 424,
+   "span": 60,
+   "band": {
+    "color": "#B8E0F434",
+    "fill": "down",
+    "reach": 10,
+    "power": 1.3,
+    "floor": 0.12
+   },
+   "dot": {
+    "radius": 6,
+    "color": "#D8F0FC"
+   },
+   "label": {
+    "size": 26,
+    "weight": 500,
+    "color": "#D8F0FC",
+    "gap": 9
+   }
+  },
+  {
+   "type": "day",
+   "id": "day",
+   "size": 42,
+   "weight": 600,
+   "color": "cream",
+   "x": 44,
+   "y": {
+    "digits_top": 30
+   }
+  },
+  {
+   "type": "month",
+   "size": 42,
+   "weight": 600,
+   "color": "cream",
+   "case": "upper",
+   "x": "day.right+10",
+   "y": {
+    "caps_top": 30
+   },
+   "max_right": 372
+  },
+  {
+   "type": "weekday",
+   "size": 32,
+   "weight": 400,
+   "color": "cream_dim",
+   "case": "upper",
+   "tracking": 2,
+   "x": 44,
+   "y": {
+    "caps_top": 84
+   }
+  },
+  {
+   "type": "time",
+   "id": "time",
+   "layout": "stacked",
+   "size": 150,
+   "weight": 500,
+   "color": "cream",
+   "pad": 2,
+   "line_gap": 22,
+   "x": 40,
+   "y": {
+    "digits_top": 134
+   }
+  },
+  {
+   "type": "tap",
+   "box": [
+    36,
+    420,
+    170,
+    460
+   ],
+   "open": "weather",
+   "elements": [
+    {
+     "type": "weather_icon",
+     "size": 32,
+     "color": "cream",
+     "x": 44,
+     "y": {
+      "middle": 440
+     }
+    },
+    {
+     "type": "number",
+     "source": "temperature",
+     "size": 32,
+     "weight": 400,
+     "color": "cream",
+     "unit": "°",
+     "gap": 1,
+     "x": "parent.left+50",
+     "y": {
+      "digits_middle": 440
+     }
+    }
+   ]
+  },
+  {
+   "type": "text",
+   "text": {
+    "word": "hours"
+   },
+   "size": 22,
+   "weight": 500,
+   "color": "#9AA8F4",
+   "x": 246,
+   "align": "center",
+   "y": {
+    "caps_middle": 441
+   },
+   "case": "upper"
+  },
+  {
+   "type": "text",
+   "text": {
+    "word": "minutes"
+   },
+   "size": 22,
+   "weight": 500,
+   "color": "#86DCE0",
+   "x": 300,
+   "align": "center",
+   "y": {
+    "caps_middle": 441
+   },
+   "case": "upper"
+  },
+  {
+   "type": "text",
+   "text": {
+    "word": "seconds"
+   },
+   "size": 22,
+   "weight": 500,
+   "color": "#D8F0FC",
+   "x": 346,
+   "align": "center",
+   "y": {
+    "caps_middle": 441
+   },
+   "case": "upper"
+  }
+ ],
+ "aod": {
+  "elements": [
+   {
+    "type": "time",
+    "layout": "stacked",
+    "size": 150,
+    "weight": 300,
+    "color": "cream_dim",
+    "pad": 2,
+    "line_gap": 22,
+    "x": 40,
+    "y": {
+     "digits_top": 134
+    }
+   }
+  ]
+ }
 }

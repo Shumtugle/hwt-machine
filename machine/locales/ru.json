@@ -68,6 +68,9 @@
   "sleep": "сон",
   "charge": "заряд",
   "pressure": "давление",
-  "altitude": "высота"
+  "altitude": "высота",
+  "hours": "часы",
+  "minutes": "мин",
+  "seconds": "сек"
  }
 }

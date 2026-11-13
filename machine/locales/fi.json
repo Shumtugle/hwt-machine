@@ -68,6 +68,9 @@
   "sleep": "uni",
   "charge": "akku",
   "pressure": "paine",
-  "altitude": "korkeus"
+  "altitude": "korkeus",
+  "hours": "tunti",
+  "minutes": "min",
+  "seconds": "sek"
  }
 }

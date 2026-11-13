@@ -2,7 +2,7 @@
 weight sliding down a cream thread once a minute. The date sits at the top, the
 weather at the foot; everything hangs from one left margin.
 
-Usage: python3 faces/plumb/build.py [locale ... | all] [--switchable ru,en,fi] [--out DIR]
+Usage: python3 tests/fixtures/thread/build.py [locale ... | all] [--switchable ru,en,fi] [--out DIR]
 """
 import argparse
 import io
@@ -10,7 +10,7 @@ import json
 import os
 import sys
 
-ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 sys.path.insert(0, ROOT)
 
 from PIL import Image, ImageDraw, ImageFilter  # noqa: E402
