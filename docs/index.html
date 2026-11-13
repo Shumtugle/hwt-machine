@@ -143,6 +143,7 @@
             <button class="chip" data-face="duo" aria-pressed="false">Duo</button>
             <button class="chip" data-face="strobe" aria-pressed="false">Strobe</button>
             <button class="chip" data-face="rubis" aria-pressed="false">Rubis</button>
+            <button class="chip" data-face="triptych" aria-pressed="false">Triptych</button>
           </div></div>
         <div class="row"><label>Language</label>
           <div class="chips" id="langs">
@@ -250,7 +251,7 @@ python3 -m unittest discover tests</pre>
     state.face = faces[name];
     const dl = document.getElementById('download');
     dl.href = 'faces/' + name + '-' + state.lang + '.hwt';
-    dl.textContent = 'Download ' + ({ 'vibe': 'Vibe', 'night-tram': 'Night Tram', 'plumb': 'Plumb', 'lighthouse': 'Lighthouse', 'duo': 'Duo', 'strobe': 'Strobe', 'rubis': 'Rubis' })[name] +
+    dl.textContent = 'Download ' + ({ 'vibe': 'Vibe', 'night-tram': 'Night Tram', 'plumb': 'Plumb', 'lighthouse': 'Lighthouse', 'duo': 'Duo', 'strobe': 'Strobe', 'rubis': 'Rubis', 'triptych': 'Triptych' })[name] +
       ' · ' + state.lang.toUpperCase();
     for (const l of ['ru', 'en', 'fi']) {
       const a = document.getElementById('single-' + l);
@@ -317,6 +318,7 @@ python3 -m unittest discover tests</pre>
     ['duo', 'Duo', 'A small dial shaped like the screen itself, crystal digits below it, the date in full words; pulse, charge, weather and steps along the foot.'],
     ['strobe', 'Strobe', 'Huge cream time on black, a scarlet searchlight for the hour and a laser for the minute turning from the colon, a scarlet mark running a band of ticks round the edge; six readings below.'],
     ['rubis', 'Rubis', 'Garnet and gold: the date above, the time with seconds, two stacks of readings and a small dial below; a gold sweep turns from the dial to the edge of the screen once a minute.'],
+    ['triptych', 'Triptych', 'Three windows in a black case: hands over a dial cut in small pyramids, red lamps behind smoked glass, a crystal calendar below.'],
   ];
   const list = document.getElementById('face-list');
   const gallery = [];

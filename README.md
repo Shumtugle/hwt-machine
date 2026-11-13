@@ -112,6 +112,22 @@ radius 44, 33 px in from the edges.
 [FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/rubis-fi.hwt) ·
 [all three](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/rubis.hwt)
 
+## Triptych
+
+Three windows in a black case, three ages of the watch. Above, hands over a chamfered
+dial cut in small pyramids that rises out of the black with no frame. In the middle,
+pulse, steps and charge in red lamps behind smoked glass, their unlit segments faintly
+showing. Below, a crystal display with an arched top, running on under the bezel: the
+day and the month in dark segments, the weekday beside them. The red second hand ties
+the dial to the lamps.
+
+![Triptych in English, Russian, Finnish, and its always-on screen](docs/img/triptych.png)
+
+[RU](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/triptych-ru.hwt) ·
+[EN](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/triptych-en.hwt) ·
+[FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/triptych-fi.hwt) ·
+[all three](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/triptych.hwt)
+
 ## Faces from a description
 
 A face can also be written as data instead of code: a JSON description of the

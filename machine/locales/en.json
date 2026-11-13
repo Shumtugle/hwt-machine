@@ -62,6 +62,12 @@
  "day_suffix": "",
  "words": {
   "hpa": "hPa",
-  "metres": "m"
+  "metres": "m",
+  "pulse": "pulse",
+  "steps": "steps",
+  "sleep": "sleep",
+  "charge": "charge",
+  "pressure": "pressure",
+  "altitude": "altitude"
  }
 }

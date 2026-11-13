@@ -21,7 +21,7 @@ Five complete descriptions ship with the repository and are the best reference:
 colon, under everything that is read) and `faces/rubis/face.json`, which keeps one rule
 for every card (radius 44, 33 px in from the edges: the smallest inset at which such a
 corner clears the ticks in the screen's rounded corners) and turns a radar sweep from
-the rim of a small dial out to the edge of the screen. Two more live with the tests:
+the rim of a small dial out to the edge of the screen. `faces/triptych/face.json` lays three windows on a background picture drawn by its own script, `make_case.py`: a dial, red lamps (segments glowing through smoked glass) and a crystal calendar with months as numbers. Two more live with the tests:
 `tests/fixtures/lit-window.json` (a lit crystal window with dark segments) and
 `tests/fixtures/reference.json`, built on what was measured on a wrist, which passes
 every check. Plumb builds into the exact pixels of the hand-written face it replaces;
@@ -154,7 +154,9 @@ digit height and `segments` shapes them: `{"ghost": "#262626", "aspect": 0.5,
 `aspect` the width over the height, `thickness` the bar over the height. They draw
 `0`–`9` and `-` only. `"shadow": {"color": "#6E34085F", "dx": 2, "dy": 3, "blur": 1.1}`
 casts each lit segment's shadow on the reflector behind it, as on a real positive
-display; a square colon casts the same shadow.
+display; a square colon casts the same shadow. Segments draw only digits; they take a weekday or a month
+only when every word is a number, as when a description gives its own locales months
+`01` to `12`. A shadow with no offset and a soft blur makes them glow, like lamps.
 
 ## Elements
 

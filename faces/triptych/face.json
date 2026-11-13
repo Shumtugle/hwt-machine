@@ -1,0 +1,372 @@
+{
+ "name": "Triptych",
+ "notes": "Three windows in a black case: hands over a chamfered dial cut in small pyramids, red lamps behind smoked glass, and a crystal calendar that runs on under the bezel. case.png is drawn by make_case.py.",
+ "font": "Oswald",
+ "colors": {
+  "cream": "#ECE3D2",
+  "rim": "#2A1E16",
+  "led": "#FF3A22",
+  "led_ghost": "#2E0E0B",
+  "led_glow": "#FF2A1AA0",
+  "legend": "#8C8C8A",
+  "seg": "#1C2217",
+  "seg_ghost": "#959E84",
+  "seg_shadow": "#00000040",
+  "dim": "#968C78"
+ },
+ "languages": {
+  "default": [
+   "ru",
+   "en",
+   "fi"
+  ]
+ },
+ "locales": {
+  "ru": {
+   "months": [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12"
+   ],
+   "day_suffix": ""
+  },
+  "en": {
+   "months": [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12"
+   ],
+   "day_suffix": ""
+  },
+  "fi": {
+   "months": [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12"
+   ],
+   "day_suffix": ""
+  }
+ },
+ "background": [
+  {
+   "type": "picture",
+   "file": "case.png"
+  }
+ ],
+ "elements": [
+  {
+   "type": "hands",
+   "centre": [
+    204,
+    113
+   ],
+   "hour": {
+    "length": 46,
+    "tail": 9,
+    "width": 8,
+    "color": "cream"
+   },
+   "minute": {
+    "length": 74,
+    "tail": 11,
+    "width": 5,
+    "color": "cream"
+   },
+   "second": {
+    "length": 80,
+    "tail": 18,
+    "width": 1.5,
+    "color": "led"
+   },
+   "pin": [
+    {
+     "radius": 6,
+     "color": "cream"
+    },
+    {
+     "radius": 2.6,
+     "color": "rim"
+    }
+   ]
+  },
+  {
+   "type": "tap",
+   "box": [
+    26,
+    216,
+    124,
+    300
+   ],
+   "open": "heart_rate",
+   "elements": [
+    {
+     "type": "text",
+     "text": {
+      "word": "pulse"
+     },
+     "size": 22,
+     "weight": 500,
+     "color": "legend",
+     "x": 72,
+     "align": "center",
+     "y": {
+      "caps_middle": 232
+     }
+    },
+    {
+     "type": "number",
+     "source": "heart_rate",
+     "font": "Segments",
+     "size": 40,
+     "color": "led",
+     "pad": 1,
+     "segments": {
+      "ghost": "led_ghost",
+      "shadow": {
+       "color": "led_glow",
+       "dx": 0,
+       "dy": 0,
+       "blur": 1.8
+      }
+     },
+     "x": 72,
+     "align": "center",
+     "y": {
+      "digits_middle": 272
+     }
+    }
+   ]
+  },
+  {
+   "type": "tap",
+   "box": [
+    128,
+    216,
+    280,
+    300
+   ],
+   "open": "steps",
+   "elements": [
+    {
+     "type": "text",
+     "text": {
+      "word": "steps"
+     },
+     "size": 22,
+     "weight": 500,
+     "color": "legend",
+     "x": 204,
+     "align": "center",
+     "y": {
+      "caps_middle": 232
+     }
+    },
+    {
+     "type": "number",
+     "source": "steps",
+     "font": "Segments",
+     "size": 40,
+     "color": "led",
+     "pad": 1,
+     "segments": {
+      "ghost": "led_ghost",
+      "shadow": {
+       "color": "led_glow",
+       "dx": 0,
+       "dy": 0,
+       "blur": 1.8
+      }
+     },
+     "x": 204,
+     "align": "center",
+     "y": {
+      "digits_middle": 272
+     }
+    }
+   ]
+  },
+  {
+   "type": "tap",
+   "box": [
+    284,
+    216,
+    382,
+    300
+   ],
+   "open": "settings",
+   "elements": [
+    {
+     "type": "text",
+     "text": {
+      "word": "charge"
+     },
+     "size": 22,
+     "weight": 500,
+     "color": "legend",
+     "x": 336,
+     "align": "center",
+     "y": {
+      "caps_middle": 232
+     }
+    },
+    {
+     "type": "number",
+     "source": "battery",
+     "font": "Segments",
+     "size": 40,
+     "color": "led",
+     "pad": 1,
+     "segments": {
+      "ghost": "led_ghost",
+      "shadow": {
+       "color": "led_glow",
+       "dx": 0,
+       "dy": 0,
+       "blur": 1.8
+      }
+     },
+     "x": 336,
+     "align": "center",
+     "y": {
+      "digits_middle": 272
+     }
+    }
+   ]
+  },
+  {
+   "type": "day",
+   "id": "day",
+   "font": "Segments",
+   "size": 70,
+   "color": "seg",
+   "pad": 5,
+   "segments": {
+    "ghost": "seg_ghost",
+    "shadow": {
+     "color": "seg_shadow",
+     "dx": 2,
+     "dy": 2,
+     "blur": 1.0
+    }
+   },
+   "x": 62,
+   "y": {
+    "digits_middle": 398
+   }
+  },
+  {
+   "type": "month",
+   "id": "mon",
+   "font": "Segments",
+   "size": 44,
+   "color": "seg",
+   "segments": {
+    "ghost": "seg_ghost",
+    "shadow": {
+     "color": "seg_shadow",
+     "dx": 2,
+     "dy": 2,
+     "blur": 1.0
+    }
+   },
+   "x": "day.right+12",
+   "y": {
+    "digits_bottom": "day.digits_bottom"
+   }
+  },
+  {
+   "type": "weekday",
+   "form": "short",
+   "case": "upper",
+   "size": 40,
+   "weight": 600,
+   "color": "seg",
+   "x": 346,
+   "align": "right",
+   "y": {
+    "caps_middle": 398
+   }
+  }
+ ],
+ "aod": {
+  "elements": [
+   {
+    "type": "hands",
+    "centre": [
+     204,
+     113
+    ],
+    "hour": {
+     "length": 46,
+     "tail": 9,
+     "width": 6,
+     "color": "dim"
+    },
+    "minute": {
+     "length": 74,
+     "tail": 11,
+     "width": 3.5,
+     "color": "dim"
+    },
+    "pin": [
+     {
+      "radius": 4.5,
+      "color": "dim"
+     }
+    ]
+   },
+   {
+    "type": "day",
+    "id": "day",
+    "font": "Segments",
+    "size": 70,
+    "color": "dim",
+    "pad": 5,
+    "x": 62,
+    "y": {
+     "digits_middle": 398
+    }
+   },
+   {
+    "type": "weekday",
+    "form": "short",
+    "case": "upper",
+    "size": 40,
+    "weight": 500,
+    "color": "dim",
+    "x": 346,
+    "align": "right",
+    "y": {
+     "caps_middle": 398
+    }
+   }
+  ]
+ }
+}

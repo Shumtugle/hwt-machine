@@ -62,6 +62,12 @@
  "day_suffix": "",
  "words": {
   "hpa": "гПа",
-  "metres": "м"
+  "metres": "м",
+  "pulse": "пульс",
+  "steps": "шаги",
+  "sleep": "сон",
+  "charge": "заряд",
+  "pressure": "давление",
+  "altitude": "высота"
  }
 }

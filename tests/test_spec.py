@@ -75,6 +75,23 @@ class InsideTheGlass(unittest.TestCase):
         self.assertEqual([w for w in result.warnings if 'bezel' in w or 'glass' in w], [])
 
 
+class DigitWords(unittest.TestCase):
+    """Segments spell a month when every month is a number, and nothing else."""
+
+    def desc(self, months):
+        return {"name": "t", "font": "Oswald", "languages": {"default": ["en"]},
+                "locales": {"en": {"months": months}},
+                "elements": [{"type": "month", "font": "Segments", "size": 40, "color": "#FFFFFF",
+                              "x": 40, "y": {"digits_middle": 240}}]}
+
+    def test_numbers(self):
+        spec.build(self.desc(["%02d" % i for i in range(1, 13)]), ROOT, ['en'])
+
+    def test_words(self):
+        with self.assertRaises(spec.SpecError):
+            spec.build(self.desc(["Jan"] + ["%02d" % i for i in range(2, 13)]), ROOT, ['en'])
+
+
 class Sweep(unittest.TestCase):
     """A radar sweep: bright at its leading edge, fading behind it, nothing ahead or inside."""
 

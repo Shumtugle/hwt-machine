@@ -62,6 +62,12 @@
  "day_suffix": ".",
  "words": {
   "hpa": "hPa",
-  "metres": "m"
+  "metres": "m",
+  "pulse": "syke",
+  "steps": "askeleet",
+  "sleep": "uni",
+  "charge": "akku",
+  "pressure": "paine",
+  "altitude": "korkeus"
  }
 }

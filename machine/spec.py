@@ -790,7 +790,9 @@ class Resolver:
         sample = ''.join(w for l in self.b.langs for w in self.b.words(kind, form, case, l))
         mine = self.b.words(kind, form, case, self.lang)
         st = self.style(el, path, sample)
-        if isinstance(st, draw.Segments):
+        # segments spell only digits, so they take words only when every word is a number
+        # (months given as 01-12 in a description's own locales, say)
+        if isinstance(st, draw.Segments) and not all(c in draw.SEGMENTS_OF for c in sample):
             raise SpecError(['%s.font: segment digits cannot spell words; use "Oswald" or "Cormorant"' % path])
         x = self.value(el['x'], path + '.x', parent)
         if 'max_right' in el:
