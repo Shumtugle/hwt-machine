@@ -87,7 +87,8 @@ A touch zone of no size, `[0, 0, 0, 0]`, opens nothing and is drawn before the d
 the time, so whatever it holds lies under all text: **verified** with hands turning
 behind the time. A second hand in such a zone, under a copy of the background that is
 open only along a band at the edge, shows only where it crosses the band: a marker that
-runs along the rounded edge instead of a circle (seen in other faces for this screen).
+runs along the rounded edge instead of a circle: **verified**, the marker shows all the
+way round, through the corners, when the band follows the visible line.
 
 An element: `1` index in the group, `2` kind, then the body in a field that depends on
 the kind.
@@ -235,7 +236,7 @@ a glance and want the comfortable size; readings looked at on purpose do at size
 | 140 / 141 / 145 / 148 | nothing drawn | text | tried on a wrist |
 | 150 | hour hand | hand | verified |
 | 153 | minute hand | hand | verified |
-| 154 | second hand | hand | observed, also in a face for this screen |
+| 154 | second hand | hand | **verified** as the marker of a seconds frame |
 
 Weather icon order (observed): unknown, sunny, clear night, cloudy, partly cloudy, rain,
 thunderstorm, snow, wind, haze, fog.

@@ -952,8 +952,6 @@ class Resolver:
                 light = True
             else:
                 im, px, py = draw.hand(hs['length'], tail, hs.get('width', 4), ink, inner)
-            if name == 'second':
-                self.b.note_warning('%s: the second hand is seen in other faces but not yet confirmed on a watch' % hp)
             pieces.append(Piece('hand', im=im, cx=cx, cy=cy, px=px, py=py, source=HAND_SOURCES[name],
                                 reach=hs['length'], role=name, ink=ink))
             reach = max(reach, hs['length'])
@@ -1006,8 +1004,6 @@ class Resolver:
                     'width': t.get('width', 2), 'length': t.get('length', width * 0.55)}
         minor = tick('ticks', {})
         major = tick('major_ticks', {'width': 3, 'length': width})
-        self.b.note_warning('%s: the marker is a second hand, seen in other faces but not yet confirmed on a watch'
-                            % path)
         box = (inset, inset, W - inset, H - inset)
         placed = Placed('seconds_frame', 'time', [piece], self.edges(box), box, path)
         placed.light = True       # drawn under everything, like a background

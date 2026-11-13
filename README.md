@@ -86,6 +86,21 @@ readings along the foot: pulse, charge, weather, steps.
 [FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/duo-fi.hwt) ·
 [all three](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/duo.hwt)
 
+## Strobe
+
+Black, and a time so large it fills the width. The hour is a scarlet searchlight and the
+minute a laser, both turning from the colon under everything that is read. Above, the
+weekday and the date in quiet lower case; below, six readings in the watch's own type:
+pulse, sleep, steps, charge, air pressure and altitude. A scarlet mark runs once a minute
+along a band of sixty ticks that follows the visible edge of the glass, corners included.
+
+![Strobe in English, Russian, Finnish, and its always-on screen](docs/img/strobe.png)
+
+[RU](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/strobe-ru.hwt) ·
+[EN](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/strobe-en.hwt) ·
+[FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/strobe-fi.hwt) ·
+[all three](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/strobe.hwt)
+
 ## Faces from a description
 
 A face can also be written as data instead of code: a JSON description of the

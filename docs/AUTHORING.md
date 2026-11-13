@@ -288,7 +288,7 @@ Hands turning about one centre, drawn pointing to 12 and turned by the watch.
 |---|---|
 | `centre` | `[x, y]` |
 | `hour`, `minute` | required: `{"length": 38, "tail": 9, "width": 7, "color": "...", "inner": {...}}` |
-| `second` | optional, same fields; not yet confirmed on a watch |
+| `second` | optional, same fields; the second hand turns on a watch (confirmed through `seconds_frame`) |
 | `inner` | a darker slit along the hand: `{"color": "#000000", "inset": 2, "from": 0.3, "to": 0.86}` (fractions of the length from the centre) |
 | `pin` | discs on top of the centre, largest first: `[{"radius": 6.5, "color": "..."}, ...]` |
 | `behind` | `true` when the hands turn under other elements on purpose. They are then put in a touch zone of no size, which the watch draws before everything else, so all text lies over them (confirmed) |
@@ -312,8 +312,8 @@ it, so the marker follows the rounded edge. It lies under everything else, hands
 | `color`, `marker_width` | the marker, 6 px wide |
 | `ticks`, `major_ticks` | `{"color": "...", "width": 2, "length": 7}`; the major ones every five seconds, the whole band long by default. `null` leaves them out |
 
-Keep text out of the band: the marker runs under it there. The marker is not yet
-confirmed on a watch.
+Keep text out of the band: the marker runs under it there. Confirmed on a watch: the
+marker shows all the way round, corners included.
 
 ### `tap`
 

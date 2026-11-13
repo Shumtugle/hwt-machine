@@ -15,53 +15,54 @@
   },
   "languages": {
     "default": ["ru", "en", "fi"],
-    "zone": [118, 30, 372, 118],
+    "zone": [130, 38, 366, 115],
     "frame": {"color": "scarlet", "radius": 12}
   },
+  "ring": {"inset": 16, "radius": 77, "length": [4, 6]},
   "background": [
     {"type": "glow", "color": "glow"},
-    {"type": "card", "box": [24, 24, 384, 124], "radius": 24},
-    {"type": "card", "box": [16, 134, 392, 298], "radius": 24},
+    {"type": "card", "box": [34, 33, 374, 120], "radius": 43},
+    {"type": "card", "box": [26, 128, 382, 296], "radius": 24},
     {"type": "ticks", "color": "tick", "major_color": "tick_major"}
   ],
   "elements": [
     {"type": "seconds_mark", "path": "ring", "layers": [{"radius": 4.2, "color": "cream"}]},
 
     {"type": "day", "id": "day", "size": 74, "weight": 600, "color": "cream",
-     "x": 38, "y": {"digits_middle": 74}},
+     "x": 50, "y": {"digits_middle": 76}},
     {"type": "weekday", "size": 32, "weight": 500, "tracking": 1, "color": "cream",
-     "x": "day.right+12", "max_right": 368, "y": {"caps_top": "day.digits_top"}},
+     "x": "day.right+12", "max_right": 362, "y": {"caps_top": "day.digits_top"}},
     {"type": "month", "size": 32, "weight": 500, "tracking": 1, "color": "scarlet_soft",
-     "x": "day.right+12", "max_right": 368, "y": {"caps_bottom": "day.digits_bottom"}},
+     "x": "day.right+12", "max_right": 362, "y": {"caps_bottom": "day.digits_bottom"}},
 
-    {"type": "time", "id": "time", "size": 120, "weight": 600, "color": "cream", "pad": 2,
-     "x": "screen.center", "align": "center", "y": {"digits_middle": 216},
+    {"type": "time", "id": "time", "size": 112, "weight": 600, "color": "cream", "pad": 2,
+     "x": "screen.center", "align": "center", "y": {"digits_middle": 212},
      "colon": {"width": 26, "radius": 5.5, "color": "scarlet"},
      "seconds": {"size": 38, "weight": 500, "color": "seconds", "pad": 1, "gap": 10, "quiet": true}},
 
-    {"type": "tap", "box": [24, 308, 201, 378], "open": "settings", "card": {"radius": 18}, "elements": [
+    {"type": "tap", "box": [37, 304, 202, 370], "open": "settings", "card": {"radius": 32}, "elements": [
       {"type": "battery_icon", "color": "cream", "low_color": "scarlet",
-       "x": "parent.left+16", "y": {"middle": "parent.middle"}},
+       "x": "parent.left+18", "y": {"middle": "parent.middle"}},
       {"type": "number", "source": "battery", "size": 32, "weight": 500, "color": "cream",
-       "unit": "%", "gap": 2, "x": "parent.right-16", "align": "right", "y": {"digits_middle": "parent.middle"}}
+       "unit": "%", "gap": 2, "x": "parent.right-20", "align": "right", "y": {"digits_middle": "parent.middle"}}
     ]},
-    {"type": "tap", "box": [207, 308, 384, 378], "open": "weather", "card": {"radius": 18}, "elements": [
+    {"type": "tap", "box": [206, 304, 371, 370], "open": "weather", "card": {"radius": 32}, "elements": [
       {"type": "weather_icon", "size": 38, "color": "cream",
-       "x": "parent.left+16", "y": {"middle": "parent.middle"}},
+       "x": "parent.left+18", "y": {"middle": "parent.middle"}},
       {"type": "number", "source": "temperature", "size": 32, "weight": 500, "color": "cream",
-       "unit": "°", "gap": 2, "x": "parent.right-14", "align": "right", "y": {"digits_middle": "parent.middle"}}
+       "unit": "°", "gap": 2, "x": "parent.right-20", "align": "right", "y": {"digits_middle": "parent.middle"}}
     ]},
-    {"type": "tap", "box": [24, 386, 201, 452], "open": "heart_rate", "card": {"radius": 18}, "elements": [
+    {"type": "tap", "box": [37, 378, 202, 442], "open": "heart_rate", "card": {"radius": 32}, "elements": [
       {"type": "symbol", "name": "favorite", "size": 34, "color": "scarlet",
-       "x": "parent.left+16", "y": {"middle": "parent.middle"}},
+       "x": "parent.left+18", "y": {"middle": "parent.middle"}},
       {"type": "number", "source": "heart_rate", "size": 32, "weight": 500, "color": "cream",
-       "x": "parent.right-16", "align": "right", "y": {"digits_middle": "parent.middle"}}
+       "x": "parent.right-20", "align": "right", "y": {"digits_middle": "parent.middle"}}
     ]},
-    {"type": "tap", "box": [207, 386, 384, 452], "open": "steps", "card": {"radius": 18}, "elements": [
+    {"type": "tap", "box": [206, 378, 371, 442], "open": "steps", "card": {"radius": 32}, "elements": [
       {"type": "symbol", "name": "footprint", "size": 32, "color": "scarlet_soft",
-       "x": "parent.left+16", "y": {"middle": "parent.middle"}},
+       "x": "parent.left+18", "y": {"middle": "parent.middle"}},
       {"type": "number", "source": "steps", "size": 32, "weight": 500, "color": "cream",
-       "x": "parent.right-16", "align": "right", "y": {"digits_middle": "parent.middle"}}
+       "x": "parent.right-20", "align": "right", "y": {"digits_middle": "parent.middle"}}
     ]}
   ],
   "aod": {

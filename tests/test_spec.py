@@ -42,11 +42,6 @@ class SameAsHandmade(unittest.TestCase):
                              '%s %s aod=%s' % (name, lang, aod))
         self.assertEqual(simulate.render.skipped, [])
 
-    def test_vibe(self):
-        # the always-on words are a size smaller than the script's: there the Cyrillic
-        # descenders of the weekday touched the month below
-        self.check('vibe', 'ru', screens=(False,))
-
     def test_plumb_with_day_suffix(self):
         self.check('plumb', 'fi')
 
@@ -63,6 +58,15 @@ class SameAsHandmade(unittest.TestCase):
             self.assertTrue(r > 180 and g < 90, 'second %d' % second)
 
 
+class InsideTheGlass(unittest.TestCase):
+    """Rings, marks and cards stay where the glass shows them."""
+
+    def test_vibe(self):
+        desc = spec.load(os.path.join(ROOT, 'faces', 'vibe', 'face.json'))
+        result = spec.build(desc, os.path.join(ROOT, 'faces', 'vibe'), ['ru'])
+        self.assertEqual([w for w in result.warnings if 'bezel' in w or 'glass' in w], [])
+
+
 class Instruments(unittest.TestCase):
     """Hands, a dial and crystal digits."""
 
@@ -77,10 +81,8 @@ class Instruments(unittest.TestCase):
         import datetime
         return simulate.render(self.binary, aod=aod, data=simulate.sample_data(datetime.datetime(2026, 11, 9, *t)))
 
-    def test_only_the_second_hand_is_unconfirmed(self):
-        unconfirmed = [w for w in self.result.warnings if 'confirmed' in w]
-        self.assertEqual(len(unconfirmed), 1)
-        self.assertIn('second hand', unconfirmed[0])
+    def test_everything_is_confirmed(self):
+        self.assertEqual([w for w in self.result.warnings if 'confirmed' in w], [])
 
     def test_hands_turn(self):
         quarter = self.at((3, 0, 30))           # hour hand to the right, minute hand up

@@ -163,6 +163,7 @@ const HWT = (() => {
       12: now.getHours(), 13: now.getMinutes(), 14: now.getSeconds(),
       53: s.weather, 54: Math.min(10, Math.floor(s.battery / 10)), 72: 0,
       0: s.steps, 1: 328, 2: s.heart, 4: s.temp, 9: s.battery,
+      7: 990, 8: 229, 26: '--', 142: '7h23m', 146: '1.94',
       161: Math.min(100, Math.round(s.steps / 100)), 163: s.battery, 158: 55,
     };
     d.time = now;
@@ -238,9 +239,10 @@ const HWT = (() => {
         const flagField = kind === 0 ? 7 : 9;
         if ((get(body, flagField, 0) || 0) !== flag) return;
         const r = get(body, 1, []), c = get(body, 2, []);
-        const v = data[get(body, 5)];
+        // plain text names its source in field 5; formatted text keeps the format there and the source in 6
+        const v = data[get(body, kind === 10 ? 6 : 5)];
         if (v === undefined || !r.length) return;
-        const unit = kind === 10 ? ({ 9: '%', 4: '°' }[get(body, 6)] || '') : '';
+        const unit = kind === 10 ? ({ 5: '%', 7: '°' }[get(body, 5)] || '') : '';
         const x = get(r, 1, 0), y = get(r, 2, 0), w = get(r, 3, 0), h = get(r, 4, 0);
         ctx.save();
         ctx.fillStyle = 'rgba(' + get(c, 1, 255) + ',' + get(c, 2, 255) + ',' + get(c, 3, 255) + ',' + (get(c, 4, 255) / 255) + ')';
