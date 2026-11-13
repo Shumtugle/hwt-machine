@@ -59,5 +59,9 @@
   "ноя",
   "дек"
  ],
- "day_suffix": ""
+ "day_suffix": "",
+ "words": {
+  "hpa": "гПа",
+  "metres": "м"
+ }
 }

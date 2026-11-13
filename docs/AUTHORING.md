@@ -19,8 +19,10 @@ Five complete descriptions ship with the repository and are the best reference:
 `faces/duo/face.json` (hands on a small dial, crystal digits, a hanging date) and
 `faces/kide/face.json` (the same instruments with a lit amber crystal window, a date
 built outwards from the middle, readings at the corners) and `faces/etalon/face.json`,
-the reference: built on what was measured on a wrist, it passes every check without a
-single warning. Both build into the
+the reference: built on what was measured on a wrist, it passes every check; the only
+notes it draws are about features still to be confirmed on a wrist. `faces/strobe/face.json`
+shows hands of light: a searchlight and a laser turning from the colon, under
+everything that is read. Both build into the
 exact pixels of the hand-written faces they replace, except where the checks below
 found a fault in the original (Vibe's always-on words are a size smaller, so the
 descenders of one line clear the next).
@@ -235,10 +237,16 @@ air pressure or altitude.
 | `x`, `y`, `align` | the box; `y` is its top |
 | `width`, `height` | the box, default 120 × 31 |
 | `color` | any colour |
+| `suffix` | `percent` or `degrees`, added by the watch right after the value |
 | `text_style` | the watch's style code, default 149, the only one confirmed here: its digits are about 18 px tall, below the 21 px read in comfort, so other codes are being tried |
 
 The font, and so the look, is the watch's; previews draw a plain sans of the same size
 in its place.
+
+Set right-aligned, a value can be followed by a unit that stays put: a `text` at
+`"id.right+5"`. Its words may differ by language: `"text": {"word": "hpa"}` takes the word from the
+language's table (`hpa`, `metres`), and `"text": {"fi": "...", "default": "..."}` gives
+them in the description.
 
 ### `symbol`
 
@@ -283,7 +291,8 @@ Hands turning about one centre, drawn pointing to 12 and turned by the watch.
 | `second` | optional, same fields; not yet confirmed on a watch |
 | `inner` | a darker slit along the hand: `{"color": "#000000", "inset": 2, "from": 0.3, "to": 0.86}` (fractions of the length from the centre) |
 | `pin` | discs on top of the centre, largest first: `[{"radius": 6.5, "color": "..."}, ...]` |
-| `behind` | `true` when the hands turn under other elements on purpose, such as digits set inside the dial; list the hands before those elements so they are drawn first |
+| `behind` | `true` when the hands turn under other elements on purpose. They are then put in a touch zone of no size, which the watch draws before everything else, so all text lies over them |
+| `shape` | `bar` (default), `laser` (`width` of the hot core, `core` its colour, `color` the glow) or `cone` (a searchlight; `spread` is its half-angle in degrees). Light may run off the screen; it is cropped like a background |
 
 The checks treat a hand as the whole circle it sweeps.
 

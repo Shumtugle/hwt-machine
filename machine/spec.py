@@ -112,7 +112,7 @@ FIELDS = {
     'battery_icon': PLACE_FIELDS | {'color', 'low_color', 'width', 'height'},
     'seconds_mark': {'id', 'path', 'layers', 'reach', 'cover_grow'},
     'hands': {'id', 'centre', 'hour', 'minute', 'second', 'pin', 'behind'},
-    'system_text': {'id', 'source', 'x', 'y', 'width', 'height', 'align', 'color', 'text_style', 'quiet'},
+    'system_text': {'id', 'source', 'x', 'y', 'width', 'height', 'align', 'color', 'text_style', 'quiet', 'suffix'},
     'tap': {'id', 'box', 'open', 'card', 'elements'},
 }
 REQUIRED = {
@@ -210,7 +210,7 @@ class Piece:
         if self.kind == 'hand':
             return ('hand', _digest(self.im), self.cx, self.cy, self.px, self.py, self.source)
         if self.kind == 'systext':
-            return ('systext', self.rect, self.color, self.style, self.align, self.source)
+            return ('systext', self.rect, self.color, self.style, self.align, self.source, self.fmt)
         return ('number', tuple(_digest(i) for i in self.ims), self.x, self.y, self.align, self.source,
                 _digest(self.minus) if self.minus is not None else None)
 
@@ -242,6 +242,7 @@ class Placed:
         self.mark = None
         self.quiet = False
         self.behind = False
+        self.light = False
         self.ink_h = None
 
 
@@ -826,8 +827,19 @@ class Resolver:
         return x, y, box
 
     def place_text(self, el, path, parent):
-        st = self.style(el, path, el['text'])
-        im = st.render(el['text'])
+        text = el['text']
+        if isinstance(text, dict) and 'word' in text:
+            table = self.b.locales[self.lang].get('words', {})
+            if text['word'] not in table:
+                raise SpecError(['%s.text.word: "%s" has no "%s" in its word table%s; it has %s' % (
+                    path, self.lang, text['word'], _near(text['word'], table), _known(table))])
+            text = table[text['word']]
+        elif isinstance(text, dict):
+            if self.lang not in text and 'default' not in text:
+                raise SpecError(['%s.text: no words for "%s"; give them or a "default"' % (path, self.lang)])
+            text = text.get(self.lang, text.get('default'))
+        st = self.style(el, path, text)
+        im = st.render(text)
         x, y, _ = self._image(el, path, parent, im, 'text', st)
         box = (x, y + st.cap_ink[0], x + im.width, y + st.cap_ink[1])
         return Placed('text', 'date', [Piece('image', im=im, x=x, y=y)], self.edges(box, st, y), box, path)
@@ -905,15 +917,19 @@ class Resolver:
         cx = self.value(c[0], path + '.centre[0]', parent)
         cy = self.value(c[1], path + '.centre[1]', parent)
         pieces, reach = [], 0
+        light = False
         for name in ('hour', 'minute', 'second'):
             hs = el.get(name)
             if hs is None:
                 continue
             hp = '%s.%s' % (path, name)
+            hand_fields = ('length', 'tail', 'width', 'color', 'inner', 'shape', 'core', 'spread')
             for k in hs:
-                if k not in ('length', 'tail', 'width', 'color', 'inner'):
-                    raise SpecError(['%s.%s: a hand takes "length", "tail", "width", "color", "inner"%s' % (
-                        hp, k, _near(k, ('length', 'tail', 'width', 'color', 'inner')))])
+                if k not in hand_fields:
+                    raise SpecError(['%s.%s: a hand takes %s%s' % (hp, k, _known(hand_fields), _near(k, hand_fields))])
+            shape = hs.get('shape', 'bar')
+            if shape not in ('bar', 'laser', 'cone'):
+                raise SpecError(['%s.shape: use "bar", "laser" or "cone"' % hp])
             if 'length' not in hs:
                 raise SpecError(['%s: give the hand a "length" in pixels from the centre' % hp])
             tail = hs.get('tail', 0)
@@ -925,7 +941,15 @@ class Resolver:
                 inner['color'] = self.b.color(inner.get('color', '#000000'), hp + '.inner.color')
                 inner.setdefault('inset', 2)
             ink = self.b.color(hs.get('color', '#FFFFFF'), hp + '.color')
-            im, px, py = draw.hand(hs['length'], tail, hs.get('width', 4), ink, inner)
+            if shape == 'laser':
+                im, px, py = draw.laser(hs['length'], self.b.color(hs.get('core', '#FFFFFF'), hp + '.core'), ink,
+                                        hs.get('width', 2))
+                light = True
+            elif shape == 'cone':
+                im, px, py = draw.cone(hs['length'], hs.get('spread', 7), ink)
+                light = True
+            else:
+                im, px, py = draw.hand(hs['length'], tail, hs.get('width', 4), ink, inner)
             if name == 'second':
                 self.b.note_warning('%s: the second hand is seen in other faces but not yet confirmed on a watch' % hp)
             pieces.append(Piece('hand', im=im, cx=cx, cy=cy, px=px, py=py, source=HAND_SOURCES[name],
@@ -938,7 +962,9 @@ class Resolver:
             pieces.append(Piece('overlay', im=im, x=int(round(cx - im.width / 2.0)), y=int(round(cy - im.height / 2.0)),
                                 role='pin'))
         box = (int(cx - reach), int(cy - reach), int(math.ceil(cx + reach)), int(math.ceil(cy + reach)))
-        return Placed('hands', 'time', pieces, self.edges(box), box, path)
+        placed = Placed('hands', 'time', pieces, self.edges(box), box, path)
+        placed.light = light      # beams of light may run off the screen, like a background
+        return placed
 
     def place_system_text(self, el, path, parent):
         """A value the watch writes in its own font into a box. Its size is the watch's to
@@ -953,7 +979,17 @@ class Resolver:
         if style != TEXT_STYLE_VERIFIED:
             self.b.note_warning('%s.text_style: %s is seen in other faces; only %d is confirmed on this screen' % (
                 path, style, TEXT_STYLE_VERIFIED))
-        piece = Piece('systext', rect=(x, y, w, h), color=col, style=style, source=src, sample=sample,
+        fmt = {None: None, 'percent': 5, 'degrees': 7}.get(el.get('suffix'), 'bad')
+        if fmt == 'bad':
+            raise SpecError(['%s.suffix: the watch adds "percent" or "degrees"; anything else, set as text' % path])
+        if fmt:
+            sample += {5: '%', 7: '\u00b0'}[fmt]
+            self.b.note_warning('%s.suffix: a suffix added by the watch is seen in other faces for this screen, '
+                                'not yet on this watch' % path)
+        if align != 'left':
+            self.b.note_warning('%s.align: system text aligned "%s" is seen in other faces, not yet on this watch' % (
+                path, align))
+        piece = Piece('systext', rect=(x, y, w, h), color=col, style=style, source=src, sample=sample, fmt=fmt,
                       align={'left': 0, 'center': 1, 'right': 2}[align])
         box = (x, y, x + w, y + h)
         return Placed('system_text', 'date', [piece], self.edges(box), box, path)
@@ -1089,9 +1125,13 @@ def _layout_items(pieces, face, aod, origin=None):
             if origin:
                 raise SpecError(['system text cannot depend on the language'])
             x, y, w, h = p.rect
-            out.append((codes.TEXT, [(1, [(1, x), (2, y), (3, w), (4, h)]),
-                                     (2, [(1, p.color[0]), (2, p.color[1]), (3, p.color[2]), (4, p.color[3])]),
-                                     (3, p.style), (4, p.align), (5, p.source), (7, aod)]))
+            rect = [(1, x), (2, y), (3, w), (4, h)]
+            colour = [(1, p.color[0]), (2, p.color[1]), (3, p.color[2]), (4, p.color[3])]
+            if p.fmt:
+                out.append((codes.TEXT_FORMATTED, [(1, rect), (2, colour), (3, p.style), (4, p.align), (5, p.fmt),
+                                                   (6, p.source), (7, 255), (9, aod)]))
+            else:
+                out.append((codes.TEXT, [(1, rect), (2, colour), (3, p.style), (4, p.align), (5, p.source), (7, aod)]))
         elif p.kind == 'hand':
             if origin:
                 raise SpecError(['hands cannot depend on the language'])
@@ -1186,9 +1226,24 @@ def build(spec, base_dir='.', langs=None):
     for i, pl in enumerate(first):
         others = [runs[l][1][i] for l in b.langs]
         if pl.kind == 'tap':
-            sig = [tuple(q.signature() for c in o.children for q in c.pieces if q) for o in others]
-            if len(set(sig)) > 1:
-                problems.append('%s: what is drawn inside a tap zone must not depend on the language' % pl.path)
+            # a still picture that changes with the language (a unit, a label) leaves the zone
+            # for the language choice; what moves must stay the same in every language
+            pl.child_keep = []
+            for ci, child in enumerate(pl.children):
+                keep = []
+                for j, piece in enumerate(child.pieces):
+                    group = [o.children[ci].pieces[j] for o in others]
+                    sigs = [(q.signature() if q else None) for q in group]
+                    if len(set(sigs)) == 1:
+                        keep.append(piece)
+                    elif all(q is None or q.kind == 'image' for q in group):
+                        for l, q in zip(b.langs, group):
+                            per_lang[l].append(q)
+                        keep.append(None)
+                    else:
+                        problems.append('%s: a value inside a tap zone must not depend on the language' % child.path)
+                        keep.append(piece)
+                pl.child_keep.append(keep)
             shared.append((pl, None))
             continue
         keep = []
@@ -1212,8 +1267,8 @@ def build(spec, base_dir='.', langs=None):
         if pl.kind == 'tap':
             for q in pl.pieces:
                 _paint_static(bg, q)
-            for c in pl.children:
-                for q in c.pieces:
+            for keep_c in pl.child_keep:
+                for q in keep_c:
                     if q is not None and q.kind in ('image', 'paint'):
                         _paint_static(bg, q)
         else:
@@ -1276,19 +1331,25 @@ def build(spec, base_dir='.', langs=None):
 
     # --- groups
     zones, date_items, time_items = [], [], []
-    marks = []
+    marks, beneath = [], []
     for pl, keep in shared:
         if pl.kind == 'tap':
             items = []
-            for c in pl.children:
-                items += _layout_items([q for q in c.pieces if q is not None and q.kind in DYNAMIC], face, 0)
+            for keep_c in pl.child_keep:
+                items += _layout_items([q for q in keep_c if q is not None and q.kind in DYNAMIC], face, 0)
             zones.append((pl.target, pl.box, items))
         elif pl.kind == 'seconds_mark':
             marks.append((len(time_items), pl))
             time_items.append(None)
+        elif pl.kind == 'hands' and pl.behind:
+            # zones are drawn first, so a zone of no size holds what lies under everything
+            beneath.extend(_layout_items([q for q in keep if q is not None and q.kind in DYNAMIC], face, 0))
         else:
             items = _layout_items([q for q in keep if q is not None and q.kind in DYNAMIC], face, 0)
             (time_items if pl.group == 'time' else date_items).extend(items)
+
+    if beneath:
+        zones.insert(0, (codes.OPEN_BATTERY, (0, 0, 0, 0), beneath))
 
     slots, choices = [], []
     if len(b.langs) > 1 and any(per_lang[l] for l in b.langs):
@@ -1341,7 +1402,7 @@ def build(spec, base_dir='.', langs=None):
 def _inspectable(b, placed):
     items = []
     for p in placed:
-        if p.kind == 'seconds_mark':
+        if p.kind == 'seconds_mark' or p.light:
             continue
         if p.kind == 'tap':
             for c in p.children:
@@ -1358,7 +1419,7 @@ def _check_geometry(b, placed, problems, aod=False):
     ring_used = any(l.get('type') == 'ticks' for l in b.spec.get('background', [])) or any(
         p.kind == 'seconds_mark' and p.mark and p.mark[0] is b.ring for p in placed)
     for p in _walk(placed):
-        if p.kind == 'seconds_mark':
+        if p.kind == 'seconds_mark' or p.light:
             continue
         x0, y0, x1, y1 = p.box
         out = []

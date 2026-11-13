@@ -59,5 +59,9 @@
   "Nov",
   "Dec"
  ],
- "day_suffix": ""
+ "day_suffix": "",
+ "words": {
+  "hpa": "hPa",
+  "metres": "m"
+ }
 }

@@ -529,3 +529,44 @@ def pin(rings, ss=8):
     for r, col in rings:
         d.ellipse([c - r * ss, c - r * ss, c + r * ss, c + r * ss], fill=col)
     return im.resize((s, s), Image.LANCZOS)
+
+
+# ---------------------------------------------------------------- hands of light
+
+def laser(length, core, glow, width=2.0, ss=4):
+    """A beam pointing to 12: a hot core, a halo and a wide faint haze, all fading
+    in near the pivot. Returns (image, pivot x, pivot y)."""
+    layers = ((26.0, 14.0, glow[:3] + (60,)), (9.0, 4.0, glow[:3] + (150,)), (width, 0.0, core))
+    m = int(math.ceil(3 * max(b for _, b, _ in layers))) + 2
+    w = int(math.ceil(max(lw for lw, _, _ in layers))) + 2 * m
+    h = int(math.ceil(length)) + 2 * m
+    cx, py = w / 2.0, m + length
+    out = Image.new('RGBA', (w, h), (0, 0, 0, 0))
+    for lw, blur, col in layers:
+        im = Image.new('RGBA', (w * ss, h * ss), (0, 0, 0, 0))
+        ImageDraw.Draw(im).line([(cx * ss, py * ss), (cx * ss, m * ss)], fill=col, width=max(1, int(lw * ss)))
+        im = im.resize((w, h), Image.LANCZOS)
+        if blur:
+            im = im.filter(ImageFilter.GaussianBlur(blur))
+        out.alpha_composite(im)
+    return out, cx, py
+
+
+def cone(length, spread, color, ss=2):
+    """A searchlight wedge pointing to 12, brightest at the pivot and fading outwards.
+    spread is the half-angle in degrees. Returns (image, pivot x, pivot y)."""
+    half = length * math.tan(math.radians(spread))
+    m = 8
+    w = int(math.ceil(2 * half)) + 2 * m
+    h = int(math.ceil(length)) + 2 * m
+    cx, py = w / 2.0, m + length
+    out = Image.new('RGBA', (w, h), (0, 0, 0, 0))
+    steps = 48
+    for i in range(steps, 0, -1):
+        r = length * i / steps
+        k = r * math.tan(math.radians(spread))
+        layer = Image.new('RGBA', (w * ss, h * ss), (0, 0, 0, 0))
+        ImageDraw.Draw(layer).polygon([(cx * ss, py * ss), ((cx - k) * ss, (py - r) * ss), ((cx + k) * ss, (py - r) * ss)],
+                                      fill=color[:3] + (int(color[3] * (1 - i / float(steps)) ** 0.6 / 6),))
+        out.alpha_composite(layer.resize((w, h), Image.LANCZOS))
+    return out.filter(ImageFilter.GaussianBlur(3)), cx, py

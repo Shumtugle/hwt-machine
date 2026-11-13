@@ -117,13 +117,51 @@ class LitWindow(unittest.TestCase):
 
 
 class Etalon(unittest.TestCase):
-    """The reference face passes every check, in every language, without a warning."""
+    """The reference face passes every check in every language; the only notes allowed
+    are about features still to be confirmed on a wrist."""
 
     def test_clean(self):
         desc = spec.load(os.path.join(ROOT, 'faces', 'etalon', 'face.json'))
         for langs in (['ru'], ['en'], ['fi'], ['ru', 'en', 'fi']):
             result = spec.build(desc, os.path.join(ROOT, 'faces', 'etalon'), langs)
-            self.assertEqual(result.warnings, [], langs)
+            # only notes about features still to be confirmed on a wrist are allowed
+            self.assertEqual([w for w in result.warnings if 'not yet on this watch' not in w], [], langs)
+
+
+class Beams(unittest.TestCase):
+    """Hands of light drawn under everything, units that change with the language."""
+
+    @classmethod
+    def setUpClass(cls):
+        desc = spec.load(os.path.join(ROOT, 'faces', 'strobe', 'face.json'))
+        cls.result = spec.build(desc, os.path.join(ROOT, 'faces', 'strobe'), ['ru', 'en'])
+        with tempfile.TemporaryDirectory() as out:
+            cls.binary, _, _ = spec.package(cls.result, os.path.join(out, 'strobe.hwt'))
+
+    def test_beams_lie_under_everything(self):
+        import subprocess
+        with tempfile.TemporaryDirectory() as out:
+            path = os.path.join(out, 'strobe.hwt')
+            spec.package(self.result, path)
+            text = subprocess.run([sys.executable, os.path.join(ROOT, 'tools', 'inspect.py'), path],
+                                  capture_output=True, text=True).stdout
+        lines = [l.strip() for l in text.splitlines()]
+        first_zone = next(i for i, l in enumerate(lines) if l.startswith('zone'))
+        self.assertTrue(lines[first_zone].startswith('zone [0, 0, 0, 0]'), lines[first_zone])
+        self.assertTrue(lines[first_zone + 1].startswith('hand') and lines[first_zone + 2].startswith('hand'))
+
+    def test_laser_shows_and_digits_stay_on_top(self):
+        import datetime
+        im = simulate.render(self.binary, data=simulate.sample_data(datetime.datetime(2026, 11, 9, 21, 8, 12)))
+        reds = [px for px in im.crop((240, 40, 400, 160)).getdata() if px[0] > 150 and px[1] < 110]
+        self.assertGreater(len(reds), 40)                          # the minute laser, up and to the right
+        self.assertEqual(simulate.render.skipped, [])
+
+    def test_units_follow_the_language(self):
+        import datetime
+        t = simulate.sample_data(datetime.datetime(2026, 11, 9, 21, 8, 12))
+        ru, en = simulate.render(self.binary, data=t, choice=0), simulate.render(self.binary, data=t, choice=1)
+        self.assertNotEqual(ru.crop((160, 400, 210, 445)).tobytes(), en.crop((160, 400, 210, 445)).tobytes())
 
 
 class Languages(unittest.TestCase):

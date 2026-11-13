@@ -1,0 +1,550 @@
+{
+ "name": "Strobe",
+ "notes": "The colon is a light source: the hour is a searchlight, the minute a laser, both turning behind everything that is read. The time and the full date are caught at a glance; six readings below are looked at on purpose.",
+ "font": "Oswald",
+ "colors": {
+  "cream": "#F2E3C6",
+  "name": "#8E8276",
+  "scarlet": "#FF283C",
+  "laser_core": "#FFD6DA",
+  "dim": "#8A8070",
+  "dim_red": "#7A1420"
+ },
+ "languages": {
+  "default": [
+   "ru",
+   "en",
+   "fi"
+  ],
+  "frame": {
+   "color": "scarlet",
+   "radius": 10
+  }
+ },
+ "background": [
+  {
+   "type": "shapes",
+   "items": [
+    {
+     "line": [
+      [
+       48.61,
+       432.0
+      ],
+      [
+       47.72,
+       430.1
+      ],
+      [
+       47.18,
+       428.08
+      ],
+      [
+       47.0,
+       426.0
+      ],
+      [
+       47.18,
+       423.92
+      ],
+      [
+       47.72,
+       421.9
+      ],
+      [
+       48.61,
+       420.0
+      ],
+      [
+       49.81,
+       418.29
+      ],
+      [
+       51.29,
+       416.81
+      ],
+      [
+       53.0,
+       415.61
+      ],
+      [
+       54.9,
+       414.72
+      ],
+      [
+       56.92,
+       414.18
+      ],
+      [
+       59.0,
+       414.0
+      ],
+      [
+       61.08,
+       414.18
+      ],
+      [
+       63.1,
+       414.72
+      ],
+      [
+       65.0,
+       415.61
+      ],
+      [
+       66.71,
+       416.81
+      ],
+      [
+       68.19,
+       418.29
+      ],
+      [
+       69.39,
+       420.0
+      ],
+      [
+       70.28,
+       421.9
+      ],
+      [
+       70.82,
+       423.92
+      ],
+      [
+       71.0,
+       426.0
+      ],
+      [
+       70.82,
+       428.08
+      ],
+      [
+       70.28,
+       430.1
+      ],
+      [
+       69.39,
+       432.0
+      ]
+     ],
+     "width": 2.2,
+     "color": "name"
+    },
+    {
+     "line": [
+      [
+       59,
+       426
+      ],
+      [
+       64.14,
+       419.87
+      ]
+     ],
+     "width": 2.2,
+     "color": "name"
+    },
+    {
+     "ellipse": [
+      56.6,
+      423.6,
+      61.4,
+      428.4
+     ],
+     "color": "name"
+    },
+    {
+     "line": [
+      [
+       216,
+       434
+      ],
+      [
+       227,
+       414
+      ],
+      [
+       238,
+       434
+      ]
+     ],
+     "width": 2.2,
+     "color": "name"
+    },
+    {
+     "line": [
+      [
+       229,
+       430
+      ],
+      [
+       236,
+       420
+      ],
+      [
+       244,
+       434
+      ]
+     ],
+     "width": 2.2,
+     "color": "name"
+    },
+    {
+     "line": [
+      [
+       215,
+       434
+      ],
+      [
+       245,
+       434
+      ]
+     ],
+     "width": 2.2,
+     "color": "name"
+    }
+   ]
+  }
+ ],
+ "elements": [
+  {
+   "type": "hands",
+   "id": "beams",
+   "behind": true,
+   "centre": [
+    "time.center",
+    "time.digits_middle"
+   ],
+   "hour": {
+    "shape": "cone",
+    "length": 300,
+    "spread": 7,
+    "color": "scarlet"
+   },
+   "minute": {
+    "shape": "laser",
+    "length": 340,
+    "width": 2,
+    "core": "laser_core",
+    "color": "scarlet"
+   }
+  },
+  {
+   "type": "weekday",
+   "case": "lower",
+   "size": 36,
+   "weight": 300,
+   "color": "cream",
+   "x": "screen.center",
+   "align": "center",
+   "max_right": 380,
+   "y": {
+    "caps_bottom": 66
+   }
+  },
+  {
+   "type": "day",
+   "id": "day",
+   "size": 36,
+   "weight": 600,
+   "color": "cream",
+   "x": 150,
+   "align": "right",
+   "y": {
+    "caps_bottom": 114
+   }
+  },
+  {
+   "type": "month",
+   "case": "lower",
+   "size": 36,
+   "weight": 300,
+   "color": "cream",
+   "x": "day.right+12",
+   "max_right": 384,
+   "y": {
+    "caps_bottom": 114
+   }
+  },
+  {
+   "type": "time",
+   "id": "time",
+   "size": 150,
+   "weight": 600,
+   "color": "cream",
+   "pad": 1,
+   "x": "screen.center",
+   "align": "center",
+   "y": {
+    "digits_middle": 222
+   },
+   "colon": {
+    "width": 22,
+    "radius": 6,
+    "color": "scarlet"
+   }
+  },
+  {
+   "type": "tap",
+   "box": [
+    40,
+    315,
+    206,
+    357
+   ],
+   "open": "heart_rate",
+   "elements": [
+    {
+     "type": "symbol",
+     "fill": 0,
+     "size": 28,
+     "color": "scarlet",
+     "name": "favorite",
+     "x": 46,
+     "y": {
+      "middle": 336
+     }
+    },
+    {
+     "type": "system_text",
+     "height": 41,
+     "width": 120,
+     "color": "cream",
+     "text_style": 158,
+     "source": "heart_rate",
+     "x": 82,
+     "y": 316
+    }
+   ]
+  },
+  {
+   "type": "tap",
+   "box": [
+    210,
+    315,
+    392,
+    357
+   ],
+   "open": "sleep",
+   "elements": [
+    {
+     "type": "symbol",
+     "fill": 0,
+     "size": 28,
+     "color": "name",
+     "name": "clear_night",
+     "x": 216,
+     "y": {
+      "middle": 336
+     }
+    },
+    {
+     "type": "system_text",
+     "height": 41,
+     "width": 120,
+     "color": "cream",
+     "text_style": 158,
+     "source": "sleep",
+     "x": 250,
+     "y": 316
+    }
+   ]
+  },
+  {
+   "type": "tap",
+   "box": [
+    40,
+    359,
+    206,
+    401
+   ],
+   "open": "steps",
+   "elements": [
+    {
+     "type": "symbol",
+     "fill": 0,
+     "size": 28,
+     "color": "name",
+     "name": "footprint",
+     "x": 46,
+     "y": {
+      "middle": 380
+     }
+    },
+    {
+     "type": "system_text",
+     "height": 41,
+     "width": 120,
+     "color": "cream",
+     "text_style": 158,
+     "source": "steps",
+     "x": 82,
+     "y": 360
+    }
+   ]
+  },
+  {
+   "type": "tap",
+   "box": [
+    210,
+    359,
+    392,
+    401
+   ],
+   "open": "settings",
+   "elements": [
+    {
+     "type": "battery_icon",
+     "color": "name",
+     "low_color": "scarlet",
+     "width": 28,
+     "height": 15,
+     "x": 216,
+     "y": {
+      "middle": 380
+     }
+    },
+    {
+     "type": "system_text",
+     "height": 41,
+     "width": 120,
+     "color": "cream",
+     "text_style": 158,
+     "source": "battery",
+     "suffix": "percent",
+     "x": 250,
+     "y": 360
+    }
+   ]
+  },
+  {
+   "type": "tap",
+   "box": [
+    40,
+    403,
+    206,
+    445
+   ],
+   "open": "pressure",
+   "elements": [
+    {
+     "type": "system_text",
+     "height": 41,
+     "width": 80,
+     "color": "cream",
+     "text_style": 158,
+     "id": "hpa",
+     "source": "pressure",
+     "x": 160,
+     "align": "right",
+     "y": 404
+    },
+    {
+     "type": "text",
+     "size": 26,
+     "weight": 400,
+     "color": "name",
+     "quiet": true,
+     "text": {
+      "word": "hpa"
+     },
+     "x": "hpa.right+5",
+     "y": {
+      "caps_middle": 424
+     }
+    }
+   ]
+  },
+  {
+   "type": "tap",
+   "box": [
+    210,
+    403,
+    392,
+    445
+   ],
+   "open": "altitude",
+   "elements": [
+    {
+     "type": "system_text",
+     "height": 41,
+     "width": 66,
+     "color": "cream",
+     "text_style": 158,
+     "id": "alt",
+     "source": "altitude",
+     "x": 322,
+     "align": "right",
+     "y": 404
+    },
+    {
+     "type": "text",
+     "size": 26,
+     "weight": 400,
+     "color": "name",
+     "quiet": true,
+     "text": {
+      "word": "metres"
+     },
+     "x": "alt.right+5",
+     "y": {
+      "caps_middle": 424
+     }
+    }
+   ]
+  }
+ ],
+ "aod": {
+  "elements": [
+   {
+    "type": "weekday",
+    "case": "lower",
+    "size": 36,
+    "weight": 300,
+    "color": "dim",
+    "x": "screen.center",
+    "align": "center",
+    "max_right": 380,
+    "y": {
+     "caps_bottom": 66
+    }
+   },
+   {
+    "type": "day",
+    "id": "aday",
+    "size": 36,
+    "weight": 500,
+    "color": "dim",
+    "x": 150,
+    "align": "right",
+    "y": {
+     "caps_bottom": 114
+    }
+   },
+   {
+    "type": "month",
+    "case": "lower",
+    "size": 36,
+    "weight": 300,
+    "color": "dim",
+    "x": "aday.right+12",
+    "max_right": 384,
+    "y": {
+     "caps_bottom": 114
+    }
+   },
+   {
+    "type": "time",
+    "like": "time",
+    "weight": 300,
+    "color": "dim",
+    "colon": {
+     "width": 22,
+     "radius": 5,
+     "color": "dim_red"
+    }
+   }
+  ]
+ }
+}

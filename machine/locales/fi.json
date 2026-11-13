@@ -59,5 +59,9 @@
   "marras",
   "joulu"
  ],
- "day_suffix": "."
+ "day_suffix": ".",
+ "words": {
+  "hpa": "hPa",
+  "metres": "m"
+ }
 }
