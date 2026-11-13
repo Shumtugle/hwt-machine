@@ -58,9 +58,11 @@ charge: the watch says so itself when it runs low.
 ## Lighthouse
 
 A painted night sea with a lighthouse on a cliff. The time in a warm serif across the
-stars, the seconds in warm cream beneath it, the date above; a golden wave with a small boat on
-its crest, and battery, weather, pulse and steps on the dark water below it.
+stars, the seconds in warm cream beneath it, the date above; a golden wave with a small
+boat on its crest, and battery, weather, pulse and steps on the dark water below it.
 `--art night` swaps the calm painting for a richer one, with the wave drawn over it.
+
+![Lighthouse in English, Russian, Finnish, and its always-on screen](docs/img/lighthouse.png)
 
 [RU](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/lighthouse-ru.hwt) ·
 [EN](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/lighthouse-en.hwt) ·
