@@ -123,12 +123,13 @@ radius 44, 33 px in from the edges.
 
 ## Triptych
 
-Three windows in a black case, three ages of the watch. Above, hands over a chamfered
-dial cut in small pyramids that rises out of the black with no frame. In the middle,
-pulse, steps and charge in red lamps behind smoked glass, their unlit segments faintly
-showing. Below, a crystal display with an arched top, running on under the bezel: the
-day and the month in dark segments, the weekday beside them. The red second hand ties
-the dial to the lamps.
+Three windows in a black case, three ages of the watch. Above, hands over a dial of
+deep pyramids that runs on under the bezel and ends in an arch turned down, with applied
+indices and a ruby lamp below the hands that lights while messages wait. In the middle,
+pulse, steps and charge in red lamps set in sunken windows. Below, a crystal display
+under a rising arch: the day and the month in dark segments, the weekday, and the
+weather beneath it. Ten glass lamps ride the crystal's lip and light one a second; after
+them stand the tens of seconds already passed.
 
 ![Triptych in English, Russian, Finnish, and its always-on screen](docs/img/triptych.png)
 

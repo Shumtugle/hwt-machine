@@ -563,18 +563,33 @@ def dial(size, box, radius, frame=None, minute=None, hour=None, inset=6, centre=
     return im.resize((W, H), Image.LANCZOS)
 
 
-def hand(length, tail, width, color, inner=None, ss=4):
+def hand(length, tail, width, color, inner=None, ss=4, shade=None, ridge=None):
     """A rounded bar pointing to 12, optionally with a darker slit along it.
-    Returns (image, pivot x, pivot y)."""
-    m = 2
+    shade: (color, blur) a soft shadow all round, which turns with the hand unchanged;
+    ridge: a colour laid over one half of the bar along its length, so it reads as a
+    blade with two faces. Returns (image, pivot x, pivot y)."""
+    m = 2 + (int(math.ceil(2.5 * shade[1])) if shade else 0)
     w = int(math.ceil(width)) + 2 * m
     h = int(math.ceil(length + tail)) + 2 * m
     im = Image.new('RGBA', (w * ss, h * ss), (0, 0, 0, 0))
     d = ImageDraw.Draw(im)
     x0 = (w - width) / 2.0
     py = m + length
-    d.rounded_rectangle([x0 * ss, m * ss, (x0 + width) * ss, (m + length + tail) * ss],
-                        radius=width / 2.0 * ss, fill=color)
+    bar = [x0 * ss, m * ss, (x0 + width) * ss, (m + length + tail) * ss]
+    if shade:
+        sh = Image.new('RGBA', im.size, (0, 0, 0, 0))
+        ImageDraw.Draw(sh).rounded_rectangle(bar, radius=width / 2.0 * ss, fill=shade[0])
+        im.alpha_composite(sh.filter(ImageFilter.GaussianBlur(shade[1] * ss)))
+        d = ImageDraw.Draw(im)
+    d.rounded_rectangle(bar, radius=width / 2.0 * ss, fill=color)
+    if ridge:
+        face = Image.new('RGBA', im.size, (0, 0, 0, 0))
+        ImageDraw.Draw(face).rounded_rectangle(bar, radius=width / 2.0 * ss, fill=ridge)
+        half = Image.new('L', im.size, 0)
+        ImageDraw.Draw(half).rectangle([0, 0, int((x0 + width / 2.0) * ss), im.height], fill=255)
+        face.putalpha(ImageChops.multiply(face.getchannel('A'), half))
+        im.alpha_composite(face)
+        d = ImageDraw.Draw(im)
     if inner:
         iw = width - 2 * inner['inset']
         if iw > 0:

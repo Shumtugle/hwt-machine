@@ -1,6 +1,6 @@
 {
  "name": "Triptych",
- "notes": "Three windows in a black case: hands over a chamfered dial cut in small pyramids, red lamps behind smoked glass, and a crystal calendar that runs on under the bezel. case.png is drawn by make_case.py.",
+ "notes": "Three windows in a black case. Above, hands over a dial of deep pyramids that runs on under the bezel and ends in an arch turned down, with applied indices and a ruby lamp that lights while messages wait. In the middle, red lamps in sunken windows. Below, a crystal display under a rising arch: the day and month, the weekday and the weather. Ten glass lamps along the crystal's lip count the seconds, the tens passed after them. case.png and every frame are drawn by make_case.py.",
  "font": "Oswald",
  "colors": {
   "cream": "#ECE3D2",
@@ -8,7 +8,7 @@
   "led": "#FF3A22",
   "led_ghost": "#2E0E0B",
   "led_glow": "#FF2A1AA0",
-  "legend": "#8C8C8A",
+  "legend": "#B8B2A6",
   "seg": "#1C2217",
   "seg_ghost": "#959E84",
   "seg_shadow": "#00000040",
@@ -82,37 +82,77 @@
  ],
  "elements": [
   {
+   "type": "frames",
+   "id": "lamps",
+   "source": "second_units",
+   "files": "lamps-{}.png",
+   "x": 15,
+   "y": 291,
+   "behind": true
+  },
+  {
+   "type": "frames",
+   "id": "tens",
+   "source": "second_tens",
+   "files": "tens-{}.png",
+   "x": 348,
+   "y": 303,
+   "behind": true
+  },
+  {
+   "type": "frames",
+   "id": "notice",
+   "source": "unread_messages",
+   "files": "lamp-{}.png",
+   "x": 182,
+   "y": 128,
+   "behind": true,
+   "quiet": true
+  },
+  {
    "type": "hands",
    "centre": [
     204,
-    113
+    103
    ],
    "hour": {
-    "length": 46,
+    "length": 42,
     "tail": 9,
     "width": 8,
-    "color": "cream"
+    "color": "cream",
+    "shade": {
+     "color": "#000000C8",
+     "blur": 2.2
+    },
+    "ridge": "#FFFFFF30"
    },
    "minute": {
-    "length": 74,
+    "length": 68,
     "tail": 11,
     "width": 5,
-    "color": "cream"
-   },
-   "second": {
-    "length": 80,
-    "tail": 18,
-    "width": 1.5,
-    "color": "led"
+    "color": "cream",
+    "shade": {
+     "color": "#000000C8",
+     "blur": 2.2
+    },
+    "ridge": "#FFFFFF30"
    },
    "pin": [
+    {
+     "radius": 7,
+     "color": "#2A2A2C"
+    },
     {
      "radius": 6,
      "color": "cream"
     },
     {
-     "radius": 2.6,
-     "color": "rim"
+     "radius": 2.8,
+     "color": "#3A3632"
+    },
+    {
+     "radius": 1.4,
+     "color": "#0E0E0E"
     }
    ]
   },
@@ -120,9 +160,9 @@
    "type": "tap",
    "box": [
     26,
-    216,
+    200,
     124,
-    300
+    312
    ],
    "open": "heart_rate",
    "elements": [
@@ -137,7 +177,7 @@
      "x": 72,
      "align": "center",
      "y": {
-      "caps_middle": 232
+      "caps_middle": 214
      }
     },
     {
@@ -159,7 +199,7 @@
      "x": 72,
      "align": "center",
      "y": {
-      "digits_middle": 272
+      "digits_middle": 256
      }
     }
    ]
@@ -168,9 +208,9 @@
    "type": "tap",
    "box": [
     128,
-    216,
+    200,
     280,
-    300
+    312
    ],
    "open": "steps",
    "elements": [
@@ -185,7 +225,7 @@
      "x": 204,
      "align": "center",
      "y": {
-      "caps_middle": 232
+      "caps_middle": 214
      }
     },
     {
@@ -207,7 +247,7 @@
      "x": 204,
      "align": "center",
      "y": {
-      "digits_middle": 272
+      "digits_middle": 256
      }
     }
    ]
@@ -216,9 +256,9 @@
    "type": "tap",
    "box": [
     284,
-    216,
+    200,
     382,
-    300
+    312
    ],
    "open": "settings",
    "elements": [
@@ -233,7 +273,7 @@
      "x": 336,
      "align": "center",
      "y": {
-      "caps_middle": 232
+      "caps_middle": 214
      }
     },
     {
@@ -255,7 +295,7 @@
      "x": 336,
      "align": "center",
      "y": {
-      "digits_middle": 272
+      "digits_middle": 256
      }
     }
    ]
@@ -278,7 +318,7 @@
    },
    "x": 62,
    "y": {
-    "digits_middle": 398
+    "digits_middle": 404
    }
   },
   {
@@ -305,14 +345,74 @@
    "type": "weekday",
    "form": "short",
    "case": "upper",
-   "size": 40,
+   "size": 34,
    "weight": 600,
    "color": "seg",
-   "x": 346,
+   "x": 351,
    "align": "right",
    "y": {
-    "caps_middle": 398
+    "caps_middle": 382
    }
+  },
+  {
+   "type": "tap",
+   "box": [
+    228,
+    406,
+    376,
+    460
+   ],
+   "open": "weather",
+   "elements": [
+    {
+     "type": "weather_icon",
+     "id": "sky",
+     "size": 30,
+     "color": "seg",
+     "fill": 0,
+     "x": 352,
+     "align": "right",
+     "y": {
+      "middle": 432
+     }
+    },
+    {
+     "type": "text",
+     "id": "deg",
+     "text": "°",
+     "size": 28,
+     "weight": 500,
+     "color": "seg",
+     "x": "sky.left-8",
+     "align": "right",
+     "y": {
+      "top": 414
+     }
+    },
+    {
+     "type": "number",
+     "id": "temp",
+     "source": "temperature",
+     "font": "Segments",
+     "size": 30,
+     "color": "seg",
+     "pad": 1,
+     "segments": {
+      "ghost": "seg_ghost",
+      "shadow": {
+       "color": "seg_shadow",
+       "dx": 2,
+       "dy": 2,
+       "blur": 1.0
+      }
+     },
+     "x": "deg.left-2",
+     "align": "right",
+     "y": {
+      "digits_middle": 432
+     }
+    }
+   ]
   }
  ],
  "aod": {
@@ -321,16 +421,16 @@
     "type": "hands",
     "centre": [
      204,
-     113
+     103
     ],
     "hour": {
-     "length": 46,
+     "length": 42,
      "tail": 9,
      "width": 6,
      "color": "dim"
     },
     "minute": {
-     "length": 74,
+     "length": 68,
      "tail": 11,
      "width": 3.5,
      "color": "dim"
@@ -351,20 +451,20 @@
     "pad": 5,
     "x": 62,
     "y": {
-     "digits_middle": 398
+     "digits_middle": 404
     }
    },
    {
     "type": "weekday",
     "form": "short",
     "case": "upper",
-    "size": 40,
+    "size": 34,
     "weight": 500,
     "color": "dim",
-    "x": 346,
+    "x": 351,
     "align": "right",
     "y": {
-     "caps_middle": 398
+     "caps_middle": 382
     }
    }
   ]

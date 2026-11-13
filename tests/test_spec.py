@@ -268,6 +268,36 @@ class Languages(unittest.TestCase):
                     self.assertEqual(px[i:i + 4], b'\0\0\0\0')
 
 
+class Frames(unittest.TestCase):
+    """Ready pictures follow a digit of the time: the lamps of Triptych light one more
+    each second, and the mark after them shows the tens already passed."""
+
+    def test_lamps_follow_the_second(self):
+        folder = os.path.join(ROOT, 'faces', 'triptych')
+        desc = spec.load(os.path.join(folder, 'face.json'))
+        with tempfile.TemporaryDirectory() as out:
+            binary, _, _ = spec.package(spec.build(desc, folder, ['en']), os.path.join(out, 't.hwt'))
+
+        def lit(second):
+            data = simulate.sample_data()
+            data[codes.SECOND_TENS], data[codes.SECOND_UNITS] = divmod(second, 10)
+            im = simulate.render(binary, data=data).convert('RGB')
+            # red light along the band of lamps, left of the tens
+            return sum(1 for x in range(20, 340, 2) for y in range(290, 336, 2)
+                       if im.getpixel((x, y))[0] > 180 and im.getpixel((x, y))[1] < 120)
+        self.assertLess(lit(30), lit(33))
+        self.assertLess(lit(33), lit(39))
+
+    def test_missing_picture(self):
+        folder = os.path.join(ROOT, 'faces', 'triptych')
+        desc = spec.load(os.path.join(folder, 'face.json'))
+        lamps = [e for e in desc['elements'] if e.get('id') == 'lamps'][0]
+        lamps['files'] = 'lamp-{}.png'           # only two of those exist
+        with self.assertRaises(spec.SpecError) as e:
+            spec.build(desc, folder, ['en'])
+        self.assertIn('needs 10', '\n'.join(e.exception.problems))
+
+
 class Problems(unittest.TestCase):
     """A description with mistakes is refused with messages that say what to change."""
 

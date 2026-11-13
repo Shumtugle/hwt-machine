@@ -124,7 +124,7 @@
     "duo": "A small dial shaped like the screen itself, crystal digits below it, the date in full words; pulse, charge, weather and steps along the foot.",
     "strobe": "Huge cream time on black, a scarlet searchlight for the hour and a laser for the minute turning from the colon, a scarlet mark running a band of ticks round the edge; six readings below.",
     "rubis": "Garnet and gold: the date above, the time with seconds, two stacks of readings and a small dial below; a gold sweep turns from the dial to the edge of the screen once a minute.",
-    "triptych": "Three windows in a black case: hands over a dial cut in small pyramids, red lamps behind smoked glass, a crystal calendar below."
+    "triptych": "Three windows in a black case: hands over a dial of deep pyramids with a ruby lamp for messages, red lamps in sunken windows, a crystal with the date and the weather below. Ten glass lamps on the arch count the seconds."
    }
   },
   "ru": {
@@ -219,7 +219,7 @@
     "duo": "Маленький циферблат в форме самого экрана, под ним кристаллические цифры, дата полными словами; пульс, заряд, погода и шаги внизу.",
     "strobe": "Огромное кремовое время на чёрном, алый прожектор часа и лазер минуты вращаются от двоеточия, алая метка бежит по полосе рисок вдоль края; внизу шесть показаний.",
     "rubis": "Гранат и золото: дата сверху, время с секундами, внизу два столбика показаний и маленький циферблат; золотой луч раз в минуту обходит экран от циферблата до края.",
-    "triptych": "Три окна в чёрном корпусе: стрелки над циферблатом с пирамидальной насечкой, красные диоды за дымчатым стеклом, кристаллический календарь внизу."
+    "triptych": "Три окна в чёрном корпусе: стрелки над глубокой пирамидальной насечкой с рубиновым огоньком уведомлений, красные диоды в утопленных окнах, внизу кристалл с датой и погодой. Десять стеклянных ламп на дуге отсчитывают секунды."
    }
   },
   "fi": {
@@ -314,7 +314,7 @@
     "duo": "Pieni kellotaulu näytön muotoisena, sen alla kidenumerot, päivämäärä kokonaisin sanoin; syke, akku, sää ja askeleet alareunassa.",
     "strobe": "Valtava kermanvärinen aika mustalla, tunnin helakanpunainen valonheitin ja minuutin laser kääntyvät kaksoispisteestä, punainen merkki kiertää reunan asteikkoa; alla kuusi lukemaa.",
     "rubis": "Granaattia ja kultaa: päivämäärä ylhäällä, aika sekunteineen, alhaalla kaksi lukemapinoa ja pieni kellotaulu; kultainen säde kiertää kerran minuutissa kellotaulusta näytön reunaan.",
-    "triptych": "Kolme ikkunaa mustassa kotelossa: osoittimet pyramidikuvioidun kellotaulun yllä, punaiset ledit savulasin takana, kidekalenteri alhaalla."
+    "triptych": "Kolme ikkunaa mustassa kotelossa: osoittimet syvän pyramidikuvion yllä ja rubiininen viestivalo, punaiset ledit upotetuissa ikkunoissa, alhaalla kidenäyttö, jossa päivämäärä ja sää. Kaarella kymmenen lasilamppua laskee sekunnit."
    }
   }
  }

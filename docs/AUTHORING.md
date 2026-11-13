@@ -299,6 +299,8 @@ Hands turning about one centre, drawn pointing to 12 and turned by the watch.
 | `hour`, `minute` | required: `{"length": 38, "tail": 9, "width": 7, "color": "...", "inner": {...}}` |
 | `second` | optional, same fields; the second hand turns on a watch (confirmed through `seconds_frame`) |
 | `inner` | a darker slit along the hand: `{"color": "#000000", "inset": 2, "from": 0.3, "to": 0.86}` (fractions of the length from the centre) |
+| `shade` | a soft shadow all round a bar hand: `{"color": "#000000C8", "blur": 2.2}`. It turns with the hand, so it has no direction of its own |
+| `ridge` | a colour, usually light with alpha, laid over one half of a bar hand along its length, so the hand reads as a blade with two faces |
 | `pin` | discs on top of the centre, largest first: `[{"radius": 6.5, "color": "..."}, ...]` |
 | `behind` | `true` when the hands turn under other elements on purpose. They are then put in a touch zone of no size, which the watch draws before everything else, so all text lies over them (confirmed) |
 | `shape` | `bar` (default), `laser` (`width` of the hot core, `core` its colour, `color` the glow), `cone` (a searchlight; `spread` is its half-angle in degrees) or `sweep` (a radar sweep: a leading edge of `width` in `core`, and behind it a sector of `color` fading out over `spread` degrees, 60 by default; `start` leaves the middle empty, so the sweep can begin at a dial's rim). A sweep turns under the other hands. Light may run off the screen; it is cropped like a background. Give light a colour with alpha (`#RRGGBBAA`) to keep text over it readable |
@@ -343,6 +345,23 @@ in the background.
 
 Sheets of the three levels overlap: give them colours of one family so the overlap
 deepens instead of turning grey.
+
+### `frames`
+
+Ready pictures, one for every value of a digit of the time or of a state, read from
+files next to the description: a row of lamps lit one more each second, a mark that
+steps with the tens, a lamp that lights while messages wait. The pictures are drawn by
+a script beside the description, as a background picture is.
+
+| field | meaning |
+|---|---|
+| `source` | `second_units` (10 pictures), `second_tens` (6), `minute_units` (10), `minute_tens` (6), `hour_units` (10), `hour_tens` (3), all confirmed as sources; `unread_messages` (2: none, some) seen in other faces, not yet confirmed |
+| `files` | a name with `{}` for the value: `"lamps-{}.png"` reads `lamps-0.png`, `lamps-1.png` and on |
+| `x`, `y` | the top left corner of the pictures, which are all as large as the first |
+| `behind` | `true` puts them under everything else, so their light may run under readings |
+
+Draw what never changes into the background and only what lights into the frames: a
+frame of a lamp at rest can then be empty.
 
 ### `tap`
 

@@ -114,6 +114,7 @@ FIELDS = {
     'seconds_mark': {'id', 'path', 'layers', 'reach', 'cover_grow'},
     'hands': {'id', 'centre', 'hour', 'minute', 'second', 'pin', 'behind'},
     'level': {'id', 'source', 'x', 'from', 'to', 'span', 'band', 'dot', 'label'},
+    'frames': {'id', 'source', 'files', 'x', 'y', 'quiet', 'behind'},
     'seconds_frame': {'id', 'centre', 'inset', 'width', 'radius', 'color', 'marker_width', 'ticks', 'major_ticks'},
     'system_text': {'id', 'source', 'x', 'y', 'width', 'height', 'align', 'color', 'text_style', 'quiet', 'suffix'},
     'tap': {'id', 'box', 'open', 'card', 'elements'},
@@ -123,8 +124,16 @@ REQUIRED = {
     'month': {'size', 'x', 'y'}, 'number': {'source', 'size', 'x', 'y'}, 'text': {'text', 'size', 'x', 'y'},
     'symbol': {'name', 'size', 'x', 'y'}, 'weather_icon': {'size', 'x', 'y'}, 'battery_icon': {'x', 'y'},
     'seconds_mark': {'layers'}, 'tap': {'box', 'open', 'elements'}, 'hands': {'centre', 'hour', 'minute'}, 'level': {'source', 'x', 'from', 'to'},
-    'system_text': {'source', 'x', 'y'}, 'seconds_frame': set(),
+    'system_text': {'source', 'x', 'y'}, 'seconds_frame': set(), 'frames': {'source', 'files', 'x', 'y'},
 }
+# image-list sources a frames element may follow: (code, number of pictures)
+FRAME_SOURCES = {
+    'hour_tens': (codes.HOUR_TENS, 3), 'hour_units': (codes.HOUR_UNITS, 10),
+    'minute_tens': (codes.MINUTE_TENS, 6), 'minute_units': (codes.MINUTE_UNITS, 10),
+    'second_tens': (codes.SECOND_TENS, 6), 'second_units': (codes.SECOND_UNITS, 10),
+    'unread_messages': (codes.UNREAD_MESSAGES, 2),
+}
+FRAME_SOURCES_UNCONFIRMED = {'unread_messages'}
 TIME_GROUP = {'time', 'seconds_mark'}
 LAYER_FIELDS = {
     'fill': {'color'},
@@ -347,6 +356,11 @@ class Builder:
                 self.errors.append('%s.source: unknown "%s"%s; sources: %s' % (
                     p, el['source'], _near(el['source'], NUMBER_SOURCES), _known(NUMBER_SOURCES)))
             elif t == 'number' and el.get('source') in NUMBER_SOURCES and not NUMBER_SOURCES[el['source']][2]:
+                self.warnings.append('%s.source: "%s" is seen in other faces but not yet confirmed on a watch' % (p, el['source']))
+            if t == 'frames' and el.get('source') not in FRAME_SOURCES:
+                self.errors.append('%s.source: unknown "%s"%s; frames follow %s' % (
+                    p, el.get('source'), _near(el.get('source'), FRAME_SOURCES), _known(FRAME_SOURCES)))
+            elif t == 'frames' and el.get('source') in FRAME_SOURCES_UNCONFIRMED:
                 self.warnings.append('%s.source: "%s" is seen in other faces but not yet confirmed on a watch' % (p, el['source']))
             if t == 'system_text' and el.get('source') not in TEXT_SOURCES:
                 self.errors.append('%s.source: unknown "%s"%s; the watch writes %s' % (
@@ -920,6 +934,27 @@ class Resolver:
         placed.mark = (track, paint, el.get('cover_grow', 1.5))
         return placed
 
+    def place_frames(self, el, path, parent):
+        """Ready pictures, one per value of a digit of the time, read from files next to the
+        description: the files pattern takes the value, as in "lamps-{}.png". Every picture
+        has the size of the first; x and y place its top left corner. With behind they lie
+        under everything else, so light in them may run under readings."""
+        code, count = FRAME_SOURCES[el['source']]
+        ims = []
+        for v in range(count):
+            name = el['files'].format(v)
+            f = os.path.join(self.b.base_dir, name)
+            if not os.path.exists(f):
+                raise SpecError(['%s.files: no picture "%s" next to the description; %s needs %d, from %s to %s' % (
+                    path, name, el['source'], count, el['files'].format(0), el['files'].format(count - 1))])
+            ims.append(Image.open(f).convert('RGBA'))
+        if any(im.size != ims[0].size for im in ims):
+            raise SpecError(['%s.files: the pictures differ in size; draw them all as large as the first' % path])
+        x = int(round(self.value(el['x'], path + '.x', parent)))
+        y = int(round(self.value(el['y'], path + '.y', parent)))
+        box = (x, y, x + ims[0].width, y + ims[0].height)
+        return Placed('frames', 'time', [Piece('list', ims=ims, x=x, y=y, source=code)], self.edges(box), box, path)
+
     LEVEL_SOURCES = {'hours': (codes.HOURS, 24), 'minutes': (codes.MINUTES, 60), 'seconds': (codes.SECONDS, 60)}
 
     def place_level(self, el, path, parent):
@@ -1003,7 +1038,7 @@ class Resolver:
             if hs is None:
                 continue
             hp = '%s.%s' % (path, name)
-            hand_fields = ('length', 'tail', 'width', 'color', 'inner', 'shape', 'core', 'spread', 'start')
+            hand_fields = ('length', 'tail', 'width', 'color', 'inner', 'shape', 'core', 'spread', 'start', 'shade', 'ridge')
             for k in hs:
                 if k not in hand_fields:
                     raise SpecError(['%s.%s: a hand takes %s%s' % (hp, k, _known(hand_fields), _near(k, hand_fields))])
@@ -1034,7 +1069,11 @@ class Resolver:
                                         start=hs.get('start', 0))
                 light = True
             else:
-                im, px, py = draw.hand(hs['length'], tail, hs.get('width', 4), ink, inner)
+                shade = hs.get('shade')
+                if shade:
+                    shade = (self.b.color(shade.get('color', '#000000A0'), hp + '.shade.color'), shade.get('blur', 2.0))
+                ridge = self.b.color(hs['ridge'], hp + '.ridge') if hs.get('ridge') else None
+                im, px, py = draw.hand(hs['length'], tail, hs.get('width', 4), ink, inner, shade=shade, ridge=ridge)
             piece = Piece('hand', im=im, cx=cx, cy=cy, px=px, py=py, source=HAND_SOURCES[name],
                           reach=hs['length'], role=name, ink=ink)
             # a sweep is light on the dial: it turns under the other hands, not over them
@@ -1496,7 +1535,7 @@ def build(spec, base_dir='.', langs=None):
             band_mask, _ = pl.frame
             under.extend(_layout_items([q for q in keep if q is not None and q.kind in DYNAMIC], face, 0))
             under.append(pl)
-        elif pl.kind in ('hands', 'level') and pl.behind:
+        elif pl.kind in ('hands', 'level', 'frames') and pl.behind:
             # zones are drawn first, so a zone of no size holds what lies under everything
             beneath.extend(_layout_items([q for q in keep if q is not None and q.kind in DYNAMIC], face, 0))
         else:
