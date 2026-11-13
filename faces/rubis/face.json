@@ -1,0 +1,504 @@
+{
+ "name": "Rubis",
+ "notes": "Garnet and gold, like the jewels of a movement: the date in words above, the time with seconds in the middle, two stacks of three readings and a small dial below. A gold sweep turns from the dial's rim to the edge of the screen once a minute, under everything that is read.",
+ "font": "Oswald",
+ "colors": {
+  "cream": "#ECE0C8",
+  "gold": "#E3B04B",
+  "name": "#8E8276",
+  "dim": "#968C78",
+  "dim_colon": "#7A5F2A",
+  "glow": "#540413",
+  "tick": "#320A0F",
+  "tick_major": "#500F17",
+  "disc": "#0A0708",
+  "disc_rim": "#2A0609",
+  "dial_tick": "#7A6A5C",
+  "sweep": "#E3B04B50",
+  "sweep_edge": "#E3B04BB0",
+  "alarm": "#FF283C"
+ },
+ "languages": {
+  "default": [
+   "ru",
+   "en",
+   "fi"
+  ],
+  "zone": [
+   136,
+   40,
+   360,
+   112
+  ],
+  "frame": {
+   "color": "gold",
+   "radius": 12
+  }
+ },
+ "ring": {
+  "inset": 16,
+  "radius": 77,
+  "length": [
+   4,
+   6
+  ]
+ },
+ "background": [
+  {
+   "type": "glow",
+   "color": "glow"
+  },
+  {
+   "type": "shapes",
+   "ss": 4,
+   "items": [
+    {
+     "ellipse": [
+      249,
+      306,
+      375,
+      432
+     ],
+     "color": "disc"
+    }
+   ]
+  },
+  {
+   "type": "card",
+   "box": [
+    249,
+    306,
+    375,
+    432
+   ],
+   "radius": 63
+  },
+  {
+   "type": "dial",
+   "box": [
+    256,
+    313,
+    368,
+    425
+   ],
+   "radius": 56,
+   "inset": 4,
+   "frame": {
+    "color": "disc_rim",
+    "width": 2
+   },
+   "minute": {
+    "color": "dial_tick",
+    "length": 3,
+    "width": 1
+   },
+   "hour": {
+    "color": "cream",
+    "length": 7,
+    "width": 3
+   }
+  },
+  {
+   "type": "card",
+   "box": [
+    33,
+    33,
+    375,
+    121
+   ],
+   "radius": 44
+  },
+  {
+   "type": "card",
+   "box": [
+    33,
+    129,
+    375,
+    285
+   ],
+   "radius": 44
+  },
+  {
+   "type": "card",
+   "box": [
+    33,
+    292,
+    135,
+    446
+   ],
+   "radius": 44
+  },
+  {
+   "type": "card",
+   "box": [
+    141,
+    292,
+    243,
+    446
+   ],
+   "radius": 44
+  },
+  {
+   "type": "ticks",
+   "color": "tick",
+   "major_color": "tick_major"
+  }
+ ],
+ "elements": [
+  {
+   "type": "day",
+   "id": "day",
+   "size": 74,
+   "weight": 600,
+   "color": "cream",
+   "x": 54,
+   "y": {
+    "digits_middle": 76
+   }
+  },
+  {
+   "type": "weekday",
+   "size": 34,
+   "weight": 500,
+   "tracking": 1,
+   "color": "cream",
+   "x": "day.right+12",
+   "max_right": 358,
+   "y": {
+    "caps_top": "day.digits_top"
+   }
+  },
+  {
+   "type": "month",
+   "size": 34,
+   "weight": 500,
+   "tracking": 1,
+   "color": "cream",
+   "x": "day.right+12",
+   "max_right": 358,
+   "y": {
+    "caps_bottom": "day.digits_bottom"
+   }
+  },
+  {
+   "type": "time",
+   "id": "time",
+   "size": 108,
+   "weight": 600,
+   "color": "cream",
+   "pad": 2,
+   "x": "screen.center",
+   "align": "center",
+   "y": {
+    "digits_middle": 206
+   },
+   "colon": {
+    "width": 26,
+    "radius": 5.5,
+    "color": "gold"
+   },
+   "seconds": {
+    "size": 50,
+    "weight": 600,
+    "color": "gold",
+    "pad": 1,
+    "gap": 8
+   }
+  },
+  {
+   "type": "hands",
+   "id": "hands",
+   "centre": [
+    312,
+    369
+   ],
+   "hour": {
+    "length": 24,
+    "tail": 7,
+    "width": 8,
+    "color": "gold"
+   },
+   "minute": {
+    "length": 38,
+    "tail": 7,
+    "width": 4.5,
+    "color": "cream"
+   },
+   "pin": [
+    {
+     "radius": 5,
+     "color": "cream"
+    },
+    {
+     "radius": 2.4,
+     "color": "disc_rim"
+    }
+   ],
+   "second": {
+    "shape": "sweep",
+    "start": 64,
+    "length": 480,
+    "spread": 50,
+    "color": "sweep",
+    "core": "sweep_edge",
+    "width": 1.6
+   },
+   "behind": true
+  },
+  {
+   "type": "tap",
+   "box": [
+    37,
+    296,
+    131,
+    340
+   ],
+   "open": "heart_rate",
+   "elements": [
+    {
+     "type": "symbol",
+     "name": "favorite",
+     "size": 20,
+     "color": "gold",
+     "x": 47,
+     "y": {
+      "middle": 318
+     }
+    },
+    {
+     "type": "number",
+     "source": "heart_rate",
+     "size": 22,
+     "weight": 500,
+     "color": "cream",
+     "x": 125,
+     "align": "right",
+     "y": {
+      "digits_middle": 318
+     }
+    }
+   ]
+  },
+  {
+   "type": "tap",
+   "box": [
+    37,
+    347,
+    131,
+    391
+   ],
+   "open": "steps",
+   "elements": [
+    {
+     "type": "symbol",
+     "name": "footprint",
+     "size": 20,
+     "color": "name",
+     "x": 47,
+     "y": {
+      "middle": 369
+     }
+    },
+    {
+     "type": "number",
+     "source": "steps",
+     "size": 22,
+     "weight": 500,
+     "color": "cream",
+     "x": 125,
+     "align": "right",
+     "y": {
+      "digits_middle": 369
+     }
+    }
+   ]
+  },
+  {
+   "type": "tap",
+   "box": [
+    37,
+    398,
+    131,
+    442
+   ],
+   "open": "sleep",
+   "elements": [
+    {
+     "type": "system_text",
+     "source": "sleep",
+     "x": 125,
+     "y": 407,
+     "width": 86,
+     "height": 26,
+     "align": "right",
+     "text_style": 149,
+     "color": "cream"
+    }
+   ]
+  },
+  {
+   "type": "tap",
+   "box": [
+    145,
+    296,
+    239,
+    340
+   ],
+   "open": "weather",
+   "elements": [
+    {
+     "type": "weather_icon",
+     "size": 22,
+     "color": "name",
+     "x": 155,
+     "y": {
+      "middle": 318
+     }
+    },
+    {
+     "type": "number",
+     "source": "temperature",
+     "size": 22,
+     "weight": 500,
+     "color": "cream",
+     "x": 233,
+     "align": "right",
+     "y": {
+      "digits_middle": 318
+     },
+     "unit": "°",
+     "gap": 1
+    }
+   ]
+  },
+  {
+   "type": "tap",
+   "box": [
+    145,
+    347,
+    239,
+    391
+   ],
+   "open": "pressure",
+   "elements": [
+    {
+     "type": "system_text",
+     "id": "hpa",
+     "source": "pressure",
+     "x": 203,
+     "y": 356,
+     "width": 50,
+     "height": 26,
+     "align": "right",
+     "text_style": 149,
+     "color": "cream"
+    },
+    {
+     "type": "text",
+     "size": 22,
+     "weight": 400,
+     "color": "name",
+     "quiet": true,
+     "text": {
+      "word": "hpa"
+     },
+     "x": "hpa.right+4",
+     "y": {
+      "caps_middle": 369
+     }
+    }
+   ]
+  },
+  {
+   "type": "tap",
+   "box": [
+    145,
+    398,
+    239,
+    442
+   ],
+   "open": "settings",
+   "elements": [
+    {
+     "type": "battery_icon",
+     "color": "name",
+     "low_color": "alarm",
+     "width": 20,
+     "height": 11,
+     "x": 149,
+     "y": {
+      "middle": 420
+     }
+    },
+    {
+     "type": "number",
+     "source": "battery",
+     "size": 22,
+     "weight": 500,
+     "color": "cream",
+     "x": 233,
+     "align": "right",
+     "y": {
+      "digits_middle": 420
+     },
+     "unit": "%",
+     "gap": 1
+    }
+   ]
+  }
+ ],
+ "aod": {
+  "elements": [
+   {
+    "type": "day",
+    "id": "aod_day",
+    "size": 76,
+    "weight": 400,
+    "color": "dim",
+    "x": 54,
+    "y": {
+     "digits_middle": 76
+    }
+   },
+   {
+    "type": "weekday",
+    "size": 30,
+    "weight": 400,
+    "tracking": 1,
+    "color": "dim",
+    "x": "aod_day.right+12",
+    "y": {
+     "caps_top": "aod_day.digits_top"
+    }
+   },
+   {
+    "type": "month",
+    "size": 30,
+    "weight": 400,
+    "tracking": 1,
+    "color": "dim",
+    "x": "aod_day.right+12",
+    "y": {
+     "caps_bottom": "aod_day.digits_bottom"
+    }
+   },
+   {
+    "type": "time",
+    "size": 112,
+    "weight": 300,
+    "color": "dim",
+    "pad": 2,
+    "x": "screen.center",
+    "align": "center",
+    "y": {
+     "digits_middle": 206
+    },
+    "colon": {
+     "width": 26,
+     "radius": 4,
+     "color": "dim_colon"
+    }
+   }
+  ]
+ }
+}

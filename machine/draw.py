@@ -197,6 +197,35 @@ def glass(base, box, radius=22, fill_alpha=14, rim_alpha=46):
     base.alpha_composite(rim)
 
 
+
+def well(base, box, radius=22, depth=150, shade=12, lip_alpha=40):
+    """A dark well sunk into the background: the light under it dimmed by depth (0-255),
+    a soft shadow cast inward from the upper edge, a hairline lip catching light along
+    the lower edge and fading towards the top."""
+    x0, y0, x1, y1 = box
+    mask = Image.new('L', base.size, 0)
+    ImageDraw.Draw(mask).rounded_rectangle(box, radius=radius, fill=255)
+    dark = Image.new('RGBA', base.size, (0, 0, 0, 0))
+    dark.putalpha(mask.point(lambda v: v * depth // 255))
+    base.alpha_composite(dark)
+    if shade > 0:
+        lower = Image.new('L', base.size, 0)
+        lower.paste(mask.crop((0, 0, base.size[0], base.size[1] - shade)), (0, shade))
+        band = ImageChops.subtract(mask, lower).filter(ImageFilter.GaussianBlur(shade / 2.0))
+        shadow = Image.new('RGBA', base.size, (0, 0, 0, 0))
+        shadow.putalpha(ImageChops.multiply(band, mask))
+        base.alpha_composite(shadow)
+    lip = Image.new('RGBA', base.size, (0, 0, 0, 0))
+    ImageDraw.Draw(lip).rounded_rectangle(box, radius=radius, outline=(255, 255, 255, lip_alpha), width=1)
+    fade = Image.new('L', base.size, 0)
+    fd = ImageDraw.Draw(fade)
+    for y in range(y0, y1 + 1):
+        t = (y - y0) / max(1, (y1 - y0))
+        fd.line([(x0, y), (x1, y)], fill=int(255 * (0.15 + 0.85 * t)))
+    lip.putalpha(ImageChops.multiply(lip.getchannel('A'), fade))
+    base.alpha_composite(lip)
+
+
 class Ring:
     """60 ticks spaced evenly along a rounded rectangle just inside the screen edge,
     starting at top centre, clockwise; 15 seconds land exactly on the right middle."""
@@ -588,6 +617,40 @@ def laser(length, core, glow, width=2.0, ss=4):
             im = im.filter(ImageFilter.GaussianBlur(blur))
         out.alpha_composite(im)
     return out, cx, py
+
+
+def sweep(length, trail, color, edge, edge_width=2.0, start=0.0, ss=None):
+    """A radar sweep pointing to 12: a bright leading edge and, behind it (anticlockwise,
+    as the sweep turns clockwise), a sector that fades out over trail degrees.
+    start leaves the middle empty: the sweep begins that far from the pivot.
+    Returns (image, pivot x, pivot y)."""
+    ss = ss or (3 if length < 120 else 2)
+    m = 4
+    trail = max(1.0, min(90.0, float(trail)))
+    left = length * math.sin(math.radians(trail)) if trail < 90 else length
+    w = int(math.ceil(left + edge_width)) + 2 * m
+    h = int(math.ceil(length)) + 2 * m
+    px, py = m + left, m + length
+    W, H = w * ss, h * ss
+    out = Image.new('RGBA', (W, H), (0, 0, 0, 0))
+    pix = out.load()
+    for y in range(H):
+        dy = py * ss - y - 0.5
+        for x in range(W):
+            dx = x + 0.5 - px * ss
+            r = math.hypot(dx, dy) / ss
+            if r > length or r < max(0.5, start):
+                continue
+            a = math.degrees(math.atan2(-dx, dy))        # 0 at the leading edge, growing anticlockwise
+            if 0 <= a <= trail:
+                k = (1 - a / trail) ** 2
+                pix[x, y] = color[:3] + (int(color[3] * k),)
+    out = out.resize((w, h), Image.LANCZOS)
+    line = Image.new('RGBA', (W, H), (0, 0, 0, 0))
+    ImageDraw.Draw(line).line([(px * ss, (py - start) * ss), (px * ss, (py - length) * ss)], fill=edge,
+                              width=max(1, int(round(edge_width * ss))))
+    out.alpha_composite(line.resize((w, h), Image.LANCZOS))
+    return out, px, py
 
 
 def cone(length, spread, color, ss=2):

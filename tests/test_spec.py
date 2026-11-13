@@ -1,5 +1,6 @@
 """Faces built from descriptions. Run: python3 -m unittest discover tests"""
 import importlib.util
+import math
 import os
 import sys
 import tempfile
@@ -65,6 +66,26 @@ class InsideTheGlass(unittest.TestCase):
         desc = spec.load(os.path.join(ROOT, 'faces', 'vibe', 'face.json'))
         result = spec.build(desc, os.path.join(ROOT, 'faces', 'vibe'), ['ru'])
         self.assertEqual([w for w in result.warnings if 'bezel' in w or 'glass' in w], [])
+
+    def test_rubis(self):
+        desc = spec.load(os.path.join(ROOT, 'faces', 'rubis', 'face.json'))
+        result = spec.build(desc, os.path.join(ROOT, 'faces', 'rubis'), ['fi'])
+        self.assertEqual([w for w in result.warnings if 'bezel' in w or 'glass' in w], [])
+
+
+class Sweep(unittest.TestCase):
+    """A radar sweep: bright at its leading edge, fading behind it, nothing ahead or inside."""
+
+    def test_shape(self):
+        from machine import draw
+        im, px, py = draw.sweep(100, 60, (255, 0, 0, 200), (255, 0, 0, 255), start=30)
+        alpha = lambda r, deg: im.getpixel((int(round(px - r * math.sin(math.radians(deg)))),
+                                            int(round(py - r * math.cos(math.radians(deg))))))[3]
+        self.assertGreater(alpha(70, 2), 150)             # just behind the leading edge, pointing to 12
+        self.assertGreater(alpha(70, 10), alpha(70, 40))  # fading behind it, anticlockwise
+        self.assertEqual(alpha(70, 70), 0)                # beyond the trail
+        self.assertEqual(alpha(15, 10), 0)                # inside the start
+        self.assertEqual(im.getpixel((min(im.width - 1, int(px) + 4), int(py) - 70))[3], 0)  # ahead of it
 
 
 class Instruments(unittest.TestCase):

@@ -130,6 +130,7 @@ LAYER_FIELDS = {
     'gradient': {'top', 'bottom'},
     'glow': {'color', 'centre', 'reach', 'power', 'edge'},
     'card': {'box', 'radius', 'fill_alpha', 'rim_alpha'},
+    'well': {'box', 'radius', 'depth', 'shade', 'lip_alpha'},
     'ticks': {'color', 'major_color'},
     'shapes': {'ss', 'items'},
     'picture': {'file'},
@@ -925,13 +926,13 @@ class Resolver:
             if hs is None:
                 continue
             hp = '%s.%s' % (path, name)
-            hand_fields = ('length', 'tail', 'width', 'color', 'inner', 'shape', 'core', 'spread')
+            hand_fields = ('length', 'tail', 'width', 'color', 'inner', 'shape', 'core', 'spread', 'start')
             for k in hs:
                 if k not in hand_fields:
                     raise SpecError(['%s.%s: a hand takes %s%s' % (hp, k, _known(hand_fields), _near(k, hand_fields))])
             shape = hs.get('shape', 'bar')
-            if shape not in ('bar', 'laser', 'cone'):
-                raise SpecError(['%s.shape: use "bar", "laser" or "cone"' % hp])
+            if shape not in ('bar', 'laser', 'cone', 'sweep'):
+                raise SpecError(['%s.shape: use "bar", "laser", "cone" or "sweep"' % hp])
             if 'length' not in hs:
                 raise SpecError(['%s: give the hand a "length" in pixels from the centre' % hp])
             tail = hs.get('tail', 0)
@@ -950,10 +951,20 @@ class Resolver:
             elif shape == 'cone':
                 im, px, py = draw.cone(hs['length'], hs.get('spread', 7), ink)
                 light = True
+            elif shape == 'sweep':
+                im, px, py = draw.sweep(hs['length'], hs.get('spread', 60), ink,
+                                        self.b.color(hs.get('core', '#FFFFFF'), hp + '.core'), hs.get('width', 2),
+                                        start=hs.get('start', 0))
+                light = True
             else:
                 im, px, py = draw.hand(hs['length'], tail, hs.get('width', 4), ink, inner)
-            pieces.append(Piece('hand', im=im, cx=cx, cy=cy, px=px, py=py, source=HAND_SOURCES[name],
-                                reach=hs['length'], role=name, ink=ink))
+            piece = Piece('hand', im=im, cx=cx, cy=cy, px=px, py=py, source=HAND_SOURCES[name],
+                          reach=hs['length'], role=name, ink=ink)
+            # a sweep is light on the dial: it turns under the other hands, not over them
+            if shape == 'sweep':
+                pieces.insert(0, piece)
+            else:
+                pieces.append(piece)
             reach = max(reach, hs['length'])
         if el.get('pin'):
             rings = [(r['radius'], self.b.color(r.get('color', '#FFFFFF'), '%s.pin[%d].color' % (path, i)))
@@ -1090,12 +1101,18 @@ def paint_layer(b, img, layer, path):
         img.alpha_composite(g.resize((W, H)))
     elif t == 'glow':
         c = b.color(layer.get('color', '#FF0000'), path + '.color')
-        img.alpha_composite(draw.glow(W, H, c[:3], tuple(layer.get('centre', (0.5, 0.47))),
-                                      tuple(layer.get('reach', (0.80, 0.66))), layer.get('power', 1.5),
-                                      tuple(layer.get('edge', (6, 70)))))
+        # glows add up: each one lights only what is darker than itself, so a second glow
+        # brightens a spot without wiping out the first
+        light = draw.glow(W, H, c[:3], tuple(layer.get('centre', (0.5, 0.47))),
+                          tuple(layer.get('reach', (0.80, 0.66))), layer.get('power', 1.5),
+                          tuple(layer.get('edge', (6, 70))))
+        img.paste(ImageChops.lighter(img, light))
     elif t == 'card':
         draw.glass(img, tuple(layer['box']), radius=layer.get('radius', 22),
                    fill_alpha=layer.get('fill_alpha', 14), rim_alpha=layer.get('rim_alpha', 46))
+    elif t == 'well':
+        draw.well(img, tuple(layer['box']), radius=layer.get('radius', 22), depth=layer.get('depth', 150),
+                  shade=layer.get('shade', 12), lip_alpha=layer.get('lip_alpha', 40))
     elif t == 'ticks':
         minor = b.color(layer.get('color', '#333333'), path + '.color')
         major = b.color(layer.get('major_color', layer.get('color', '#555555')), path + '.major_color')
@@ -1350,7 +1367,7 @@ def build(spec, base_dir='.', langs=None):
             mark_area = m if mark_area is None else ImageChops.lighter(mark_area, m)
     # the background's own drawings and the second mark's path, against the bezel
     for i, layer in enumerate(spec.get('background', [])):
-        if layer.get('type') in ('card', 'ticks', 'shapes', 'dial', 'lcd'):
+        if layer.get('type') in ('card', 'well', 'ticks', 'shapes', 'dial', 'lcd'):
             alone = Image.new('RGBA', (W, H), (0, 0, 0, 0))
             paint_layer(b, alone, layer, 'background[%d]' % i)
             b.warnings.extend(check.bezel_messages('background[%d]' % i, 'the "%s" layer' % layer['type'],
@@ -1507,7 +1524,7 @@ def _check_geometry(b, placed, problems, aod=False):
                     p.path, list(q.card[0]), b.ring.inset + b.ring.length[1] + 3))
     if not aod:
         for i, layer in enumerate(b.spec.get('background', [])):
-            if layer.get('type') == 'card' and ring_used and not b.ring.clear(tuple(layer['box']), layer.get('radius', 22)):
+            if layer.get('type') in ('card', 'well') and ring_used and not b.ring.clear(tuple(layer['box']), layer.get('radius', 22)):
                 problems.append('background[%d]: the card %s runs into the ring of ticks' % (i, layer['box']))
 
 

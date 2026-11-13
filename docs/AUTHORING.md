@@ -22,10 +22,11 @@ built outwards from the middle, readings at the corners) and `faces/etalon/face.
 the reference: built on what was measured on a wrist, it passes every check; the only
 notes it draws are about features still to be confirmed on a wrist. `faces/strobe/face.json`
 shows hands of light: a searchlight and a laser turning from the colon, under
-everything that is read. Both build into the
-exact pixels of the hand-written faces they replace, except where the checks below
-found a fault in the original (Vibe's always-on words are a size smaller, so the
-descenders of one line clear the next).
+everything that is read. `faces/rubis/face.json` keeps one rule for every card (radius
+44, 33 px in from the edges: the smallest inset at which such a corner clears the ticks
+in the screen's rounded corners) and turns a radar sweep from the rim of a small dial
+out to the edge of the screen. Plumb builds into the exact pixels of the hand-written
+face it replaces; Vibe matched its script too, until its ring moved onto the visible line.
 
 ## What the machine does for you
 
@@ -292,7 +293,7 @@ Hands turning about one centre, drawn pointing to 12 and turned by the watch.
 | `inner` | a darker slit along the hand: `{"color": "#000000", "inset": 2, "from": 0.3, "to": 0.86}` (fractions of the length from the centre) |
 | `pin` | discs on top of the centre, largest first: `[{"radius": 6.5, "color": "..."}, ...]` |
 | `behind` | `true` when the hands turn under other elements on purpose. They are then put in a touch zone of no size, which the watch draws before everything else, so all text lies over them (confirmed) |
-| `shape` | `bar` (default), `laser` (`width` of the hot core, `core` its colour, `color` the glow) or `cone` (a searchlight; `spread` is its half-angle in degrees). Light may run off the screen; it is cropped like a background |
+| `shape` | `bar` (default), `laser` (`width` of the hot core, `core` its colour, `color` the glow), `cone` (a searchlight; `spread` is its half-angle in degrees) or `sweep` (a radar sweep: a leading edge of `width` in `core`, and behind it a sector of `color` fading out over `spread` degrees, 60 by default; `start` leaves the middle empty, so the sweep can begin at a dial's rim). A sweep turns under the other hands. Light may run off the screen; it is cropped like a background. Give light a colour with alpha (`#RRGGBBAA`) to keep text over it readable |
 
 The checks treat a hand as the whole circle it sweeps.
 
@@ -337,8 +338,9 @@ Drawn in order onto black, once, into one picture.
 |---|---|
 | `fill` | `color` |
 | `gradient` | `top`, `bottom` colours, vertical |
-| `glow` | `color`, `centre` [0.5, 0.47], `reach` [0.8, 0.66], `power` 1.5, `edge` [6, 70]: radial light that dies out before the edge |
+| `glow` | `color`, `centre` [0.5, 0.47], `reach` [0.8, 0.66], `power` 1.5, `edge` [6, 70]: radial light that dies out before the edge. Glows add up: a second one lights only what is darker than itself, so a small glow can brighten one spot, a dial say, without wiping out the first; `edge` [0, 1] keeps it whole near the screen edge |
 | `card` | `box`, `radius` 22, `fill_alpha` 14, `rim_alpha` 46: a glass card |
+| `well` | `box`, `radius` 22, `depth` 150 (how much of the light under it is taken away, 0–255), `shade` 12 (the shadow cast inward from the upper edge), `lip_alpha` 40: a dark well sunk into the background, the opposite of a card, with a hairline lip catching light along its lower edge |
 | `ticks` | `color`, `major_color`: 60 ticks along the ring |
 | `shapes` | `ss` 4 and `items`: `{"line": [[x, y], ...], "width": 1.4, "color": ...}`, `{"ellipse": [l, t, r, b], ...}`, `{"rect": [l, t, r, b], "radius": 0, ...}`, drawn on one supersampled canvas |
 | `lcd` | `box`, `radius` 20, `centre` and `edge` colours of the backlight, `focus` [0.42, 0.38] where it is brightest, `reach`, `power`, `rim` 7 and `rim_alpha` 140 (shadow inside the rim), `outline` `{color, width}`: a lit crystal window for dark segment digits |
