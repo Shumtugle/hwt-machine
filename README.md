@@ -6,6 +6,8 @@ watch face comes out, drawn, packed and checked without a single hand-painted pi
 **[Live page](https://shumtugle.github.io/hwt-machine/)**: Vibe running in the browser on
 your clock, and a drop zone that opens any watch face package and draws it.
 
+**[Telegram channel](https://t.me/HW_watch_faces)**: new faces as they come out, each with its files.
+
 ![Vibe in English, Russian, Finnish, and its always-on screen](docs/img/vibe.png)
 
 ## Vibe
