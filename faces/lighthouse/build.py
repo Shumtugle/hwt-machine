@@ -41,7 +41,6 @@ LNUM = ['lnum']
 GOLD_TOP = (250, 232, 196)
 GOLD_BOTTOM = (226, 188, 128)
 CREAM = (236, 224, 200, 255)
-QUIET = (150, 152, 166, 255)
 DIM = (120, 116, 106, 255)
 SHADOW = (4, 8, 22)
 
@@ -187,10 +186,10 @@ def build(locales):
     c_im, c_pad = with_shade(colon)
     bg.alpha_composite(c_im, (tx + 2 * cell + 4 - c_pad, ty - c_pad))
 
-    # --- seconds: small, grey, beneath
-    s_sec = serif(32, 600, QUIET)
+    # --- seconds: small and warm beneath, over a dense halo so they read against the sky
+    s_sec = serif(36, 600, (222, 208, 180, 255))
     sec_digits, sec_cell = s_sec.digits(extra_pad=1)
-    sec_shaded = [with_shade(d, 5, 230) for d in sec_digits]
+    sec_shaded = [with_shade(d, 7, 340) for d in sec_digits]
     sp = sec_shaded[0][1]
     sec_refs = face.add_set([s for s, _ in sec_shaded], 'sec')
     sy = s_sec.top_for_digits_centred_on(ty + s_time.digit_ink[1] + 28)

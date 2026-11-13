@@ -58,7 +58,7 @@ charge: the watch says so itself when it runs low.
 ## Lighthouse
 
 A painted night sea with a lighthouse on a cliff. The time in a warm serif across the
-stars, the seconds quiet beneath it, the date above; a golden wave with a small boat on
+stars, the seconds in warm cream beneath it, the date above; a golden wave with a small boat on
 its crest, and battery, weather, pulse and steps on the dark water below it.
 `--art night` swaps the calm painting for a richer one, with the wave drawn over it.
 
