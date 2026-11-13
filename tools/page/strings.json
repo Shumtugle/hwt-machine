@@ -52,8 +52,8 @@
    "l_battery": "Battery",
    "l_steps": "Steps",
    "l_pulse": "Pulse",
-   "l_weather": "Weather",
-   "l_sky": "Sky",
+   "l_weather": "Temperature",
+   "l_sky": "Weather",
    "sky": [
     "unknown",
     "sunny",
@@ -147,8 +147,8 @@
    "l_battery": "Заряд",
    "l_steps": "Шаги",
    "l_pulse": "Пульс",
-   "l_weather": "Погода",
-   "l_sky": "Небо",
+   "l_weather": "Температура",
+   "l_sky": "Погода",
    "sky": [
     "нет данных",
     "солнечно",
@@ -242,8 +242,8 @@
    "l_battery": "Akku",
    "l_steps": "Askeleet",
    "l_pulse": "Syke",
-   "l_weather": "Sää",
-   "l_sky": "Taivas",
+   "l_weather": "Lämpötila",
+   "l_sky": "Sää",
    "sky": [
     "ei tietoa",
     "aurinkoista",
