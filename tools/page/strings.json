@@ -9,7 +9,8 @@
   "strobe",
   "rubis",
   "triptych",
-  "flip"
+  "flip",
+  "noir"
  ],
  "names": {
   "vibe": "Vibe",
@@ -21,7 +22,8 @@
   "strobe": "Strobe",
   "rubis": "Rubis",
   "triptych": "Triptych",
-  "flip": "Flip"
+  "flip": "Flip",
+  "noir": "Noir"
  },
  "languages": [
   "en",
@@ -127,7 +129,8 @@
     "strobe": "Huge cream time on black, a scarlet searchlight for the hour and a laser for the minute turning from the colon, a scarlet mark running a band of ticks round the edge; six readings below.",
     "rubis": "Garnet and gold: the date above, the time with seconds, two stacks of readings and a small dial below; a gold sweep turns from the dial to the edge of the screen once a minute.",
     "triptych": "Three windows in a black case: hands over a dial of deep pyramids with a ruby lamp for messages, red lamps in sunken windows, a crystal with the date and the weather below. Ten glass lamps on the arch count the seconds.",
-    "flip": "Two dark flip cards split at their hinges, after a phone clock many loved; the weather as a glossy picture over their foot, the date in full words, the temperature, and a quiet line of heart, steps, sleep and charge."
+    "flip": "Two dark flip cards split at their hinges, after a phone clock many loved; the weather as a glossy picture over their foot, the date in full words, the temperature, and a quiet line of heart, steps, sleep and charge.",
+    "noir": "Flip's readings without its cards: on black, in large type, inside Strobe's frame of ticks with an amber second running round. The date in full words, the time tall, the temperature beside a glossy sky, and heart, sleep, steps and charge below."
    }
   },
   "ru": {
@@ -223,7 +226,8 @@
     "strobe": "Огромное кремовое время на чёрном, алый прожектор часа и лазер минуты вращаются от двоеточия, алая метка бежит по полосе рисок вдоль края; внизу шесть показаний.",
     "rubis": "Гранат и золото: дата сверху, время с секундами, внизу два столбика показаний и маленький циферблат; золотой луч раз в минуту обходит экран от циферблата до края.",
     "triptych": "Три окна в чёрном корпусе: стрелки над глубокой пирамидальной насечкой с рубиновым огоньком уведомлений, красные диоды в утопленных окнах, внизу кристалл с датой и погодой. Десять стеклянных ламп на дуге отсчитывают секунды.",
-    "flip": "Две тёмные перекидные карточки с петлями, в память о любимых телефонных часах: погода глянцевой картинкой поверх их края, дата полными словами, температура и тихая строка — пульс, шаги, сон, заряд."
+    "flip": "Две тёмные перекидные карточки с петлями, в память о любимых телефонных часах: погода глянцевой картинкой поверх их края, дата полными словами, температура и тихая строка — пульс, шаги, сон, заряд.",
+    "noir": "Данные Flip без карточек: на чёрном, крупным шрифтом, в рамке Strobe с бегущей янтарной секундой. Дата полными словами, высокое время, температура рядом с глянцевым небом, внизу пульс, сон, шаги и заряд."
    }
   },
   "fi": {
@@ -319,7 +323,8 @@
     "strobe": "Valtava kermanvärinen aika mustalla, tunnin helakanpunainen valonheitin ja minuutin laser kääntyvät kaksoispisteestä, punainen merkki kiertää reunan asteikkoa; alla kuusi lukemaa.",
     "rubis": "Granaattia ja kultaa: päivämäärä ylhäällä, aika sekunteineen, alhaalla kaksi lukemapinoa ja pieni kellotaulu; kultainen säde kiertää kerran minuutissa kellotaulusta näytön reunaan.",
     "triptych": "Kolme ikkunaa mustassa kotelossa: osoittimet syvän pyramidikuvion yllä ja rubiininen viestivalo, punaiset ledit upotetuissa ikkunoissa, alhaalla kidenäyttö, jossa päivämäärä ja sää. Kaarella kymmenen lasilamppua laskee sekunnit.",
-    "flip": "Kaksi tummaa kääntökorttia saranoineen, rakastetun puhelinkellon muistoksi: sää kiiltävänä kuvana korttien reunan päällä, päivämäärä kokonaisin sanoin, lämpötila ja hiljainen rivi — syke, askeleet, uni ja akku."
+    "flip": "Kaksi tummaa kääntökorttia saranoineen, rakastetun puhelinkellon muistoksi: sää kiiltävänä kuvana korttien reunan päällä, päivämäärä kokonaisin sanoin, lämpötila ja hiljainen rivi — syke, askeleet, uni ja akku.",
+    "noir": "Flipin tiedot ilman kortteja: mustalla, isolla kirjasimella, Strobe-kehyksessä, jota kiertää meripihkainen sekunti. Päivämäärä kokonaisin sanoin, korkea aika, lämpötila kiiltävän taivaan vieressä, alla syke, uni, askeleet ja akku."
    }
   }
  }

@@ -153,6 +153,20 @@ sleep and the charge. The same face lives among the clocks of a home screen.
 [EN](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/flip-en.hwt) ·
 [FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/flip-fi.hwt)
 
+## Noir
+
+The readings of Flip without its cards: on black, in large type, inside the frame of
+Strobe, where sixty ticks run round the visible edge and an amber marker steps once a
+second. The weekday, the day and the month in full words above; the hour and the minute
+tall; the temperature beside a small glossy picture of the sky; and below, heart, sleep,
+steps and charge, each a touch away from its own screen.
+
+![Noir in English, Russian, Finnish, and its always-on screen](docs/img/noir.png)
+
+[RU](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/noir-ru.hwt) ·
+[EN](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/noir-en.hwt) ·
+[FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/noir-fi.hwt)
+
 ## Faces from a description
 
 A face can also be written as data instead of code: a JSON description of the
