@@ -2,7 +2,8 @@
 
 On black, a frame of sixty dots runs round the visible edge with the quarters written
 in; a small amber tablet carrying the second steps along it. The hour and the minute
-stand very tall, the figures stretched upward to fill the upper half. Under the date a
+stand very tall, the figures stretched upward over the upper half; the date runs
+across the middle, level with the quarters 45 and 15. Under it a
 painted landscape changes with the month, twelve of them; the readings sit below.
 
     python3 make_case.py OUT_DIR PANELS_DIR
@@ -28,10 +29,10 @@ DOT, AMBER, INK = (140, 135, 127), (255, 176, 32), (24, 14, 4)
 
 # the four tall figures and the colon between them
 CELLS = [39, 117, 215, 293]
-CELL_W, TOP, TALL = 76, 44, 218
+CELL_W, TOP, TALL = 76, 40, 172
 COLON = (195, 213)
 # the painting
-PIC = (33, 304, 342, 92)
+PIC = (33, 284, 342, 92)
 # where in each painting the window sits, as a fraction of its width (0 left, 1 right)
 FOCUS = [0.45, 0.5, 0.5, 0.62, 0.4, 0.58, 0.62, 0.5, 0.45, 0.38, 0.65, 0.62]
 

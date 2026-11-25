@@ -139,6 +139,11 @@ to put on a value:
 the screen (`center` is 204, `middle` 240), `parent.*` the tap zone around the element.
 Elements may refer forwards; a circle of references is an error.
 
+A place may differ by language, as words do: `"x": {"ru": 246, "en": 228, "default": 224}`
+takes the value for the language being built, or the `default`. Use it where a line of
+words must clear something in every language, its longest weekday or month being longer
+in one than in another.
+
 Any element may carry `"quiet": true`: it is meant to recede, so low contrast is not
 reported as a warning (it is still an error when it cannot be seen at all).
 

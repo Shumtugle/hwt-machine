@@ -1,6 +1,6 @@
 {
  "name": "Almanakka",
- "notes": "A wall calendar on the wrist. On black, a frame of sixty dots with the quarters written in, and an amber tablet carrying the second round it; the hour and the minute stretched tall over the upper half; the weekday, the day and the month on one line; a painted landscape that changes with the month; weather, steps, heart and charge below. Every picture is drawn by make_case.py from the twelve paintings.",
+ "notes": "A wall calendar on the wrist. On black, a frame of sixty dots with the quarters written in, and an amber tablet carrying the second round it; the hour and the minute stretched tall over the upper half; the weekday, the day and the month on one line across the middle, level with the quarters 45 and 15; a painted landscape that changes with the month; weather, steps, heart and charge below. Every picture is drawn by make_case.py from the twelve paintings.",
  "font": "Oswald",
  "colors": {
   "cream": "#FAF3DF",
@@ -37,7 +37,7 @@
    "source": "hour_tens",
    "files": "h1-{}.png",
    "x": 39,
-   "y": 44
+   "y": 40
   },
   {
    "type": "frames",
@@ -45,7 +45,7 @@
    "source": "hour_units",
    "files": "h2-{}.png",
    "x": 117,
-   "y": 44
+   "y": 40
   },
   {
    "type": "frames",
@@ -53,7 +53,7 @@
    "source": "minute_tens",
    "files": "m1-{}.png",
    "x": 215,
-   "y": 44
+   "y": 40
   },
   {
    "type": "frames",
@@ -61,7 +61,7 @@
    "source": "minute_units",
    "files": "m2-{}.png",
    "x": 293,
-   "y": 44
+   "y": 40
   },
   {
    "type": "day",
@@ -69,10 +69,14 @@
    "size": 32,
    "weight": 600,
    "color": "cream",
-   "x": 232,
+   "x": {
+    "ru": 246,
+    "en": 228,
+    "fi": 224
+   },
    "align": "right",
    "y": {
-    "caps_middle": 284
+    "caps_middle": 240
    }
   },
   {
@@ -82,10 +86,10 @@
    "size": 32,
    "weight": 500,
    "color": "cream",
-   "x": "day.left-10",
+   "x": "day.left-8",
    "align": "right",
    "y": {
-    "caps_middle": 284
+    "caps_middle": 240
    }
   },
   {
@@ -95,10 +99,10 @@
    "size": 32,
    "weight": 500,
    "color": "cream",
-   "x": "day.right+10",
-   "max_right": 386,
+   "x": "day.right+8",
+   "max_right": 374,
    "y": {
-    "caps_middle": 284
+    "caps_middle": 240
    }
   },
   {
@@ -107,7 +111,7 @@
    "source": "month",
    "files": "month-{}.png",
    "x": 33,
-   "y": 304,
+   "y": 284,
    "quiet": true
   },
   {
@@ -255,7 +259,7 @@
     "source": "hour_tens",
     "files": "ah1-{}.png",
     "x": 39,
-    "y": 44
+    "y": 40
    },
    {
     "type": "frames",
@@ -263,7 +267,7 @@
     "source": "hour_units",
     "files": "ah2-{}.png",
     "x": 117,
-    "y": 44
+    "y": 40
    },
    {
     "type": "frames",
@@ -271,7 +275,7 @@
     "source": "minute_tens",
     "files": "am1-{}.png",
     "x": 215,
-    "y": 44
+    "y": 40
    },
    {
     "type": "frames",
@@ -279,7 +283,7 @@
     "source": "minute_units",
     "files": "am2-{}.png",
     "x": 293,
-    "y": 44
+    "y": 40
    },
    {
     "type": "day",
@@ -287,10 +291,14 @@
     "size": 32,
     "weight": 600,
     "color": "dim",
-    "x": 232,
+    "x": {
+     "ru": 246,
+     "en": 228,
+     "fi": 224
+    },
     "align": "right",
     "y": {
-     "caps_middle": 284
+     "caps_middle": 240
     }
    },
    {
@@ -300,10 +308,10 @@
     "size": 32,
     "weight": 500,
     "color": "dim",
-    "x": "aday.left-10",
+    "x": "aday.left-8",
     "align": "right",
     "y": {
-     "caps_middle": 284
+     "caps_middle": 240
     }
    },
    {
@@ -313,10 +321,10 @@
     "size": 32,
     "weight": 500,
     "color": "dim",
-    "x": "aday.right+10",
-    "max_right": 386,
+    "x": "aday.right+8",
+    "max_right": 374,
     "y": {
-     "caps_middle": 284
+     "caps_middle": 240
     }
    }
   ],

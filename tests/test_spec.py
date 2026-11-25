@@ -267,6 +267,18 @@ class Languages(unittest.TestCase):
                 if px[i + 3] == 0:
                     self.assertEqual(px[i:i + 4], b'\0\0\0\0')
 
+    def test_a_place_may_differ_by_language(self):
+        folder = os.path.join(FIXTURES, 'thread')
+        plain = spec.load(os.path.join(folder, 'face.json'))
+        moved = spec.load(os.path.join(folder, 'face.json'))
+        moved['elements'][2]['x'] = {'ru': 60, 'default': 40}
+        with tempfile.TemporaryDirectory() as out:
+            def draw(desc, lang):
+                binary, _, _ = spec.package(spec.build(desc, folder, [lang]), os.path.join(out, 'f-%s.hwt' % lang))
+                return simulate.render(binary).tobytes()
+            self.assertEqual(draw(moved, 'en'), draw(plain, 'en'))       # the default
+            self.assertNotEqual(draw(moved, 'ru'), draw(plain, 'ru'))    # its own place
+
 
 class Frames(unittest.TestCase):
     """Ready pictures follow a digit of the time: the lamps of Triptych light one more
@@ -328,6 +340,9 @@ class Problems(unittest.TestCase):
 
     def test_unknown_reference(self):
         self.assertIn('did you mean "day"', self.problems(lambda d: d['elements'][3].update(x='dya.right+8')))
+
+    def test_place_missing_for_a_language(self):
+        self.assertIn('no value for "en"', self.problems(lambda d: d['elements'][2].update(x={'ru': 40})))
 
     def test_circular_positions(self):
         def change(d):

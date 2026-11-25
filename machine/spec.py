@@ -522,6 +522,11 @@ class Resolver:
     # ------------------------------------------------------------ values
 
     def value(self, v, path, parent):
+        # a place may differ by language, as words do: {"ru": 246, "default": 226}
+        if isinstance(v, dict):
+            if self.lang not in v and 'default' not in v:
+                raise SpecError(['%s: no value for "%s"; give one or a "default"' % (path, self.lang)])
+            v = v.get(self.lang, v.get('default'))
         if isinstance(v, bool) or v is None:
             raise SpecError(['%s: expected a number or a reference like "day.right+12"' % path])
         if isinstance(v, (int, float)):
