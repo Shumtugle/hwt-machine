@@ -133,8 +133,10 @@ FRAME_SOURCES = {
     'second_tens': (codes.SECOND_TENS, 6), 'second_units': (codes.SECOND_UNITS, 10),
     'unread_messages': (codes.UNREAD_MESSAGES, 2),
     'weather': (codes.WEATHER_ICON, len(codes.WEATHER_STATES)),
+    'month': (codes.MONTH, 13),          # index 0 is never shown; January is 1
+    'second': (codes.SECONDS, 60),
 }
-FRAME_SOURCES_UNCONFIRMED = {'unread_messages'}
+FRAME_SOURCES_UNCONFIRMED = {'unread_messages', 'second'}
 TIME_GROUP = {'time', 'seconds_mark'}
 LAYER_FIELDS = {
     'fill': {'color'},

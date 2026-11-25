@@ -1,0 +1,330 @@
+{
+ "name": "Almanakka",
+ "notes": "A wall calendar on the wrist. On black, a frame of sixty dots with the quarters written in, and an amber tablet carrying the second round it; the hour and the minute stretched tall over the upper half; the weekday, the day and the month on one line; a painted landscape that changes with the month; weather, steps, heart and charge below. Every picture is drawn by make_case.py from the twelve paintings.",
+ "font": "Oswald",
+ "colors": {
+  "cream": "#FAF3DF",
+  "faint": "#8C877F",
+  "amber": "#FFB020",
+  "dim": "#807A6E"
+ },
+ "languages": {
+  "default": [
+   "ru",
+   "en",
+   "fi"
+  ]
+ },
+ "background": [
+  {
+   "type": "picture",
+   "file": "case.png"
+  }
+ ],
+ "elements": [
+  {
+   "type": "frames",
+   "id": "sec",
+   "source": "second",
+   "files": "sec-{}.png",
+   "x": 0,
+   "y": 0,
+   "behind": true
+  },
+  {
+   "type": "frames",
+   "id": "h1",
+   "source": "hour_tens",
+   "files": "h1-{}.png",
+   "x": 39,
+   "y": 44
+  },
+  {
+   "type": "frames",
+   "id": "h2",
+   "source": "hour_units",
+   "files": "h2-{}.png",
+   "x": 117,
+   "y": 44
+  },
+  {
+   "type": "frames",
+   "id": "m1",
+   "source": "minute_tens",
+   "files": "m1-{}.png",
+   "x": 215,
+   "y": 44
+  },
+  {
+   "type": "frames",
+   "id": "m2",
+   "source": "minute_units",
+   "files": "m2-{}.png",
+   "x": 293,
+   "y": 44
+  },
+  {
+   "type": "day",
+   "id": "day",
+   "size": 32,
+   "weight": 600,
+   "color": "cream",
+   "x": 232,
+   "align": "right",
+   "y": {
+    "caps_middle": 284
+   }
+  },
+  {
+   "type": "weekday",
+   "form": "full",
+   "case": "as_is",
+   "size": 32,
+   "weight": 500,
+   "color": "cream",
+   "x": "day.left-10",
+   "align": "right",
+   "y": {
+    "caps_middle": 284
+   }
+  },
+  {
+   "type": "month",
+   "form": "full",
+   "case": "as_is",
+   "size": 32,
+   "weight": 500,
+   "color": "cream",
+   "x": "day.right+10",
+   "max_right": 386,
+   "y": {
+    "caps_middle": 284
+   }
+  },
+  {
+   "type": "frames",
+   "id": "month",
+   "source": "month",
+   "files": "month-{}.png",
+   "x": 33,
+   "y": 304,
+   "quiet": true
+  },
+  {
+   "type": "tap",
+   "box": [
+    28,
+    400,
+    116,
+    440
+   ],
+   "open": "weather",
+   "elements": [
+    {
+     "type": "number",
+     "id": "temp",
+     "source": "temperature",
+     "size": 26,
+     "weight": 400,
+     "color": "cream",
+     "x": 38,
+     "align": "left",
+     "y": {
+      "digits_middle": 420
+     },
+     "unit": "°"
+    },
+    {
+     "type": "weather_icon",
+     "id": "sky",
+     "size": 24,
+     "color": "faint",
+     "fill": 0,
+     "x": "temp.right+4",
+     "y": {
+      "middle": 420
+     }
+    }
+   ]
+  },
+  {
+   "type": "tap",
+   "box": [
+    116,
+    400,
+    212,
+    440
+   ],
+   "open": "steps",
+   "elements": [
+    {
+     "type": "number",
+     "id": "steps",
+     "source": "steps",
+     "size": 26,
+     "weight": 400,
+     "color": "cream",
+     "x": "sky.right+9",
+     "align": "left",
+     "y": {
+      "digits_middle": 420
+     }
+    },
+    {
+     "type": "symbol",
+     "id": "foot",
+     "name": "footprint",
+     "fill": 0,
+     "size": 20,
+     "color": "faint",
+     "x": "steps.right+3",
+     "y": {
+      "middle": 420
+     }
+    }
+   ]
+  },
+  {
+   "type": "tap",
+   "box": [
+    212,
+    400,
+    290,
+    440
+   ],
+   "open": "heart_rate",
+   "elements": [
+    {
+     "type": "number",
+     "id": "hr",
+     "source": "heart_rate",
+     "size": 26,
+     "weight": 400,
+     "color": "cream",
+     "x": "foot.right+9",
+     "align": "left",
+     "y": {
+      "digits_middle": 420
+     }
+    },
+    {
+     "type": "symbol",
+     "id": "heart",
+     "name": "favorite",
+     "fill": 0,
+     "size": 20,
+     "color": "amber",
+     "x": "hr.right+3",
+     "y": {
+      "middle": 420
+     }
+    }
+   ]
+  },
+  {
+   "type": "number",
+   "id": "bat",
+   "source": "battery",
+   "size": 26,
+   "weight": 400,
+   "color": "cream",
+   "x": "heart.right+9",
+   "align": "left",
+   "y": {
+    "digits_middle": 420
+   },
+   "unit": "%"
+  },
+  {
+   "type": "battery_icon",
+   "color": "faint",
+   "low_color": "amber",
+   "width": 22,
+   "height": 12,
+   "x": "bat.right+4",
+   "y": {
+    "middle": 420
+   }
+  }
+ ],
+ "aod": {
+  "elements": [
+   {
+    "type": "frames",
+    "id": "ah1",
+    "source": "hour_tens",
+    "files": "ah1-{}.png",
+    "x": 39,
+    "y": 44
+   },
+   {
+    "type": "frames",
+    "id": "ah2",
+    "source": "hour_units",
+    "files": "ah2-{}.png",
+    "x": 117,
+    "y": 44
+   },
+   {
+    "type": "frames",
+    "id": "am1",
+    "source": "minute_tens",
+    "files": "am1-{}.png",
+    "x": 215,
+    "y": 44
+   },
+   {
+    "type": "frames",
+    "id": "am2",
+    "source": "minute_units",
+    "files": "am2-{}.png",
+    "x": 293,
+    "y": 44
+   },
+   {
+    "type": "day",
+    "id": "aday",
+    "size": 32,
+    "weight": 600,
+    "color": "dim",
+    "x": 232,
+    "align": "right",
+    "y": {
+     "caps_middle": 284
+    }
+   },
+   {
+    "type": "weekday",
+    "form": "full",
+    "case": "as_is",
+    "size": 32,
+    "weight": 500,
+    "color": "dim",
+    "x": "aday.left-10",
+    "align": "right",
+    "y": {
+     "caps_middle": 284
+    }
+   },
+   {
+    "type": "month",
+    "form": "full",
+    "case": "as_is",
+    "size": 32,
+    "weight": 500,
+    "color": "dim",
+    "x": "aday.right+10",
+    "max_right": 386,
+    "y": {
+     "caps_middle": 284
+    }
+   }
+  ],
+  "background": [
+   {
+    "type": "picture",
+    "file": "aod-colon.png"
+   }
+  ]
+ }
+}
