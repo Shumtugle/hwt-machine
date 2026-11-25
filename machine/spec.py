@@ -134,9 +134,11 @@ FRAME_SOURCES = {
     'unread_messages': (codes.UNREAD_MESSAGES, 2),
     'weather': (codes.WEATHER_ICON, len(codes.WEATHER_STATES)),
     'month': (codes.MONTH, 13),          # index 0 is never shown; January is 1
+    'weekday': (codes.WEEKDAY, 8),       # index 0 is never shown; Monday is 1
+    'day': (codes.DAY_OF_MONTH, 32),     # index 0 is never shown
     'second': (codes.SECONDS, 60),
 }
-FRAME_SOURCES_UNCONFIRMED = {'unread_messages'}
+FRAME_SOURCES_UNCONFIRMED = {'unread_messages', 'day'}
 TIME_GROUP = {'time', 'seconds_mark'}
 LAYER_FIELDS = {
     'fill': {'color'},
@@ -965,15 +967,17 @@ class Resolver:
         """Ready pictures, one per value of a digit of the time, read from files next to the
         description: the files pattern takes the value, as in "lamps-{}.png". Every picture
         has the size of the first; x and y place its top left corner. With behind they lie
-        under everything else, so light in them may run under readings."""
+        under everything else, so light in them may run under readings. Pictures that differ by
+        language name it in the pattern: "weekday-{lang}-{}.png"."""
         code, count = FRAME_SOURCES[el['source']]
         ims = []
         for v in range(count):
-            name = el['files'].format(v)
+            name = el['files'].format(v, lang=self.lang)
             f = os.path.join(self.b.base_dir, name)
             if not os.path.exists(f):
                 raise SpecError(['%s.files: no picture "%s" next to the description; %s needs %d, from %s to %s' % (
-                    path, name, el['source'], count, el['files'].format(0), el['files'].format(count - 1))])
+                    path, name, el['source'], count, el['files'].format(0, lang=self.lang),
+                    el['files'].format(count - 1, lang=self.lang))])
             ims.append(Image.open(f).convert('RGBA'))
         if any(im.size != ims[0].size for im in ims):
             raise SpecError(['%s.files: the pictures differ in size; draw them all as large as the first' % path])

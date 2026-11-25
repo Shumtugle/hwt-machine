@@ -1,0 +1,259 @@
+{
+ "name": "Bang",
+ "notes": "The first second of everything, every minute. A fireball in the middle, white at its heart, through gold and red to violet and the dark; rays and sparks to the edges. The hour and the minute stand black against the fire, rimmed with heat; a shock wave leaves the fire at the second 0 and reaches the edge at 59. The weekday bends along an arc over the fire, the day in gold, the month black at the rim of the fire; weather and heart, steps and charge below, pressed to the axis from both sides. Every picture is drawn by make_case.py.",
+ "font": "Oswald",
+ "colors": {
+  "cream": "#F6ECD6",
+  "gold": "#FFC450",
+  "faint": "#B49A86",
+  "dim": "#96603C"
+ },
+ "languages": {
+  "default": [
+   "ru",
+   "en",
+   "fi"
+  ]
+ },
+ "background": [
+  {
+   "type": "picture",
+   "file": "bang.png"
+  }
+ ],
+ "elements": [
+  {
+   "type": "frames",
+   "id": "wave",
+   "source": "second",
+   "files": "wave-{}.png",
+   "x": 0,
+   "y": 0,
+   "behind": true,
+   "quiet": true
+  },
+  {
+   "type": "frames",
+   "id": "wd",
+   "source": "weekday",
+   "files": "weekday-{lang}-{}.png",
+   "x": 44,
+   "y": 22
+  },
+  {
+   "type": "frames",
+   "id": "dd",
+   "source": "day",
+   "files": "day-{lang}-{}.png",
+   "x": 124,
+   "y": 68
+  },
+  {
+   "type": "frames",
+   "id": "mm",
+   "source": "month",
+   "files": "month-{lang}-{}.png",
+   "x": 34,
+   "y": 142
+  },
+  {
+   "type": "frames",
+   "id": "h1",
+   "source": "hour_tens",
+   "files": "h1-{}.png",
+   "x": 32,
+   "y": 188
+  },
+  {
+   "type": "frames",
+   "id": "h2",
+   "source": "hour_units",
+   "files": "h2-{}.png",
+   "x": 110,
+   "y": 188
+  },
+  {
+   "type": "frames",
+   "id": "m1",
+   "source": "minute_tens",
+   "files": "m1-{}.png",
+   "x": 222,
+   "y": 188
+  },
+  {
+   "type": "frames",
+   "id": "m2",
+   "source": "minute_units",
+   "files": "m2-{}.png",
+   "x": 300,
+   "y": 188
+  },
+  {
+   "type": "tap",
+   "box": [
+    90,
+    368,
+    202,
+    402
+   ],
+   "open": "weather",
+   "elements": [
+    {
+     "type": "weather_icon",
+     "id": "sky",
+     "size": 26,
+     "color": "gold",
+     "fill": 0,
+     "x": 194,
+     "align": "right",
+     "y": {
+      "middle": 385
+     }
+    },
+    {
+     "type": "number",
+     "id": "temp",
+     "source": "temperature",
+     "size": 30,
+     "weight": 500,
+     "color": "cream",
+     "x": "sky.left-5",
+     "align": "right",
+     "y": {
+      "digits_middle": 385
+     },
+     "unit": "°"
+    }
+   ]
+  },
+  {
+   "type": "tap",
+   "box": [
+    206,
+    368,
+    318,
+    402
+   ],
+   "open": "heart_rate",
+   "elements": [
+    {
+     "type": "symbol",
+     "id": "heart",
+     "name": "favorite",
+     "fill": 1,
+     "size": 22,
+     "color": "gold",
+     "x": 214,
+     "y": {
+      "middle": 385
+     }
+    },
+    {
+     "type": "number",
+     "id": "hr",
+     "source": "heart_rate",
+     "size": 30,
+     "weight": 500,
+     "color": "cream",
+     "x": "heart.right+5",
+     "align": "left",
+     "y": {
+      "digits_middle": 385
+     }
+    }
+   ]
+  },
+  {
+   "type": "tap",
+   "box": [
+    90,
+    404,
+    202,
+    436
+   ],
+   "open": "steps",
+   "elements": [
+    {
+     "type": "symbol",
+     "id": "foot",
+     "name": "footprint",
+     "fill": 0,
+     "size": 22,
+     "color": "faint",
+     "x": 194,
+     "align": "right",
+     "y": {
+      "middle": 420
+     }
+    },
+    {
+     "type": "number",
+     "id": "steps",
+     "source": "steps",
+     "size": 26,
+     "weight": 400,
+     "color": "cream",
+     "x": "foot.left-5",
+     "align": "right",
+     "y": {
+      "digits_middle": 420
+     }
+    }
+   ]
+  },
+  {
+   "type": "battery_icon",
+   "id": "cell",
+   "color": "faint",
+   "low_color": "gold",
+   "width": 22,
+   "height": 12,
+   "x": 214,
+   "y": {
+    "middle": 420
+   }
+  },
+  {
+   "type": "number",
+   "id": "bat",
+   "source": "battery",
+   "size": 26,
+   "weight": 400,
+   "color": "cream",
+   "x": "cell.right+6",
+   "align": "left",
+   "y": {
+    "digits_middle": 420
+   },
+   "unit": "%"
+  }
+ ],
+ "aod": {
+  "background": [
+   {
+    "type": "picture",
+    "file": "aod.png"
+   }
+  ],
+  "elements": [
+   {
+    "type": "time",
+    "size": 120,
+    "weight": 400,
+    "color": "dim",
+    "x": 204,
+    "align": "center",
+    "y": {
+     "digits_middle": 254
+    },
+    "colon": {
+     "width": 22,
+     "radius": 5,
+     "color": "dim",
+     "spread": 0.22,
+     "shape": "round"
+    }
+   }
+  ]
+ }
+}
