@@ -136,7 +136,7 @@ FRAME_SOURCES = {
     'month': (codes.MONTH, 13),          # index 0 is never shown; January is 1
     'second': (codes.SECONDS, 60),
 }
-FRAME_SOURCES_UNCONFIRMED = {'unread_messages', 'second'}
+FRAME_SOURCES_UNCONFIRMED = {'unread_messages'}
 TIME_GROUP = {'time', 'seconds_mark'}
 LAYER_FIELDS = {
     'fill': {'color'},

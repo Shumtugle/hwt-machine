@@ -54,7 +54,7 @@ SLEEP = 142            # last night, formatted by the watch: 7h23m       verifie
 DISTANCE = 146         # today, km with decimals: 1.94                   verified as text
 HOURS = 12             # observed
 MINUTES = 13           # observed
-SECONDS = 14           # observed
+SECONDS = 14           # verified
 SUNRISE = 121          # text only                                     observed
 SUNSET = 122           # text only                                     observed
 
