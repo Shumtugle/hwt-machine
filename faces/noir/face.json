@@ -1,6 +1,6 @@
 {
  "name": "Noir",
- "notes": "The readings of Flip without its cards: on black, in large type, inside the seconds frame of Strobe. The date in full words, the hour and the minute tall, the temperature beside a glossy picture of the sky, and four readings below. The weather pictures are Flip's, drawn smaller by make_sky.py.",
+ "notes": "The readings of Flip without its cards: on black, in large type, inside the seconds frame of Strobe. The date in full words, the hour and the minute tall, the temperature beside a glossy picture of the sky, and four readings below in a small table, each figure flush to the right of its column. The weather pictures are Flip's, drawn smaller by make_sky.py.",
  "font": "Oswald",
  "colors": {
   "ink": "#F2EEE6",
@@ -37,53 +37,52 @@
    "type": "weekday",
    "form": "full",
    "case": "title",
-   "size": 36,
+   "size": 42,
    "weight": 400,
    "color": "ink",
    "x": "screen.center",
    "align": "center",
-   "max_right": 380,
    "y": {
-    "caps_bottom": 66
+    "caps_bottom": 72
    }
   },
   {
    "type": "day",
    "id": "day",
-   "size": 36,
+   "size": 42,
    "weight": 600,
    "color": "ink",
-   "x": 160,
+   "x": 156,
    "align": "right",
    "y": {
-    "caps_bottom": 112
+    "caps_bottom": 124
    }
   },
   {
    "type": "month",
    "form": "full",
-   "case": "lower",
-   "size": 36,
+   "case": "as_is",
+   "size": 42,
    "weight": 300,
    "color": "ink",
    "x": "day.right+12",
-   "max_right": 380,
+   "max_right": 382,
    "y": {
-    "caps_bottom": 112
+    "caps_bottom": 124
    }
   },
   {
    "type": "time",
    "id": "time",
-   "size": 140,
+   "size": 124,
    "weight": 700,
    "color": "ink",
    "pad": 1,
-   "space": 28,
+   "space": 26,
    "x": "screen.center",
    "align": "center",
    "y": {
-    "digits_middle": 208
+    "digits_middle": 212
    }
   },
   {
@@ -91,32 +90,32 @@
    "id": "sky",
    "source": "weather",
    "files": "sky-{}.png",
-   "x": 206,
-   "y": 278,
+   "x": 208,
+   "y": 272,
    "behind": true
   },
   {
    "type": "tap",
    "box": [
-    60,
-    280,
-    296,
-    354
+    80,
+    274,
+    290,
+    336
    ],
    "open": "weather",
    "elements": [
     {
      "type": "number",
      "source": "temperature",
-     "size": 60,
+     "size": 52,
      "weight": 300,
      "color": "ink",
      "unit": "°",
      "gap": 1,
-     "x": 196,
+     "x": 198,
      "align": "right",
      "y": {
-      "digits_middle": 316
+      "digits_middle": 304
      }
     }
    ]
@@ -124,33 +123,35 @@
   {
    "type": "tap",
    "box": [
-    40,
-    364,
-    206,
-    405
+    34,
+    338,
+    192,
+    382
    ],
    "open": "heart_rate",
    "elements": [
     {
      "type": "symbol",
      "fill": 0,
-     "size": 28,
+     "size": 30,
      "color": "amber",
      "name": "favorite",
-     "x": 46,
+     "x": 44,
      "y": {
-      "middle": 384
+      "middle": 360
      }
     },
     {
-     "type": "system_text",
-     "height": 41,
-     "width": 120,
-     "color": "ink",
-     "text_style": 158,
+     "type": "number",
      "source": "heart_rate",
-     "x": 82,
-     "y": 364
+     "size": 36,
+     "weight": 400,
+     "color": "ink",
+     "x": 184,
+     "align": "right",
+     "y": {
+      "digits_middle": 360
+     }
     }
    ]
   },
@@ -158,65 +159,68 @@
    "type": "tap",
    "box": [
     210,
-    364,
-    384,
-    405
+    338,
+    376,
+    382
    ],
    "open": "sleep",
    "elements": [
     {
      "type": "symbol",
      "fill": 0,
-     "size": 28,
+     "size": 30,
      "color": "faint",
      "name": "clear_night",
-     "x": 213,
+     "x": 214,
      "y": {
-      "middle": 384
+      "middle": 360
      }
     },
     {
      "type": "system_text",
      "height": 41,
-     "width": 120,
+     "width": 110,
      "color": "ink",
      "text_style": 158,
      "source": "sleep",
-     "x": 246,
-     "y": 364
+     "x": 370,
+     "align": "right",
+     "y": 340
     }
    ]
   },
   {
    "type": "tap",
    "box": [
-    40,
-    407,
-    206,
-    448
+    34,
+    390,
+    192,
+    434
    ],
    "open": "steps",
    "elements": [
     {
      "type": "symbol",
      "fill": 0,
-     "size": 28,
+     "size": 30,
      "color": "faint",
      "name": "footprint",
-     "x": 52,
+     "x": 48,
      "y": {
-      "middle": 427
+      "middle": 412
      }
     },
     {
-     "type": "system_text",
-     "height": 41,
-     "width": 120,
-     "color": "ink",
-     "text_style": 158,
+     "type": "number",
      "source": "steps",
-     "x": 88,
-     "y": 407
+     "size": 36,
+     "weight": 400,
+     "color": "ink",
+     "x": 184,
+     "align": "right",
+     "y": {
+      "digits_middle": 412
+     }
     }
    ]
   },
@@ -224,9 +228,9 @@
    "type": "tap",
    "box": [
     210,
-    407,
-    372,
-    448
+    390,
+    376,
+    434
    ],
    "open": "settings",
    "elements": [
@@ -234,23 +238,25 @@
      "type": "battery_icon",
      "color": "faint",
      "low_color": "amber",
-     "width": 28,
-     "height": 15,
-     "x": 213,
+     "width": 30,
+     "height": 16,
+     "x": 214,
      "y": {
-      "middle": 427
+      "middle": 412
      }
     },
     {
-     "type": "system_text",
-     "height": 41,
-     "width": 100,
-     "color": "ink",
-     "text_style": 158,
+     "type": "number",
      "source": "battery",
-     "suffix": "percent",
-     "x": 246,
-     "y": 407
+     "size": 36,
+     "weight": 400,
+     "color": "ink",
+     "x": 370,
+     "align": "right",
+     "y": {
+      "digits_middle": 412
+     },
+     "unit": "%"
     }
    ]
   }
@@ -261,39 +267,38 @@
     "type": "weekday",
     "form": "full",
     "case": "title",
-    "size": 36,
+    "size": 42,
     "weight": 300,
     "color": "dim",
     "x": "screen.center",
     "align": "center",
-    "max_right": 380,
     "y": {
-     "caps_bottom": 66
+     "caps_bottom": 72
     }
    },
    {
     "type": "day",
     "id": "aday",
-    "size": 36,
+    "size": 42,
     "weight": 500,
     "color": "dim",
-    "x": 160,
+    "x": 156,
     "align": "right",
     "y": {
-     "caps_bottom": 112
+     "caps_bottom": 124
     }
    },
    {
     "type": "month",
     "form": "full",
-    "case": "lower",
-    "size": 36,
+    "case": "as_is",
+    "size": 42,
     "weight": 300,
     "color": "dim",
     "x": "aday.right+12",
-    "max_right": 380,
+    "max_right": 382,
     "y": {
-     "caps_bottom": 112
+     "caps_bottom": 124
     }
    },
    {

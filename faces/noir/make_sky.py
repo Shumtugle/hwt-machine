@@ -10,7 +10,7 @@ import sys
 
 from PIL import Image
 
-SIDE = 76
+SIDE = 64
 
 
 def flip_pictures():
