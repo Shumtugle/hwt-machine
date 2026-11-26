@@ -169,7 +169,7 @@ steps and charge, each a touch away from its own screen.
 
 ## hwfit4
 
-The reference face for this screen, in two colourings. A deep ground lit from the
+One face in two colourings. A deep ground lit from the
 middle, a frame of sixty dots round the visible edge with the quarters written in, and a
 small tablet carrying the second along it. The weekday above, the day and the month on
 one line, the hour and the minute tall in the middle, level with the quarters 45 and 15;
