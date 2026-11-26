@@ -167,6 +167,21 @@ steps and charge, each a touch away from its own screen.
 [EN](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/noir-en.hwt) ·
 [FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/noir-fi.hwt)
 
+## Skylight
+
+The hour and the minute stand very tall in a lens-shaped window between two shutters.
+Behind them is the sky, and its middle follows the hour: deep at night, lighter towards
+midday, indigo again in the evening. The inner edges of the shutters catch that light and
+their shadow falls on the figures; the seconds are cut out of the top of the last figure,
+so the sky shows through them. The weekday and the date sit in the top shutter; weather,
+charge, heart and steps in the bottom one.
+
+![Skylight in English, Russian, Finnish, and its always-on screen](docs/img/skylight.png)
+
+[RU](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/skylight-ru.hwt) ·
+[EN](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/skylight-en.hwt) ·
+[FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/skylight-fi.hwt)
+
 ## hwfit4
 
 One face in two colourings. A deep ground lit from the

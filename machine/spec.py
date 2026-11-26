@@ -115,7 +115,7 @@ FIELDS = {
     'seconds_mark': {'id', 'path', 'layers', 'reach', 'cover_grow'},
     'hands': {'id', 'centre', 'hour', 'minute', 'second', 'pin', 'behind'},
     'level': {'id', 'source', 'x', 'from', 'to', 'span', 'band', 'dot', 'label'},
-    'frames': {'id', 'source', 'files', 'x', 'y', 'quiet', 'behind'},
+    'frames': {'id', 'source', 'files', 'x', 'y', 'quiet', 'behind', 'cover'},
     'seconds_frame': {'id', 'centre', 'inset', 'width', 'radius', 'color', 'marker_width', 'ticks', 'major_ticks'},
     'system_text': {'id', 'source', 'x', 'y', 'width', 'height', 'align', 'color', 'text_style', 'quiet', 'suffix'},
     'tap': {'id', 'box', 'open', 'card', 'elements'},
@@ -138,6 +138,7 @@ FRAME_SOURCES = {
     'weekday': (codes.WEEKDAY, 8),       # index 0 is never shown; Monday is 1
     'day': (codes.DAY_OF_MONTH, 32),     # index 0 is never shown
     'second': (codes.SECONDS, 60),
+    'hour': (codes.HOURS, 24),         # the hour, 0 to 23; seen driving levels
 }
 FRAME_SOURCES_UNCONFIRMED = {'unread_messages', 'day'}
 TIME_GROUP = {'time', 'seconds_mark'}
@@ -985,7 +986,12 @@ class Resolver:
         x = int(round(self.value(el['x'], path + '.x', parent)))
         y = int(round(self.value(el['y'], path + '.y', parent)))
         box = (x, y, x + ims[0].width, y + ims[0].height)
-        return Placed('frames', 'time', [Piece('list', ims=ims, x=x, y=y, source=code)], self.edges(box), box, path)
+        placed = Placed('frames', 'time', [Piece('list', ims=ims, x=x, y=y, source=code)], self.edges(box), box, path)
+        if el.get('cover'):
+            if not el.get('behind'):
+                raise SpecError(['%s.cover: a cover lies among the layers under everything; give it "behind": true' % path])
+            placed.light = True     # scenery laid over the layers before it: nothing to read, nothing to check
+        return placed
 
     LEVEL_SOURCES = {'hours': (codes.HOURS, 24), 'minutes': (codes.MINUTES, 60), 'seconds': (codes.SECONDS, 60)}
 

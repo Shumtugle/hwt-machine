@@ -1,0 +1,292 @@
+{
+ "name": "Skylight",
+ "notes": "The hour and the minute very tall in a lens-shaped window between two shutters. Behind them is the sky, whose middle changes with the hour: deep at night, lighter towards midday, indigo again in the evening. The shutters' inner edges catch its light and their shadow falls on the figures; the seconds are cut out of the top of the last figure, where all ten figures have ink, so the sky shows through them. The weekday and the date in the top shutter; weather, charge, heart and steps in the bottom one. Every picture is drawn by make_case.py.",
+ "font": "Oswald",
+ "colors": {
+  "ink": "#FFF4E2",
+  "soft": "#9AA8C8",
+  "heart": "#FFB347",
+  "dim": "#6E7A9A"
+ },
+ "languages": {
+  "default": [
+   "ru",
+   "en",
+   "fi"
+  ]
+ },
+ "background": [
+  {
+   "type": "picture",
+   "file": "case.png"
+  }
+ ],
+ "elements": [
+  {
+   "type": "frames",
+   "id": "sky",
+   "source": "hour",
+   "files": "sky-{}.png",
+   "x": 75,
+   "y": 119,
+   "behind": true,
+   "cover": true
+  },
+  {
+   "type": "frames",
+   "id": "h1",
+   "source": "hour_tens",
+   "files": "fig-{}.png",
+   "x": 31,
+   "y": 115,
+   "behind": true
+  },
+  {
+   "type": "frames",
+   "id": "h2",
+   "source": "hour_units",
+   "files": "fig-{}.png",
+   "x": 113,
+   "y": 115,
+   "behind": true
+  },
+  {
+   "type": "frames",
+   "id": "m1",
+   "source": "minute_tens",
+   "files": "fig-{}.png",
+   "x": 219,
+   "y": 115,
+   "behind": true
+  },
+  {
+   "type": "frames",
+   "id": "m2",
+   "source": "minute_units",
+   "files": "fig-{}.png",
+   "x": 301,
+   "y": 115,
+   "behind": true
+  },
+  {
+   "type": "frames",
+   "id": "colon",
+   "source": "hour_tens",
+   "files": "colon-{}.png",
+   "x": 189,
+   "y": 115,
+   "behind": true
+  },
+  {
+   "type": "frames",
+   "id": "sec",
+   "source": "second",
+   "files": "sec-{}.png",
+   "x": 322,
+   "y": 120,
+   "behind": true,
+   "cover": true
+  },
+  {
+   "type": "frames",
+   "id": "bands",
+   "source": "hour_tens",
+   "files": "band-{}.png",
+   "x": 0,
+   "y": 0,
+   "behind": true,
+   "cover": true
+  },
+  {
+   "type": "weekday",
+   "id": "wd",
+   "form": "full",
+   "case": "lower",
+   "size": 32,
+   "weight": 500,
+   "color": "soft",
+   "x": "screen.center",
+   "align": "center",
+   "y": {
+    "caps_bottom": 62
+   }
+  },
+  {
+   "type": "day",
+   "id": "day",
+   "size": 36,
+   "weight": 500,
+   "color": "ink",
+   "x": 160,
+   "align": "right",
+   "y": {
+    "digits_bottom": 102
+   }
+  },
+  {
+   "type": "month",
+   "form": "full",
+   "case": "lower",
+   "size": 36,
+   "weight": 500,
+   "color": "ink",
+   "x": "day.right+9",
+   "max_right": 372,
+   "y": {
+    "caps_bottom": 102
+   }
+  },
+  {
+   "type": "tap",
+   "box": [
+    42,
+    374,
+    122,
+    452
+   ],
+   "open": "weather",
+   "elements": [
+    {
+     "type": "weather_icon",
+     "size": 30,
+     "color": "soft",
+     "fill": 0,
+     "x": 66,
+     "y": {
+      "middle": 394
+     }
+    },
+    {
+     "type": "number",
+     "source": "temperature",
+     "size": 30,
+     "weight": 400,
+     "color": "ink",
+     "unit": "°",
+     "x": 81,
+     "align": "center",
+     "y": {
+      "digits_middle": 432
+     }
+    }
+   ]
+  },
+  {
+   "type": "battery_icon",
+   "color": "soft",
+   "low_color": "heart",
+   "width": 30,
+   "height": 15,
+   "x": 148,
+   "y": {
+    "middle": 394
+   }
+  },
+  {
+   "type": "number",
+   "source": "battery",
+   "size": 30,
+   "weight": 400,
+   "color": "ink",
+   "unit": "%",
+   "x": 163,
+   "align": "center",
+   "y": {
+    "digits_middle": 432
+   }
+  },
+  {
+   "type": "tap",
+   "box": [
+    206,
+    374,
+    286,
+    452
+   ],
+   "open": "heart_rate",
+   "elements": [
+    {
+     "type": "symbol",
+     "name": "favorite",
+     "fill": 1,
+     "size": 28,
+     "color": "heart",
+     "x": 231,
+     "y": {
+      "middle": 394
+     }
+    },
+    {
+     "type": "number",
+     "source": "heart_rate",
+     "size": 30,
+     "weight": 400,
+     "color": "ink",
+     "x": 245,
+     "align": "center",
+     "y": {
+      "digits_middle": 432
+     }
+    }
+   ]
+  },
+  {
+   "type": "tap",
+   "box": [
+    288,
+    374,
+    368,
+    452
+   ],
+   "open": "steps",
+   "elements": [
+    {
+     "type": "symbol",
+     "name": "footprint",
+     "fill": 0,
+     "size": 28,
+     "color": "soft",
+     "x": 313,
+     "y": {
+      "middle": 394
+     }
+    },
+    {
+     "type": "number",
+     "source": "steps",
+     "size": 30,
+     "weight": 400,
+     "color": "ink",
+     "x": 327,
+     "align": "center",
+     "y": {
+      "digits_middle": 432
+     }
+    }
+   ]
+  }
+ ],
+ "aod": {
+  "elements": [
+   {
+    "type": "time",
+    "size": 150,
+    "weight": 300,
+    "color": "dim",
+    "pad": 1,
+    "x": "screen.center",
+    "align": "center",
+    "y": {
+     "digits_middle": 240
+    },
+    "colon": {
+     "width": 26,
+     "radius": 4,
+     "color": "dim",
+     "shape": "square",
+     "spread": 0.2
+    }
+   }
+  ]
+ }
+}

@@ -1,5 +1,6 @@
 {
  "order": [
+  "skylight",
   "hwfit4-s",
   "hwfit4-r",
   "vibe",
@@ -15,6 +16,7 @@
   "noir"
  ],
  "names": {
+  "skylight": "Skylight",
   "hwfit4-s": "hwfit4-s",
   "hwfit4-r": "hwfit4-r",
   "vibe": "Vibe",
@@ -125,6 +127,7 @@
     "unreadable": "Could not read that file"
    },
    "gallery": {
+    "skylight": "Very tall figures in a window between two shutters; the sky behind them changes with the hour, the shutters' edges catch its light, and the seconds are cut into the last figure so the sky shows through.",
     "hwfit4-s": "Ice-blue figures on deep blue, every number in rounded condensed numerals, a dotted frame where the second's tablet runs and strikes red every ten seconds; weather, steps, heart and charge in large type.",
     "hwfit4-r": "Warm ivory on garnet: the figures of the time stretched to one width, the second's tablet swelling on every tenth second.",
     "vibe": "Black and scarlet glass cards: the date in words, time with seconds, battery, weather, pulse, steps, a cream mark running round the frame.",
@@ -225,6 +228,7 @@
     "unreadable": "Не удалось прочитать файл"
    },
    "gallery": {
+    "skylight": "Очень высокие цифры в окне между двумя шторками; небо за ними меняется с часами, кромки шторок ловят его свет, а секунды прорезаны в последней цифре, и сквозь них видно небо.",
     "hwfit4-s": "Ледяные цифры на глубоком синем, все числа скруглёнными узкими цифрами, точечная рамка, по которой бежит плашка секунды и каждые десять секунд вспыхивает красным; погода, шаги, пульс и заряд крупно.",
     "hwfit4-r": "Тёплая кость на гранате: цифры времени растянуты до одной ширины, плашка секунды вырастает на каждой десятой секунде.",
     "vibe": "Чёрное и алое, стеклянные карточки: дата словами, время с секундами, заряд, погода, пульс, шаги, кремовая метка бежит по рамке.",
@@ -325,6 +329,7 @@
     "unreadable": "Tiedostoa ei voitu lukea"
    },
    "gallery": {
+    "skylight": "Hyvin korkeat numerot ikkunassa kahden luukun välissä; taivas niiden takana vaihtuu tunnin mukaan, luukkujen reunat poimivat sen valon, ja sekunnit on leikattu viimeiseen numeroon, joten taivas näkyy niiden läpi.",
     "hwfit4-s": "Jäänsiniset numerot syvällä sinisellä, kaikki luvut pyöreillä kapeilla numeroilla, pisteinen kehys, jota sekuntilaatta kiertää ja välähtää punaisena joka kymmenes sekunti; sää, askeleet, syke ja akku isolla.",
     "hwfit4-r": "Lämmintä norsunluuta granaatilla: ajan numerot venytetty samaan leveyteen, sekuntilaatta kasvaa joka kymmenennellä sekunnilla.",
     "vibe": "Mustaa ja helakanpunaista, lasikortit: päivämäärä sanoin, aika sekunteineen, akku, sää, syke, askeleet ja kermanvärinen merkki, joka kiertää kehystä.",

@@ -361,13 +361,19 @@ a script beside the description, as a background picture is.
 
 | field | meaning |
 |---|---|
-| `source` | `second_units` (10 pictures), `second_tens` (6), `minute_units` (10), `minute_tens` (6), `hour_units` (10), `hour_tens` (3), all confirmed as sources; `weather` (11, in the order of `weather_icon`), confirmed as a source; `month` (13: picture 0 is never shown, January is 1), on the source the month words use; `second` (60, one picture per second) and `unread_messages` (2: none, some) seen in other faces, not yet confirmed |
+| `source` | `second_units` (10 pictures), `second_tens` (6), `minute_units` (10), `minute_tens` (6), `hour_units` (10), `hour_tens` (3), all confirmed as sources; `weather` (11, in the order of `weather_icon`), confirmed as a source; `month` (13: picture 0 is never shown, January is 1), on the source the month words use; `second` (60, one picture per second) and `unread_messages` (2: none, some) seen in other faces, not yet confirmed; `hour` (24, one picture per hour of the day, 0 to 23), the source the hour levels follow |
 | `files` | a name with `{}` for the value: `"lamps-{}.png"` reads `lamps-0.png`, `lamps-1.png` and on |
 | `x`, `y` | the top left corner of the pictures, which are all as large as the first |
 | `behind` | `true` puts them under everything else, so their light may run under readings |
+| `cover` | `true` (with `behind`) marks scenery laid over the layers drawn before it, such as shutters that reach over the figures of the time or a sky that changes by the hour: nothing in it is read, so it is not checked for contrast or overlap |
 
 Draw what never changes into the background and only what lights into the frames: a
 frame of a lamp at rest can then be empty.
+
+What the machine draws from a description and never changes (a symbol, a unit, an icon
+that does not follow a value) goes into the background too, under every frame. Frames
+that cover the whole screen hide it; keep frames that reach over such things to the rows
+where they are needed, and draw the rest of the scenery into the background picture.
 
 ### `tap`
 
