@@ -33,7 +33,8 @@ LOCALE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'locales')
 
 SCREENS = {'HWHD13': (408, 480)}
 FORMAT_VERSION = '2.5.1'
-FONTS = {'Oswald': 'Oswald.ttf', 'Cormorant': 'Cormorant.ttf', 'Segments': None}   # Segments: drawn, digits only
+FONTS = {'Oswald': 'Oswald.ttf', 'Cormorant': 'Cormorant.ttf', 'Saira': 'SairaExtraCondensed-ExtraBold.ttf',
+         'Segments': None}   # Saira: Latin only, one weight; Segments: drawn, digits only
 SYMBOLS = draw.Symbols(os.path.join(FONT_DIR, 'Symbols.ttf'), os.path.join(FONT_DIR, 'symbols.codepoints'))
 
 # name -> (data source, digits to reserve, verified on a watch)

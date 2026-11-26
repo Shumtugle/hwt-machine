@@ -1,5 +1,7 @@
 {
  "order": [
+  "hwfit4-s",
+  "hwfit4-r",
   "vibe",
   "night-tram",
   "plumb",
@@ -13,6 +15,8 @@
   "noir"
  ],
  "names": {
+  "hwfit4-s": "hwfit4-s",
+  "hwfit4-r": "hwfit4-r",
   "vibe": "Vibe",
   "night-tram": "Night Tram",
   "plumb": "Plumb",
@@ -120,6 +124,8 @@
     "unreadable": "Could not read that file"
    },
    "gallery": {
+    "hwfit4-s": "The reference face: ice-blue figures on deep blue, every number in rounded condensed numerals, a dotted frame where the second's tablet runs and strikes red every ten seconds; weather, steps, heart and charge in large type.",
+    "hwfit4-r": "The reference face in warm ivory on garnet: the figures of the time stretched to one width, the second's tablet swelling on every tenth second.",
     "vibe": "Black and scarlet glass cards: the date in words, time with seconds, battery, weather, pulse, steps, a cream mark running round the frame.",
     "night-tram": "Ink, cream and amber: a lamp on the copper frame counts the seconds, a small lamp by the date wakes for unread messages.",
     "plumb": "The hour over the minute and a plumb scale: hour, minute and second hang on it as levels, each pouring light down the screen in indigo, teal and ice.",
@@ -217,6 +223,8 @@
     "unreadable": "Не удалось прочитать файл"
    },
    "gallery": {
+    "hwfit4-s": "Эталонный циферблат: ледяные цифры на глубоком синем, все числа скруглёнными узкими цифрами, точечная рамка, по которой бежит плашка секунды и каждые десять секунд вспыхивает красным; погода, шаги, пульс и заряд крупно.",
+    "hwfit4-r": "Эталонный циферблат в тёплой кости на гранате: цифры времени растянуты до одной ширины, плашка секунды вырастает на каждой десятой секунде.",
     "vibe": "Чёрное и алое, стеклянные карточки: дата словами, время с секундами, заряд, погода, пульс, шаги, кремовая метка бежит по рамке.",
     "night-tram": "Чернила, сливки и янтарь: лампа на медной рамке отсчитывает секунды, маленький огонёк у даты зажигается, когда ждут непрочитанные сообщения.",
     "plumb": "Час над минутой и шкала-отвес: на ней висят уровни часа, минуты и секунды, и каждый льёт свет вниз по экрану, индиго, бирюзой и льдом.",
@@ -314,6 +322,8 @@
     "unreadable": "Tiedostoa ei voitu lukea"
    },
    "gallery": {
+    "hwfit4-s": "Mallikellotaulu: jäänsiniset numerot syvällä sinisellä, kaikki luvut pyöreillä kapeilla numeroilla, pisteinen kehys, jota sekuntilaatta kiertää ja välähtää punaisena joka kymmenes sekunti; sää, askeleet, syke ja akku isolla.",
+    "hwfit4-r": "Mallikellotaulu lämpimänä norsunluuna granaatilla: ajan numerot venytetty samaan leveyteen, sekuntilaatta kasvaa joka kymmenennellä sekunnilla.",
     "vibe": "Mustaa ja helakanpunaista, lasikortit: päivämäärä sanoin, aika sekunteineen, akku, sää, syke, askeleet ja kermanvärinen merkki, joka kiertää kehystä.",
     "night-tram": "Mustetta, kermaa ja meripihkaa: lamppu kuparikehyksellä laskee sekunnit, pieni valo päivämäärän vieressä syttyy lukemattomista viesteistä.",
     "plumb": "Tunti minuutin yllä ja luotiasteikko: tunti, minuutti ja sekunti roikkuvat siinä tasoina, ja kukin valuttaa valoa alas näytölle indigona, turkoosina ja jäänä.",

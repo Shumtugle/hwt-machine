@@ -29,7 +29,10 @@ def render(lang, data, template):
               gallery=[[f, data['names'][f], s['gallery'][f]] for f in data['order']])
     faces = '\n'.join('            <button class="chip" data-face="%s" aria-pressed="%s">%s</button>'
                        % (f, 'true' if i == 0 else 'false', html.escape(data['names'][f])) for i, f in enumerate(data['order']))
-    values = dict(s, lang=lang, base=base, lang_chips=chips, face_chips=faces,
+    # the page opens on the first face of the gallery
+    first = data['order'][0]
+    values = dict(s, lang=lang, base=base, lang_chips=chips, face_chips=faces, first=first,
+                  first_name=html.escape(data['names'][first]),
                   sky_options='            ' + sky, cards=cards,
                   strings=json.dumps(js, ensure_ascii=False))
     out = template

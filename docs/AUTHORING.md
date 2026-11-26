@@ -95,7 +95,7 @@ time and the date are read at a glance and need capitals or digits at least 26 p
 |---|---|
 | `name` | title shown on the watch; required |
 | `author` | optional; defaults to the name in lower case |
-| `font` | default font: `Oswald` (condensed sans, weights 200–700), `Cormorant` (serif, 300–700), or `Segments` (drawn seven-segment digits, for numbers and the time only) |
+| `font` | default font: `Oswald` (condensed sans, weights 200–700), `Cormorant` (serif, 300–700), `Saira` (rounded extra-condensed sans in one extra-bold weight; Latin letters only, so for numbers and Latin words), or `Segments` (drawn seven-segment digits, for numbers and the time only) |
 | `colors` | palette; elements may name these instead of writing colours |
 | `styles` | named text styles; an element takes one with `"style": "label"` and may override any field |
 | `languages.default` | languages built when none are given on the command line; at most 3 |

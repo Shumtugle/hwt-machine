@@ -167,6 +167,35 @@ steps and charge, each a touch away from its own screen.
 [EN](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/noir-en.hwt) ·
 [FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/noir-fi.hwt)
 
+## hwfit4
+
+The reference face for this screen, in two colourings. A deep ground lit from the
+middle, a frame of sixty dots round the visible edge with the quarters written in, and a
+small tablet carrying the second along it. The weekday above, the day and the month on
+one line, the hour and the minute tall in the middle, level with the quarters 45 and 15;
+weather and steps below in large type, heart and charge under them. Every tenth second
+the tablet strikes: it swells and glows, and on the next second it is still a little
+large.
+
+**hwfit4-s**: ice-blue figures on deep blue; every number on the face in rounded,
+condensed numerals, the words in the condensed sans, and the strike takes the red of
+the heart.
+
+![hwfit4-s in English, Russian, Finnish, and its always-on screen](docs/img/hwfit4-s.png)
+
+[RU](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/hwfit4-s-ru.hwt) ·
+[EN](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/hwfit4-s-en.hwt) ·
+[FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/hwfit4-s-fi.hwt)
+
+**hwfit4-r**: warm ivory on garnet; the figures of the time stretched to one width, and
+the strike keeps the tablet's colour.
+
+![hwfit4-r in English, Russian, Finnish, and its always-on screen](docs/img/hwfit4-r.png)
+
+[RU](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/hwfit4-r-ru.hwt) ·
+[EN](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/hwfit4-r-en.hwt) ·
+[FI](https://github.com/Shumtugle/hwt-machine/raw/main/docs/faces/hwfit4-r-fi.hwt)
+
 ## Faces from a description
 
 A face can also be written as data instead of code: a JSON description of the
